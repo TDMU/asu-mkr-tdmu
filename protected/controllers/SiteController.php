@@ -102,19 +102,20 @@ class SiteController extends Controller
 			/** @var $eauth EAuthServiceBase */
 			$eauth = Yii::app()->eauth->getIdentity($serviceName);
 			$eauth->redirectUrl = Yii::app()->user->returnUrl;
-//var_dump($eauth->redirectUr);            
+//var_dump(Yii::app()->user);            
 			$eauth->cancelUrl = $this->createAbsoluteUrl('site/login');
 
 			try {
 				if ($eauth->authenticate()) {
 					//var_dump($eauth->getIsAuthenticated(), $eauth->getAttributes());
 					$identity = new EAuthUserIdentity($eauth);
-var_dump($identity);
-die();
+
 					// successful authentication
 					if ($identity->authenticate()) {
-						Yii::app()->user->login($identity);
-						//var_dump($identity->id, $identity->name, Yii::app()->user->id);exit;
+						//Yii::app()->user->login($identity);
+//var_dump($identity);                        
+                        var_dump($identity->attributes);
+						var_dump($identity->id, $identity->name, Yii::app()->user->id); die();  exit;
 
 						// special redirect with closing popup window
 						$eauth->redirect();

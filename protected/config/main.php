@@ -85,7 +85,7 @@ $config = array(
 					'class' => 'GoogleOAuthService',
 					'client_id' => '687538229992-eahogdi60j7dr19drnbedc3355nsha2c.apps.googleusercontent.com',
 					'client_secret' => 'XLQSbwelQUagRyJkJ-ptVLkf',
-					'title' => 'Google (OAuth)',
+					'title' => 'Google Auth',
 				),
             ),
         ),
