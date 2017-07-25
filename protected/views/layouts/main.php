@@ -1,14 +1,3 @@
-<?php /* @var $this Controller */ 
-	function getStyleName($name)
-	{
-		return 'css/'.$name;
-	}
-	
-	function getAceStyleName($name)
-	{
-		return 'theme/ace/assets/css/'.$name;
-	}
-?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
 <head>
@@ -17,7 +6,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" type="text/css" href="<?=Yii::app()->baseUrl?>/<?=getStyleName('styles.css')?>" />
+    <link rel="stylesheet" type="text/css" href="<?=Yii::app()->baseUrl?>/css/styles.css" />
 
 
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
@@ -26,25 +15,25 @@
     <?php
         if(file_exists(Yii::getPathOfAlias('webroot').'/css/user.css')):
         ?>
-            <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/<?=getStyleName('user.css')?>" />
+            <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/css/styles.css" />
         <?php
         endif;
     ?>
-    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/<?=getAceStyleName('font-awesome.min.css')?>" />
+    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/theme/ace/assets/css/font-awesome.min.css" />
     <!--[if IE 7]>
     <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/theme/ace/assets/css/font-awesome-ie7.min.css"/>
     <![endif]-->
 
     <!-- fonts -->
-    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/<?=getAceStyleName('ace-fonts.css')?>" />
+    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/theme/ace/assets/css/ace-fonts.css" />
 
     <!-- ace styles -->
-    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/<?=getAceStyleName('ace.min.css')?>" />
-    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/<?=getAceStyleName('ace-responsive.min.css')?>" />
-    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/<?=getAceStyleName('ace-skins.min.css')?>" />
+    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/theme/ace/assets/css/ace.min.css" />
+    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/theme/ace/assets/css/ace-responsive.min.css" />
+    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/theme/ace/assets/css/ace-skins.min.css" />
 
     <!--[if lte IE 8]>
-    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/<?=getAceStyleName('ace-ie.min.css')?>" />
+    <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/theme/ace/assets/css/ace-ie.min.css" />
     <![endif]-->
 
     <!-- ace settings handler -->
