@@ -26,6 +26,11 @@ $config = array(
 		'ext.elFinder.*',
 		'ext.EScriptBoost.*',
 		'ext.LangPick.*',
+        'ext.eoauth.*',
+		'ext.eoauth.lib.*',
+		'ext.lightopenid.*',
+		'ext.eauth.*',
+		'ext.eauth.services.*',
 	),
 
 	'modules'=>array(
@@ -67,6 +72,23 @@ $config = array(
 		'cache' => array(
 			'class' => 'CFileCache',
 		),
+        'loid' => array(
+			'class' => 'ext.lightopenid.loid',
+		),
+        'eauth' => array(
+			'class' => 'ext.eauth.EAuth',
+			'popup' => false, // Use the popup window instead of redirecting.
+			'cache' => false, // Cache component name or false to disable cache. Defaults to 'cache'.
+			'cacheExpire' => 0, // Cache lifetime. Defaults to 0 - means unlimited.
+			'services' => array( // You can change the providers and their classes.
+				'google_oauth' => array(
+					'class' => 'GoogleOAuthService',
+					'client_id' => '687538229992-eahogdi60j7dr19drnbedc3355nsha2c.apps.googleusercontent.com',
+					'client_secret' => 'XLQSbwelQUagRyJkJ-ptVLkf',
+					'title' => 'Google (OAuth)',
+				),
+            ),
+        ),
 		/*'assetManager' => array(
 			'class' => 'ext.EAssetManagerBoostGz',
 			'minifiedExtensionFlags' => array('min.js', 'minified.js', 'packed.js'),
