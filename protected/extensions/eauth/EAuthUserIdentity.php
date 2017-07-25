@@ -30,6 +30,8 @@ class EAuthUserIdentity extends CBaseUserIdentity {
 	 * @var string the display name for the identity.
 	 */
 	protected $name;
+    
+    protected $attributes;
 
 	/**
 	 * Constructor.
@@ -50,7 +52,8 @@ class EAuthUserIdentity extends CBaseUserIdentity {
 		if ($this->service->isAuthenticated) {
 			$this->id = $this->service->id;
 			$this->name = $this->service->getAttribute('name');
-
+            $this->attributes = $this->service->getAttributes();  //unsafe?
+var_dump($this->attributes);
 			$this->setState('id', $this->id);
 			$this->setState('name', $this->name);
 			$this->setState('service', $this->service->serviceName);
@@ -87,4 +90,8 @@ class EAuthUserIdentity extends CBaseUserIdentity {
 	public function getName() {
 		return $this->name;
 	}
+    
+	public function getAttributes() {
+		return $this->attributes;
+	}    
 }
