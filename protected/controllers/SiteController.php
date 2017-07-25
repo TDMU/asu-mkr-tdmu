@@ -118,13 +118,15 @@ class SiteController extends Controller
 				$user = Users::model()->findByPk(Yii::app()->user->id);
 				switch($user->u5){
 					case 0:
-						$message = PortalSettings::model()->findByPk(92)->ps2;
+						$message = (isset(PortalSettings::model()->findByPk(92)->ps2)?PortalSettings::model()->findByPk(92)->ps2:'');
 						break;
 					case 1:
-						$message = PortalSettings::model()->findByPk(93)->ps2;
+						//$message = PortalSettings::model()->findByPk(93)->ps2;
+                        $message = (isset(PortalSettings::model()->findByPk(93)->ps2)?PortalSettings::model()->findByPk(93)->ps2:'');
 						break;
 					case 2:
-						$message = PortalSettings::model()->findByPk(94)->ps2;
+						//$message = PortalSettings::model()->findByPk(94)->ps2;
+                        $message = (isset(PortalSettings::model()->findByPk(94)->ps2)?PortalSettings::model()->findByPk(94)->ps2:'');
 						break;
 				}
 
