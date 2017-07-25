@@ -54,6 +54,9 @@
                                 <div class="space-4"></div>
                             </fieldset>
                         <?php $this->endWidget(); ?>
+                        <?php
+                            $this->widget('ext.eauth.EAuthWidget', array('action' => 'site/login'));
+                        ?>
                         </div>
                     </div><!-- /widget-main -->
 
