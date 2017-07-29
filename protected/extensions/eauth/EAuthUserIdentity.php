@@ -53,7 +53,7 @@ class EAuthUserIdentity extends CBaseUserIdentity {
 			$this->id = $this->service->id;
 			$this->name = $this->service->getAttribute('name');
             $this->attributes = $this->service->getAttributes();  //unsafe?
-var_dump($this->attributes);
+
 			$this->setState('id', $this->id);
 			$this->setState('name', $this->name);
 			$this->setState('service', $this->service->serviceName);
