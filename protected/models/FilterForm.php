@@ -68,9 +68,10 @@ class FilterForm extends CFormModel
                 array('filial, faculty, course, group, semester', 'required', 'on' => 'workPlan-group'),
                 array('filial, faculty, course, group, sel_1, sel_2, type_rating, st_rating', 'required', 'on' => 'rating-group'),
                 array('filial, faculty, speciality, course, group, semester', 'required', 'on' => 'workPlan-speciality'),
-                array('filial, faculty, course, group, semester, month, student', 'required', 'on' => 'attendanceStatistic'),
+                array('filial, faculty, course, group, semester, month, student, discipline', 'required', 'on' => 'attendanceStatistic'),
                 array('filial, faculty, speciality, course, group, category, year', 'required', 'on' => 'employment'),
 				array('filial, faculty, course, discipline, group', 'required', 'on' => 'list-virtual-group'),
+				array('group, student', 'required', 'on' => 'payment'),
 			);
 	}
 

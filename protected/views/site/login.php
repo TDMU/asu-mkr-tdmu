@@ -24,6 +24,13 @@
                             'action' => Yii::app()->createUrl("site/login")
                         )); ?>
                             <fieldset>
+                                <?php
+                                /*$url = Yii::app()->request->urlReferrer;
+                                $host = Yii::app()->request->hostInfo;
+                                echo $url.' '.$host;*/
+                                    $model->setNewValidationKey();
+                                    echo $form->hiddenField($model, 'validationKey');
+                                ?>
                                 <label>
                                     <span class="block input-icon input-icon-right">
                                         <?=$form->textFieldRow($model, 'username', array('class' => 'span12', 'placeholder' => tt('Логин')))?>
@@ -37,6 +44,27 @@
                                         <i class="icon-lock"></i>
                                     </span>
                                 </label>
+
+                                <?php
+                               /* $criteria = new CDbCriteria;
+                                //$criteria->addCondition('LOWER(U2)=:USERNAME OR LOWER(U4)=:EMAIL');
+                                $criteria->addCondition('u2=\'leshamkr\'');
+
+                                $setting = PortalSettings::model()->getSettingFor(113);
+                                var_dump($setting);
+
+                                $user = Users::model()->find($criteria);
+                                var_dump($user->getCountFail($setting));*/
+                                /*if(CCaptcha::checkRequirements()): ?>
+                                    <div class="form-group">
+                                        <?php //$form->labelEx($model,'verifyCode'); ?>
+                                        <div>
+                                            <?php $this->widget('CCaptcha'); ?>
+                                            <?php echo $form->textField($model,'verifyCode'); ?>
+                                        </div>
+                                        <?php echo $form->error($model,'verifyCode'); ?>
+                                    </div>
+                                <?php endif; */?>
 
                                 <div class="space"></div>
 

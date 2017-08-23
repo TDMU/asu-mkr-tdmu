@@ -12,16 +12,6 @@ class SiteController extends Controller
 	public function actions()
     {
         return array(
-            // captcha action renders the CAPTCHA image displayed on the contact page
-            'connector' => array(
-                'class' => 'ext.elFinder.ElFinderConnectorAction',
-                'settings' => array(
-                    'root' => Yii::getPathOfAlias('webroot') . '/images/uploads/',
-                    'URL' => Yii::app()->request->baseUrl . '/images/uploads/',
-                    'rootAlias' => 'Home',
-                    'mimeDetect' => 'none',
-                )
-            ),
 			'captcha'=>array(
 					'class'=>'CCaptchaAction',
 					'backColor'=>0xFFFFFF,
@@ -116,9 +106,10 @@ class SiteController extends Controller
 		{
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
-			if($model->validate() && $model->login()) {
+			if($model->validate()&&$model->login()) {
 				$message = '';
 				$user = Users::model()->findByPk(Yii::app()->user->id);
+				$user->afterLogin();
 				switch($user->u5){
 					case 0:
 						$message = (isset(PortalSettings::model()->findByPk(92)->ps2)?PortalSettings::model()->findByPk(92)->ps2:'');
@@ -439,9 +430,10 @@ class SiteController extends Controller
                 $t = $mail->deliver();*/
 
 				$user->generatePasswordResetToken();
+				$key = $user->getValidationKey();
 				if($user->saveAttributes(array('u10'=>$user->u10))) {
 
-					$url = Yii::app()->createAbsoluteUrl('site/resetPassword', array('token' => $user->u10));
+					$url = Yii::app()->createAbsoluteUrl('site/resetPassword', array('token' => $user->u10, 'key'=>$key));
 					$link = tt('Востановить пароль');
 
 					$ps86 = PortalSettings::model()->findByPk(86)->ps2;
@@ -473,7 +465,7 @@ HTML;
         $this->render('forgotPassword',array('model'=>$model));
     }
 
-	public function actionResetPassword($token){
+	public function actionResetPassword($token, $key){
 		try {
 			$model = new ResetPasswordForm($token,'reset-password');
 		} catch (Exception $e) {
@@ -482,6 +474,9 @@ HTML;
 
 		if(!$model->isValid($token))
 			throw new CHttpException(404, '2Invalid request. Please do not repeat this request again.');
+
+		if(!$model->isValidKey($key))
+			throw new CHttpException(404, '3Invalid request. Please do not repeat this request again.');
 
 		if(isset($_POST['ResetPasswordForm'])) {
 			$model->attributes = $_POST['ResetPasswordForm'];

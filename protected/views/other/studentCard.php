@@ -23,12 +23,14 @@ if(Yii::app()->user->isAdmin) {
         'showCheckBoxCalendar' => false
     ));
 }
+
+
+echo <<<HTML
+    <span id="spinner1"></span>
+HTML;
 if ($model->student) :
     $this->renderPartial('/filter_form/default/year_sem');
 
-    echo <<<HTML
-    <span id="spinner1"></span>
-HTML;
 
     $this->renderPartial('studentCard/_bottom', array(
         'st' => St::model()->findByPk($model->student),

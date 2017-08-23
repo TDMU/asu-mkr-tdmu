@@ -104,7 +104,7 @@ if (! empty($firstDay) && !empty($lastDay)) :
                 $html = '';
                 foreach ($students as $student) {
 
-                    $attendance = Elgzst::model()->getAttendanceStatisticFor($student['st1'], $firstDay, $lastDay, $monthStatistic);
+                    $attendance = Elgzst::model()->getAttendanceStatisticFor($student['st1'], $firstDay, $lastDay, $monthStatistic, $model->discipline);
                     //$attendance['summary']['td1'] = Elgzst::getCountLesson($model->group, $model->semester, $firstDay, $lastDay);
 
                     $html .= '<tr>';

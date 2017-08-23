@@ -122,6 +122,20 @@ class Us extends CActiveRecord
 		return parent::model($className);
 	}
 
+    /*
+     * $us = Us::model()->findByAttributes(array('us2'=>$elg->elg2, 'us3'=>$elg->elg3));
+     * */
+    /**
+     * Тип итога по журналу
+     * @param $elg Elg
+     * @return Us
+     */
+    public function getUsByStusvFromJournal($elg)
+    {
+        $us = Us::model()->findByAttributes(array('us2'=>$elg->elg2, 'us3'=>$elg->elg3, 'us4'=>array(5,6)));
+        return $us;
+    }
+
     public function getHoursForWorkLoad($pd1, $year)
     {
         if (empty($pd1) || empty($year))

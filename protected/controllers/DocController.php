@@ -12,7 +12,7 @@ class DocController extends Controller
 
         return array(
             'accessControl',
-            'checkPermission -index'//не выполянеться для индекса
+            'checkPermission -index, -selfDoc'//не выполянеться для индекса
         );
     }
 
@@ -22,6 +22,7 @@ class DocController extends Controller
             array('allow',
                 'actions' => array(
                     'index',
+                    'selfDoc',
                     'view',
                     'file'
                 ),
@@ -125,7 +126,7 @@ class DocController extends Controller
         if(!empty($docYear))
             $model->tddo23 = $docYear;
 
-        $this->render('index', array(
+        $this->render('self-doc', array(
             'model'   => $model
         ));
     }
@@ -153,6 +154,21 @@ class DocController extends Controller
               SELECT COUNT(*) FROM IDO
               INNER JOIN PD on (IDO2=PD1)
               WHERE PD2=:P1 AND IDO1=:TDDO1
+SQL;
+            $command = Yii::app()->db->createCommand($sql);
+            $command->bindValue(':TDDO1', $id);
+            $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+            $count = $command->queryScalar();
+
+            $result = $count>0;
+
+            if($result)
+                return $result;
+
+            $sql = <<<SQL
+              SELECT COUNT(*) FROM IDO
+              INNER JOIN INNFP on (IDO4=INNFP2)
+              WHERE INNFP1=:P1 AND IDO1=:TDDO1
 SQL;
             $command = Yii::app()->db->createCommand($sql);
             $command->bindValue(':TDDO1', $id);
@@ -209,6 +225,7 @@ SQL;
         }else{
             header("Content-type: application/".Tddo::model()->getExtByName($file['FPDD4']));
         }
+        header('Content-Disposition: filename="'.$file['FPDD4'].'"');
         echo $file['FPDD3'];
     }
 }

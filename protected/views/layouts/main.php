@@ -1,3 +1,15 @@
+<?php
+/* @var $this Controller */
+    /*function getStyleName($name)
+	{
+		return 'css/'.$name;
+	}*/
+	
+	/*function getAceStyleName($name)
+	{
+		return 'theme/ace/assets/css/'.$name;
+	}*/
+?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
 <head>
@@ -15,7 +27,7 @@
     <?php
         if(file_exists(Yii::getPathOfAlias('webroot').'/css/user.css')):
         ?>
-            <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/css/styles.css" />
+            <link rel="stylesheet" href="<?=Yii::app()->baseUrl?>/css/user.css" />
         <?php
         endif;
     ?>
@@ -69,14 +81,11 @@
 
         <div class="main-content">
 
-
-
             <?php require_once('_breadcrumbs.php')?>
 
             <div class="page-content">
 
-                <?php require_once('_flashes.php')?>
-
+                <?php //require_once('_flashes.php')?>
                 <!-- PAGE CONTENT BEGINS -->
                 <?php echo $content; ?>
                 <!-- PAGE CONTENT ENDS -->

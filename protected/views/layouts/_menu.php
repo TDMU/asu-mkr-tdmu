@@ -200,7 +200,12 @@ $this->widget('zii.widgets.CMenu', array(
                 array(
                     'label'  => $_l2.tt('Карточка студента'),
                     'url'    => _u('/admin/default/studentCard'),
-                    'active' => $_c=='default' && $_m=='studentCard'
+                    'active' => $_c=='default' && $_a=='studentCard'&& $_m=='admin'
+                ),
+                array(
+                    'label'  => $_l2.tt('Блокировка смены тем курсовых'),
+                    'url'    => _u('/admin/courseWorkBlocker/index'),
+                    'active' => $_c=='courseWorkBlocker' && $_m=='admin'
                 ),
                 array(
                     'label'  => $_l2.tt('Расписание'),
@@ -276,6 +281,11 @@ $this->widget('zii.widgets.CMenu', array(
                     'label'  => $_l2.tt('История авторизаций'),
                     'url'    => _u('/admin/default/userHistory'),
                     'active' => $_a=='admin'
+                ),
+                array(
+                    'label'  => $_l2.tt('Безопасность'),
+                    'url'    => _u('/admin/default/security'),
+                    'active' => $_a=='security' && $_m=='admin'
                 ),
 
             ),
@@ -446,6 +456,12 @@ $this->widget('zii.widgets.CMenu', array(
             'itemOptions'=>_i('journal'),
             'items' => array_merge(array(
                 array(
+                    'label'   => $_l2.tt('Статистика блокировки неоплативших студентов'),
+                    'url'     => _u('/journal/stFinBlockStatisticExcel'),
+                    'visible' => _ch('journal', 'stFinBlockStatisticExcel') && $isAdmin,
+                    'active'  => $_c=='journal' && $_a=='stFinBlockStatisticExcel'
+                ),
+                array(
                     'label'   => $_l2.tt('Тематический план'),
                     'url'     => _u('/journal/thematicPlan'),
                     'visible' => _ch('journal', 'thematicPlan') && $isTch,
@@ -487,6 +503,12 @@ $this->widget('zii.widgets.CMenu', array(
                     'visible' => _ch('journal', 'attendanceStatistic'),
                     'active'  => $_c=='journal' && $_a=='attendanceStatistic'
                 ),
+                array(
+                    'label'   => $_l2.tt('Статистика посещаемости на поток'),
+                    'url'     => _u('/journal/attendanceStatisticPrint'),
+                    'visible' => _ch('journal', 'attendanceStatisticPrint') && PortalSettings::model()->getSettingFor(41)==0,
+                    'active'  => $_c=='journal' && $_a=='attendanceStatisticPrint'
+                ),
             ),getDopItem('journal',0)),
             'visible' => _ch('journal', 'main')
         ),
@@ -527,16 +549,22 @@ $this->widget('zii.widgets.CMenu', array(
             'label' => _l('Док.-оборот', 'folder-open'),
             'url' => '#',
             'linkOptions'=> $_l,
-            'itemOptions'=>_i('docs'),
+            'itemOptions'=>_i('doc'),
             'items' => array(
                 array(
                     'label'   => $_l2.tt('Документооборот'),
-                    'url'     => _u('/docs/tddo'),
-                    'visible' => _ch('docs', 'tddo') && $isTch,
-                    'active'  => $_c=='docs' && stristr($_a, 'tddo')
+                    'url'     => _u('/doc/index'),
+                    'visible' => _ch('doc', 'index') && ($isTch||$isAdmin),
+                    'active'  => $_c=='doc' && stristr($_a, 'index')
+                ),
+                array(
+                    'label'   => $_l2.tt('Личные документы'),
+                    'url'     => _u('/doc/selfDoc'),
+                    'visible' => _ch('doc', 'selfDoc') && ($isTch||$isAdmin),
+                    'active'  => $_c=='doc' && stristr($_a, 'selfDoc')
                 ),
             ),
-            'visible' => _ch('docs', 'main') && $isTch,
+            'visible' => _ch('doc', 'main') && $isTch,
         ),
         array(
             'label' => _l('Абитуриент', 'book'),
@@ -607,17 +635,29 @@ $this->widget('zii.widgets.CMenu', array(
                 array(
                     'label'   => $_l2.tt('Общежитие'),
                     'url'     => _u('/payment/hostel'),
-                    'visible' => _ch('payment', 'hostel'),
+                    'visible' => _ch('payment', 'hostel')&&$isStd,
                     'active'  => $_c=='payment' && $_a=='hostel'
                 ),
                 array(
                     'label'   => $_l2.tt('Обучение'),
                     'url'     => _u('/payment/education'),
-                    'visible' => _ch('payment', 'education'),
+                    'visible' => _ch('payment', 'education')&&$isStd,
                     'active'  => $_c=='payment' && $_a=='education',
                 ),
+                array(
+                    'label'   => $_l2.tt('Общежитие (кур.)'),
+                    'url'     => _u('/payment/hostelCurator'),
+                    'visible' => _ch('payment', 'hostelCurator')&&$isTch,
+                    'active'  => $_c=='payment' && $_a=='hostelCurator'
+                ),
+                array(
+                    'label'   => $_l2.tt('Обучение (кур.)'),
+                    'url'     => _u('/payment/educationCurator'),
+                    'visible' => _ch('payment', 'educationCurator')&&$isTch,
+                    'active'  => $_c=='payment' && $_a=='educationCurator',
+                ),
             ),getDopItem('payment',0)),
-            'visible' => _ch('payment', 'main') && $isStd
+            'visible' => _ch('payment', 'main') && ($isStd || $isTch)
         ),
         array(
             'label' => _l('Другое', 'globe'),

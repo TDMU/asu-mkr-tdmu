@@ -59,10 +59,13 @@
                     'name'       => 'Эл. журнал',
                     'controller' => 'journal',
                     'items' => array(
+                        'stFinBlockStatisticExcel' => 'Статистика блокировки неоплативших студентов',
                         'thematicPlan' => 'Тематический план',
                         'journal' => 'Эл. журнал',
                         'retake' => 'Отработка',
+                        'omissions'=>'Регистрация пропусков занятий',
                         'attendanceStatistic'=>'Статистика посещаемости',
+                        'attendanceStatisticPrint'=>'Статистика посещаемости на поток',
                         'stJournal'=>'Ввод посещаемости (для старост)'
                     ),
                 ),
@@ -94,9 +97,10 @@
                 ),
                 array(
                     'name'       => 'Док.-оборот',
-                    'controller' => 'docs',
+                    'controller' => 'doc',
                     'items' => array(
-                        'tddo' => 'Документооборот',
+                        'index' => 'Документооборот',
+                        'selfDoc' => 'Личные документы',
                     ),
                 ),
                 array(
@@ -114,6 +118,8 @@
                     'items' => array(
                         'hostel'    => 'Общежитие',
                         'education' => 'Обучение',
+                        'hostelCurator'    => 'Общежитие (кур.)',
+                        'educationCurator' => 'Обучение (кур.)',
                     ),
                 ),
                 array(

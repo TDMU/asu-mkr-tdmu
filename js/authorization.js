@@ -23,6 +23,8 @@ $(document).ready(function(){
         var url   = $(this).attr('action');
         var $that = $(this);
 
+        /*alert(data);*/
+
         $that.find('button').button('loading');
 
         $.ajax({

@@ -9,6 +9,11 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/m
 Yii::app()->clientScript->registerPackage('datepicker-mobile');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/mobile/datepicker/locales/bootstrap-datepicker.'.Yii::app()->language.'.min.js', CClientScript::POS_END);
 
+echo '<div class="pull-right">';
+echo CHtml::link('<i class="glyphicon glyphicon-hand-right"></i>'.' '.tt('Общий вид'), array('/timeTable/self'));
+echo '</div>';
+echo '<div class="clearfix"></div>';
+
 //if (! empty($model->teacher)) {
     $this->renderPartial('timeTable/schedule', array(
         'model' => $model,

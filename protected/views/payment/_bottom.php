@@ -152,7 +152,7 @@ function totalMsg($total)
             <span class="label label-warning arrowed arrowed-right"><?=$wholeTotal?> грн.</span>
         </td>
         <td>
-            <?=tt('Суммарная')?> <?=totalMsg($total)?>
+            <?=tt('Суммарная')?> <?=isset($total)?totalMsg($total):''?>
         </td>
     </tr>
     </tfoot>

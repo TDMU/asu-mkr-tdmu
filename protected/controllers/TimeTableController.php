@@ -27,8 +27,8 @@ class TimeTableController extends Controller
 
     public  function actionSelf()
     {
-        if($this->mobileCheck())
-            $this->redirect('/mobile/timeTableSelf');
+        /*if($this->mobileCheck())
+            $this->redirect('/mobile/timeTableSelf');*/
         $model = new TimeTableForm;
         //$model->scenario = 'self';
         if (isset($_REQUEST['TimeTableForm']))
@@ -175,13 +175,29 @@ class TimeTableController extends Controller
         ));
     }
 
+    /**
+     * Загрузка для прямой ссылки
+     * @param $model TimeTableForm
+     * @return TimeTableForm
+     */
+    private  function teacherRasp($model){
+        if (isset($_GET['teacherId'])) {
+            $model->loadByP1((int)strip_tags($_GET['teacherId']));
+            unset($_GET['teacherId']);
+        }
+
+        return $model;
+    }
+
     public function actionTeacher()
     {
-        if($this->mobileCheck())
-            $this->redirect('/mobile/timeTableTeacher');
+        /*if($this->mobileCheck())
+            $this->redirect('/mobile/timeTableTeacher');*/
 
         $model = new TimeTableForm;
         $model->scenario = 'teacher';
+
+        $model = $this->teacherRasp($model);
 		
 		if (isset($_REQUEST['timeTable'])) {
             Yii::app()->user->setState('timeTable',(int)$_REQUEST['timeTable']);
@@ -537,8 +553,8 @@ class TimeTableController extends Controller
 
     public function actionStudent()
     {
-        if($this->mobileCheck())
-            $this->redirect('/mobile/timeTableStudent');
+        /*if($this->mobileCheck())
+            $this->redirect('/mobile/timeTableStudent');*/
 
         $model = new TimeTableForm;
         $model->scenario = 'student';

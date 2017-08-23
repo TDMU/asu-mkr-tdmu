@@ -20,6 +20,19 @@ function getPassportLabel($id,$type, $pattern, $patternAdmin){
         $visible_passport=true;
 
     $modelStForm = new StInfoForm();
+
+    $this->widget('bootstrap.widgets.TbButton', array(
+        'buttonType'=>'button',
+        'type'=>'primary',
+
+        'icon'=>'print',
+        'label'=>tt('Печать'),
+        'htmlOptions'=>array(
+            'class'=>'btn-small',
+            'data-url'=>Yii::app()->createUrl('/list/groupExcel'),
+            'id'=>'btn-print-excel',
+        )
+    ));
 ?>
 <table id="list-group" class="table table-striped table-hover">
 <thead>

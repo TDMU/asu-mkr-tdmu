@@ -132,7 +132,7 @@ class Spob extends CActiveRecord
 		return parent::model($className);
 	}
 
-    public function getPlan()
+    public function getPlan($st1)
     {
         $sql = <<<SQL
             SELECT spob2 as y,spob3 as m1, spob3 as m2,spob4+spob6-spob11 as money
@@ -142,7 +142,7 @@ class Spob extends CActiveRecord
 SQL;
 
         $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':ST1', Yii::app()->user->dbModel->st1);
+        $command->bindValue(':ST1', $st1);
         $plan = $command->queryAll();
 
         return $plan;

@@ -119,7 +119,7 @@ class Sob extends CActiveRecord
 		return parent::model($className);
 	}
 
-    public function getPayments()
+    public function getPayments($st1)
     {
         $sql = <<<SQL
             SELECT sob2 as money, sob3 as dat
@@ -129,7 +129,7 @@ class Sob extends CActiveRecord
 SQL;
 
         $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':ST1', Yii::app()->user->dbModel->st1);
+        $command->bindValue(':ST1', $st1);
         $payments = $command->queryAll();
 
         $res = array();

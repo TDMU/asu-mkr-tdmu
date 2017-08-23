@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $model Elgzst
+ */
     $pageSize=Yii::app()->user->getState('pageSize',10);
     if($pageSize==0)
         $pageSize=10;

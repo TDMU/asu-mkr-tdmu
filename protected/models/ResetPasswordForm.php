@@ -42,7 +42,7 @@ class ResetPasswordForm extends CFormModel
 		);
 	}
 
-	public function __construct($token, $config = [])
+	public function __construct($token, $config = array())
 	{
 		if (empty($token) || !is_string($token)) {
 			throw new Exception('Password reset token cannot be blank.');
@@ -65,5 +65,9 @@ class ResetPasswordForm extends CFormModel
 
 	public function isValid($token){
 		return $this->_user->isPasswordResetTokenValid($token);
+	}
+
+	public function isValidKey($key){
+		return $this->_user->isValidKey($key);
 	}
 }

@@ -10,14 +10,30 @@ function getMarsForElgz3($nom,$marks){
 }
 function table2Tr($date,$gr1,$st,$marks,$permLesson,$read_only,$type_lesson,$ps20,$ps55,$ps56,$sem7,$ps60,$min,$ps65,$show,$moduleNom,$ps88, $isStd)
 {
-    if (($st['st71']!=$sem7&&$st['st71']!=$sem7+1) &&$ps60==1)
-        return '<td colspan="2"></td>';
+    if (($st['st71']!=$sem7&&$st['st71']!=$sem7+1) &&$ps60==1) {
+        $read_only = true;
+    }
+
+    if ($st['st167']==1) {
+        $read_only = true;
+    }
+        //return '<td colspan="2"></td>';
 
     if (stripos($date['r2'], '11.11.1111')!==false )
         return '<td colspan="2"></td>';
 
-    if (strtotime($date['r2']) > strtotime('now'))
-        return '<td colspan="2"></td>';
+    $dateCurrLesson = strtotime($date['r2']);
+    if ($dateCurrLesson > strtotime('now')) {
+        if(!empty($st['elgvst2'])&&!empty($st['elgvst3']))
+        {
+            if(!($st['elgvst2']<=$dateCurrLesson&&$st['elgvst3']>=$dateCurrLesson)){
+                return '<td colspan="2"></td>';
+            }
+        }
+        else
+            return '<td colspan="2"></td>';
+    }
+
     if ($ps56 == 1 && $date['elgz4']>0)
         return '<td colspan="2"></td>';
 
@@ -74,6 +90,12 @@ function table2Tr($date,$gr1,$st,$marks,$permLesson,$read_only,$type_lesson,$ps2
             Elgzst::model()->nbSt45($st,$elgz1);
     }
 
+    /*if($st['st167']==1)
+    {
+        if($ps65==1&&$date2<=$date1&&!isset($marks[$nom]))
+            Elgzst::model()->nbSt45($st,$elgz1);
+    }*/
+
     $key = $nom; // 0 - r3
 
 
@@ -114,7 +136,7 @@ function table2Tr($date,$gr1,$st,$marks,$permLesson,$read_only,$type_lesson,$ps2
                 ?
                 tt('Отработано'):
                     (
-                        $isset&&$marks[$key]['elgotr0']>0?round($marks[$key]['elgzst5'], 1):''
+                        $isset&&isset($marks[$key]['elgotr0'])&&$marks[$key]['elgotr0']>0?round($marks[$key]['elgzst5'], 1):''
                     )
             );
 
@@ -245,30 +267,36 @@ HTML;
 
 }
 
-function table2TrModule2($date,$gr1,$st,$ps56,$nom,$modules,$sem7,$ps60, $total)
+function table2TrModule2($date,$gr1,$st,$ps56,$nom,$modules,$sem7,$ps60, $total, $_count)
 {
     if (($st['st71']!=$sem7&&$st['st71']!=$sem7+1) && $ps60 ==1)
-        return '<td colspan="4"></td>';
+        return '<td colspan="2"></td>';
 
     if (stripos($date['r2'], '11.11.1111')!==false )
-        return '<td colspan="4"></td>';
+        return '<td colspan="2"></td>';
 
     /*if (strtotime($date['r2']) > strtotime('now'))
         return '<td colspan="4"></td>';*/
 
     if ($ps56 == 1 && $date['elgz4']>0)
-        return '<td colspan="4"></td>';
+        return '<td colspan="2"></td>';
 
     if(!isset($modules[(int)$nom-1]))
-        return '<td colspan="4">'.tt('Нет ведомости, обращайтесь в деканат!').'</td>';
+        return '<td colspan="2">'.tt('Нет ведомости, обращайтесь в деканат!').'</td>';
     else{
         $mark = Vmp::model()->getMarks($modules[(int)$nom-1]['vvmp1'],$st['st1'],$gr1);
         if(empty($mark))
-            return '<td colspan="4">'.tt('Нет ведомости, обращайтесь в деканат!').'</td>';
+            return '<td colspan="2">'.tt('Нет ведомости, обращайтесь в деканат!').'</td>';
         $_itog = round($mark['vmp7'],2);
         $itog = round($mark['vmp4'],2);
         $vmpv6 = $mark['vmpv6'];
         $vvmp1 = $modules[(int)$nom-1]['vvmp1'];
+
+        if($date['elgz4']==3&&SH::getUniversityCod()==32){
+            $total = $total/$_count;
+            $total = round($total,2);
+            $total= ($total*200)/5;
+        }
 
         if(!empty($vmpv6)) {
             $js=<<<JS
@@ -282,7 +310,7 @@ JS;
                     <td class="module-tr">%s</td>
                     <td class="module-tr">%s</td>
 HTML
-            ,$total,($total!=$itog)?'<label class="label label-warning">'.$itog.'</label>':$itog);
+            ,$total,(round($total,2)!=round($itog,2))?'<label class="label label-warning">'.$itog.'</label>':$itog);
     }
 }
 
@@ -309,6 +337,7 @@ function table2TrModule($date,$gr1,$st,$ps20,$ps55,$ps56,$nom,$uo1,$modules,$pot
                 $mark = Vmp::model()->getMarks($modules[(int)$nom-1]['vvmp1'],$st['st1'],$gr1);
                 if(empty($mark))
                     return '<td colspan="4">'.tt('Нет ведомости, обращайтесь в деканат!').'</td>';
+
                 $ind = round($mark['vmp6'],2);
                 $pot = round($mark['vmp5'],2);
                 $itog = round($mark['vmp4'],2);
@@ -317,6 +346,9 @@ function table2TrModule($date,$gr1,$st,$ps20,$ps55,$ps56,$nom,$uo1,$modules,$pot
                 switch($pmk){
                     case '-4':
                         $pmk = tt('н/я');
+                        break;
+                    case '-3':
+                        $pmk = '0';
                         break;
                     case '-2':
                         $pmk = tt('неув');
@@ -341,9 +373,24 @@ JS;
                     Yii::app()->clientScript->registerScript('module-nom'.$nom.'-'.$st['st1'], $js, CClientScript::POS_END);
 
                 }
+
+                $elgpmkst = Elgpmkst::model()->findByAttributes(
+                    array(
+                        'elgpmkst2'=> $date['elgz2'],
+                        'elgpmkst3' =>$st['st1'],
+                        'elgpmkst4' =>$vmpv1,
+                    )
+                );
+
+                if(!empty($elgpmkst)){
+                    if($elgpmkst->elgpmkst5!=$mark['vmp5']) {
+                        $pot = '<label class="label label-warning">' . $pot .' / ' .round($elgpmkst->elgpmkst5, 2) .   '</label>';
+                    }
+                }
+
                 $st1 = $st['st1'];
                 return sprintf(<<<HTML
-                    <td class="module-tr module{$vmpv1}{$st1}">%s</td>
+                    <td class="module-tr module{$vmpv1}{$st1}">%s <a class="btn btn-info btn-mini btn-show-marks" data-vmpv1="{$vmpv1}"><i class="icon-eye-open"></i></a></td>
                     <td class="module-tr module{$vmpv1}{$st1}" data-nom-module="{$nom}" data-nom="{$nom_}" {$disabled} data-elgz1="{$elgz1}" data-r1="{$r1}" data-date="{$date_lesson}" data-gr1="{$gr1}"><input value="%s" class="module-ind"  maxlength="5" data-vmpv1="{$vmpv1}"/></td>
                     <td class="module-tr module{$vmpv1}{$st1}">%s</td>
                     <td class="module-tr module{$vmpv1}{$st1}">%s</td>
@@ -482,11 +529,14 @@ function getMarkByLesson($marks, $nom){
     $minMaxUrl = Yii::app()->createUrl('/journal/insertMinMaxMark');
     $urlRetake = Yii::app()->createUrl('/journal/journalRetake');
     $urlModule= Yii::app()->createUrl('/journal/updateVmp');
+    $urlShowMarks= Yii::app()->createUrl('/journal/ShowMarksForRecalculate');
 
     $changeTheme= Yii::app()->createUrl('/journal/changeTheme');
 
+    $urlStFinBlock= Yii::app()->createUrl('/journal/insertStFinPriznak');
+
     $table = <<<HTML
-<div class="{$classTable2}" data-ps33="{$ps33}" data-gr1="{$gr1}" data-url-module="{$urlModule}" data-url="{$url}" data-url-change-theme="{$changeTheme}" data-url-retake="{$urlRetake}" data-url-check="{$url_check}">
+<div class="{$classTable2}" data-ps33="{$ps33}" data-gr1="{$gr1}" data-url-st-fin-block="{$urlStFinBlock}" data-url-show-marks="{$urlShowMarks}" data-url-module="{$urlModule}" data-url="{$url}" data-url-change-theme="{$changeTheme}" data-url-retake="{$urlRetake}" data-url-check="{$url_check}">
     <table class="table table-striped table-bordered table-hover journal_table">
         <thead>
             <tr>
@@ -503,11 +553,24 @@ function getMarkByLesson($marks, $nom){
 </div>
 HTML;
 
+/**
+ * @var $elg Elg
+ * @var $stusv Stusv
+ */
+    /*$ps107 = PortalSettings::model()->getSettingFor(107);
+    if($ps107==1)
+        $stusv = Stusv::model()->getStusvByJournal($elg, $gr1);
+    else
+        $stusv=null;*/
+
+
     $sem7 = Gr::model()->getSem7ByGr1ByDate($gr1,date('d.m.Y'));
     $ps59 = PortalSettings::model()->getSettingFor(59);
     $ps60 = PortalSettings::model()->getSettingFor(60);
     $ps65 = PortalSettings::model()->getSettingFor(65);
     $ps66 = PortalSettings::model()->getSettingFor(66);
+
+    $ps107 = PortalSettings::model()->getSettingFor(107);
 
     $min = Elgzst::model()->getMin();
     $elgz1_arr=array();
@@ -534,6 +597,9 @@ HTML;
 
     $permLesson=Elgr::model()->getList($gr1,$elgz1_arr);
 
+    /*количество занятий для пересчета оценки дифзачета запорожье*/
+    $countDivZacvmarks =0;
+
     foreach($dates as $date) {
             $date2  = new DateTime($date['r2']);
 
@@ -549,24 +615,48 @@ HTML;
                 $elgz3Nom = $date['elgz3'];
             }
             $count_dates++;
+
+            if($date['elgz4']==0)
+                $countDivZacvmarks++;
     }
 
     foreach($students as $st) {
+        if(!empty( $st['elgvst2']))
+            $st['elgvst2']=strtotime($st['elgvst2']);
+        if(!empty( $st['elgvst3']))
+            $st['elgvst3']=strtotime($st['elgvst3']);
         //для дивзачета сумарная
         $divZachTotal = 0;
         $potoch = 0;
         $moduleNom=1;
         $st1 = $st['st1'];
+        $class= '';
+        if( $st['st167']==1)//заблокирвоан по фин признакку
+            $class = 'error-tr';
         $marks = $elg->getMarksForStudent($st1);
-        $tr .= '<tr data-st1="'.$st1.'">';
+        $tr .= '<tr data-st1="'.$st1.'" class="'.$class.'">';
         list($total_1[$st1], $total_count_1[$st1]) = countMarkTotal($marks);
+        //проверка есть ли итоговая оценка, тогда бдлокируем ввод оценко
+        $readOnlySt = false;
+        if($ps107==1) {
+
+            $stusv = Stusv::model()->getStusvByJournalAndStudent($elg, $st1);
+            if (!empty($stusv)) {
+                $stusvst = $stusv->getMarkForStudent($st1);
+                if (!empty($stusvst)) {
+                    if ($stusvst->stusvst4 > 0 || $stusvst->stusvst6 > 0)
+                        $readOnlySt = true;
+                }
+            }
+        }
+
         foreach($dates as $key => $date) {
             $_nom=$date['elgz3'];
             $date2 = new DateTime($date['r2']);
             //если нет оценки добавляем ее ps89
             //костыль баг если выставить настроку ставить ноль
             if(!isset($marks[$_nom])&&$date1>$date2&&$ps89==1){
-                $elgzst = Elg::model()->addRowMark($st1,$date['elgz1']);
+                $elgzst = Elg::model()->addRowMark($st1,$date['elgz1'], $elg->elg4);
                 $marks[$_nom] = array(
                     'elgz3'=>$_nom,
                     'elgzst3'=>$elgzst->elgzst3,
@@ -582,13 +672,13 @@ HTML;
                 $moduleNom++;
             }elseif(($date['elgz4']==3||$date['elgz4']==4||$date['elgz4']==5)&&$ps57==1){
                 if($date['elgz4']==3){
-                    $tr .= table2TrModule2($date,$gr1,$st,$ps56,$moduleNom,$modules,$sem7,$ps60,$divZachTotal);
+                    $tr .= table2TrModule2($date,$gr1,$st,$ps56,$moduleNom,$modules,$sem7,$ps60,$divZachTotal,$countDivZacvmarks);
                     $divZachTotal = 0;
                 }else
                     $tr.='<th></th><th></th>';
                 $moduleNom++;
             }else {
-                $tr .= table2Tr($date, $gr1, $st, $marks, $permLesson, $read_only, $model->type_lesson, $ps20, $ps55, $ps56,$sem7,$ps60,$min,$ps65,$ps66,$moduleNom, $ps88, $isStd);
+                $tr .= table2Tr($date, $gr1, $st, $marks, $permLesson, ($readOnlySt)?$readOnlySt:$read_only, $model->type_lesson, $ps20, $ps55, $ps56,$sem7,$ps60,$min,$ps65,$ps66,$moduleNom, $ps88, $isStd);
                 $potoch+=getMarsForElgz3($date['elgz3'],$marks);
 
                 if($ps57==1)

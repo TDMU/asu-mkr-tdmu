@@ -23,6 +23,7 @@ $options = array(
     ' '.tt('Екзаменационная сессия'),
     ' '.tt('Общая успеваемость'),
     ' '.tt('Общая информация'),
+    ' '.tt('Итоговая успеваемость (журнал)'),
 );
 
 $htmlOptions = array(
@@ -40,13 +41,13 @@ $htmlOptions = array(
 
     <div class="control-group">
         <?=CHtml::checkBox('settings[47]', PortalSettings::model()->findByPk(47)->ps2, $htmlOptions2)?>
-        <span class="lbl"> <?=tt('Показывать таб журнал')?></span>
+        <span class="lbl"> <?=tt('Показывать таб Успеваемость (журнал)')?></span>
         <?=CHtml::hiddenField('settings[47]', PortalSettings::model()->findByPk(47)->ps2)?>
     </div>
 
     <div class="control-group">
         <?=CHtml::checkBox('settings[48]', PortalSettings::model()->findByPk(48)->ps2, $htmlOptions2)?>
-        <span class="lbl"> <?=tt('Показывать таб отработка')?></span>
+        <span class="lbl"> <?=tt('Показывать таб Поточная задолженость (журнал)')?></span>
         <?=CHtml::hiddenField('settings[48]', PortalSettings::model()->findByPk(48)->ps2)?>
     </div>
 
@@ -72,6 +73,12 @@ $htmlOptions = array(
         <?=CHtml::checkBox('settings[91]', PortalSettings::model()->findByPk(91)->ps2, $htmlOptions2)?>
         <span class="lbl"> <?=tt('Показывать таб общая информация')?></span>
         <?=CHtml::hiddenField('settings[91]', PortalSettings::model()->findByPk(91)->ps2)?>
+    </div>
+
+    <div class="control-group">
+        <?=CHtml::checkBox('settings[109]', PortalSettings::model()->findByPk(109)->ps2, $htmlOptions2)?>
+        <span class="lbl"> <?=tt('Показывать таб "Итоговая успеваемость (журнал)"')?></span>
+        <?=CHtml::hiddenField('settings[109]', PortalSettings::model()->findByPk(109)->ps2)?>
     </div>
 
     <div class="form-actions">

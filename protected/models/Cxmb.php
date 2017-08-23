@@ -143,6 +143,10 @@ SQL;
 		$command->bindValue(':MARK1', $mark);
 		$command->bindValue(':MARK2', $mark);
 		$marks = $command->queryRow();
+
+		if(empty($mark))
+            return array('cxmb3' => '', 'cxmb2' => 0);
+
 		return $marks;
 	}
 

@@ -16,6 +16,7 @@ class JournalController extends Controller
                 'actions' => array(
                     'journal',
                     'insertStMark',
+                    'insertStFinPriznak',///проставление оповещение по фин признаку
                     'insertDopMark',
                     'insertMinMaxMark',
                     'journalRetake',
@@ -26,6 +27,8 @@ class JournalController extends Controller
                     'changeTheme',
                     'saveChangeTheme',
                     'recalculateVmp',
+                    'recalculateStus',
+                    'showMarksForRecalculate',
 
                     'retake',
                     'searchRetake',
@@ -47,7 +50,10 @@ class JournalController extends Controller
                     'updateOmissionsStMark',
                     'insertOmissionsStMark',
 
-                    'searchStudent'
+                    'searchStudent',
+
+                    'attendanceStatisticPrint',
+                    'attendanceStatisticPrintExcel'
                 ),
                 'expression' => 'Yii::app()->user->isAdmin || Yii::app()->user->isTch',
             ),
@@ -57,6 +63,14 @@ class JournalController extends Controller
                     'stJournal',
                 ),
                 'expression' => 'Yii::app()->user->isStd',
+            ),
+            array(
+                'allow',
+                'actions'=>array(
+                    'stFinBlockStatistic',
+                    'stFinBlockStatisticExcel',
+                ),
+                'expression' => 'Yii::app()->user->isAdmin',
             ),
             array(
                 'allow',
@@ -73,6 +87,100 @@ class JournalController extends Controller
                 'users' => array('*'),
             ),
         );
+    }
+
+    public function actionStFinBlockStatistic()
+    {
+        $model = new StFinBlockSearch();
+        $model->scenario = 'search';
+        $model->unsetAttributes();
+        if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+            unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
+        }
+        if (isset($_REQUEST['StFinBlockSearch']))
+            $model->attributes=$_REQUEST['StFinBlockSearch'];
+
+        $this->render('stFinBlockSearch', array(
+            'model' => $model,
+        ));
+    }
+
+    public function actionStFinBlockStatisticExcel()
+    {
+        $model = new StFinBlockSearch();
+        $model->scenario = 'search';
+        $model->unsetAttributes();
+        /*if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+            unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
+        }*/
+        if (isset($_REQUEST['StFinBlockSearch']))
+            $model->attributes=$_REQUEST['StFinBlockSearch'];
+
+        $dataProvider = $model->search();
+
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel->getProperties()->setCreator("ACY")
+            ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
+            ->setTitle("ST_FIN_BLOCK ".date('Y-m-d H-i'))
+            ->setSubject("ST_FIN_BLOCK ".date('Y-m-d H-i'))
+            ->setDescription("ST_FIN_BLOCK document, generated using ACY Portal. ".date('Y-m-d H:i:'))
+            ->setKeywords("")
+            ->setCategory("Result file");
+        $objPHPExcel->setActiveSheetIndex(0);
+        $sheet=$objPHPExcel->getActiveSheet();
+
+        $sheet->setCellValue('A1', '#');
+        $sheet->setCellValue('B1', $model->getAttributeLabel('st'));
+        $sheet->setCellValue('C1', $model->getAttributeLabel('gr_name'));
+        $sheet->setCellValue('D1', $model->getAttributeLabel('course'));
+        $sheet->setCellValue('E1', $model->getAttributeLabel('stbl3'));
+        $sheet->setCellValue('F1', $model->getAttributeLabel('stbl5'));
+        $sheet->setCellValue('G1', $model->getAttributeLabel('tch'));
+
+        $sheet->getColumnDimension('A')->setWidth(4);
+        $sheet->getColumnDimension('B')->setWidth(25);
+        $sheet->getColumnDimension('C')->setWidth(12);
+        $sheet->getColumnDimension('D')->setWidth(5);
+        $sheet->getColumnDimension('E')->setWidth(19);
+        $sheet->getColumnDimension('F')->setWidth(19);
+        $sheet->getColumnDimension('G')->setWidth(25);
+
+        $i = 2;
+        $dataProvider->pagination=false;
+        foreach($dataProvider->getData(true) as $data){
+            $sheet->setCellValueByColumnAndRow(0,$i,$i-1);
+            $sheet->setCellValueByColumnAndRow(1,$i,SH::getShortName($data->st_lname, $data->st_fname, $data->st_sname));
+            $sheet->setCellValueByColumnAndRow(2,$i,$data->gr_name);
+            $sheet->setCellValueByColumnAndRow(3,$i,$data->course);
+            $sheet->setCellValueByColumnAndRow(4,$i,$data->stbl3);
+            $sheet->setCellValueByColumnAndRow(5,$i,$data->stbl5);
+            $sheet->setCellValueByColumnAndRow(6,$i,SH::getShortName($data->tch_lname, $data->tch_fname, $data->tch_sname));
+            $i++;
+        }
+
+        $sheet->getStyleByColumnAndRow(0,1,6,$i-1)->getBorders()->getAllBorders()->applyFromArray(array('style'=>PHPExcel_Style_Border::BORDER_THIN,'color' => array('rgb' => '000000')));
+
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Redirect output to a clientâ€™s web browser (Excel5)
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="ACY_ST_FIN_BLOCK_'.date('Y-m-d H-i').'.xls"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
     }
 //---------------------Journal---------------------------------------------------------------
     public function actionStJournal()
@@ -91,7 +199,7 @@ class JournalController extends Controller
         if (isset($_REQUEST['FilterForm']))
             $model->attributes=$_REQUEST['FilterForm'];
 
-        $model->group = $sstRow['sst3'];
+        //$model->group = $sstRow['sst3'];
 
         $this->render('stJournal', array(
             'model' => $model,
@@ -223,6 +331,52 @@ SQL;
         Yii::app()->end(CJSON::encode(array('error' => $error, 'errorType' => $errorType)));
     }
 
+    public function actionRecalculateStus()
+    {
+        if (!Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $ps84 = PortalSettings::model()->findByPk(84)->ps2;
+        if($ps84!=1)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $error=false;
+        $errorType=0;
+
+        $gr1 = Yii::app()->request->getParam('gr1', null);
+        $uo1 = Yii::app()->request->getParam('uo1', null);
+        $sem1 = Yii::app()->request->getParam('sem1', null);
+        $type = Yii::app()->request->getParam('type', null);
+
+        if($uo1==null || $gr1==null || $sem1==null || $type==null)
+        {
+            $error = true;
+            $errorType=2;
+        }
+        else
+        {
+            $elg1=Elg::getElg1($uo1,$type,$sem1);
+            $elg = Elg::model()->findByPk($elg1);
+            if(empty($elg))
+                throw new CHttpException(404, tt('Не задана структура журнала. Обратитесь к Администратору системы').'.');
+
+            $sem7 = Gr::model()->getSem7ByGr1ByDate($gr1,date('d.m.Y'));
+            $students = St::model()->getStudentsForJournal($gr1, $uo1);
+            if(empty($students)){
+                $error = true;
+                $errorType=2;
+            }else{
+
+                foreach ($students as $student) {
+
+                        Stusv::model()->recalculateStusMark($student['st1'], $gr1, $sem7, $elg);
+                }
+            }
+        }
+
+        Yii::app()->end(CJSON::encode(array('error' => $error, 'errorType' => $errorType)));
+    }
+
     public function actionUpdateVmp()
     {
         if (! Yii::app()->request->isAjaxRequest)
@@ -267,6 +421,14 @@ SQL;
             if($value<0){
                 $error=true;
                 $errorType=2;
+            }
+
+            $_r1 = R::model()->getR1ByLesson($elgz1, $st1);
+
+            if($_r1!=$r1)
+            {
+                $error = true;
+                $errorType = 2;
             }
 
             $elgz = Elgz::model()->findByPk($elgz1);
@@ -504,6 +666,140 @@ SQL;
         Yii::app()->end(CJSON::encode(array('error' => $error, 'errorType' => $errorType)));
     }
 
+    public function actionShowMarksForRecalculate()
+    {
+        if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $ps57 = PortalSettings::model()->getSettingFor(57);
+        if($ps57!=1)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $error=false;
+        $errorType=0;
+        $html = '';
+        $title = '';
+
+        $st1 = Yii::app()->request->getParam('st1', null);
+        $elgz1 = Yii::app()->request->getParam('elgz1', null);
+        $vmpv1 = Yii::app()->request->getParam('vmpv1', null);
+        $nomModule = Yii::app()->request->getParam('nomModule', null);
+        $r1 = Yii::app()->request->getParam('r1', null);
+        $nom = Yii::app()->request->getParam('nom', null);
+        $date = Yii::app()->request->getParam('date', null);
+        $gr1 = Yii::app()->request->getParam('gr1', null);
+
+        if($vmpv1==null ||$st1==null || $elgz1==null || $r1==null || $nomModule==null || $nom==null || $date==null || $gr1==null)
+        {
+            $error = true;
+            $errorType=2;
+        }
+        else
+        {
+            $sql = <<<SQL
+            SELECT * FROM  EL_GURNAL(:P1,0,0,0,2,0,:R1,0,0);
+SQL;
+            $command = Yii::app()->db->createCommand($sql);
+            $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+            $command->bindValue(':R1', $r1);
+            $res = $command->queryRow();
+            if(count($res)==0 || empty($res)||$res['dostup']==0)
+            {
+                $error=true;
+                $errorType=3;
+            }
+
+            $_r1 = R::model()->getR1ByLesson($elgz1, $st1);
+
+            if($_r1!=$r1)
+            {
+                $error = true;
+                $errorType = 2;
+            }
+
+            $elgz = Elgz::model()->findByPk($elgz1);
+            if(!$error) {
+                if (empty($elgz)) {
+                    $error = true;
+                    $errorType = 2;
+                } else {
+                    if ($elgz->elgz4 != 2) {
+                        $error = true;
+                        $errorType = 2;
+                    } else {
+                        $elg = Elg::model()->findByPk($elgz->elgz2);
+                        $module = Vvmp::model()->getModul($elg->elg2, $gr1,$elgz->elgz3,$elg->elg1,$st1);
+                        //var_dump($module);
+                        if ($module['vmpv1'] != $vmpv1 ) {
+                            $error = true;
+                            $errorType = 9;
+                        } else {
+                            $sql = <<<SQL
+                              SELECT * FROM vmp WHERE vmp2=:ST1 AND vmp1=:VMPV1
+SQL;
+                            $command = Yii::app()->db->createCommand($sql);
+                            $command->bindValue(':ST1', $st1);
+                            $command->bindValue(':VMPV1', $vmpv1);
+                            $vmp = $command->queryRow();
+
+
+                            $marksArray = Vmp::model()->getMarksFromJournal($st1,$elgz, $gr1, true);
+                            /** @var $st St  */
+                            $st = St::model()->findByPk($st1);
+
+                            $title = '№'.$module['vmpv3']. ' '. date('Y-m-d',strtotime( $module['vmpv4'])). ', '. $st->getShortName() .':'.tt('просмотр оценок для расчета');
+
+                            $html = $this->renderPartial('journal/_show_marks_for_vmp', array(
+                                'marksArray'=>$marksArray,
+                                'vmp'=>$vmp,
+                                'module'=>$module
+                            ), true);
+                        }
+                    }
+                }
+            }
+        }
+
+        Yii::app()->end(CJSON::encode(array('title'=>$title,'html'=>$html, 'error' => $error, 'errorType' => $errorType)));
+    }
+
+    public function actionInsertStFinPriznak()
+    {
+        if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $error=false;
+        $errorType=0;
+        $st1 = Yii::app()->request->getParam('st1', null);
+
+        if($st1==null)
+        {
+            $error = true;
+            $errorType=2;
+        }else{
+            $st=St::model()->findByPk($st1);
+            if(empty($st)||$st->st167!=1)
+            {
+                $error = true;
+                $errorType=2;
+            }else{
+
+                $stbl = Stbl::model()->findByAttributes(array('stbl2'=>$st1,'stbl5'=>null),array('order'=>'stbl3 DESC'));
+                if(empty($stbl))
+                {
+                    $error = true;
+                    $errorType=2;
+                }else{
+                    $stbl->stbl5 = date('Y-m-d H:i:s');
+                    $stbl->stbl6= Yii::app()->user->dbModel->p1;
+                    $error = !$stbl->save();
+                }
+            }
+        }
+
+        Yii::app()->end(CJSON::encode(array('error' => $error, 'errorType' => $errorType)));
+    }
+
     public function actionInsertStMark()
     {
         if (! Yii::app()->request->isAjaxRequest)
@@ -535,12 +831,9 @@ SQL;
                 $ps106 = PortalSettings::model()->getSettingFor(106);
                 if($ps106!=1)
                     throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
-                $sstRow = Yii::app()->user->dbModel->isSst();
+                $isSst = Yii::app()->user->dbModel->isSstByGroup($gr1);
 
-                if(empty($sstRow)||!isset($sstRow['sst3']))
-                    throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
-
-                if($sstRow['sst3']!=$gr1)
+                if(!$isSst)
                     throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
             }elseif(Yii::app()->user->isTch) {
@@ -556,6 +849,28 @@ SQL;
                     $errorType = 3;
                 }
             }
+            //проверка да дату занятия
+            $dateCurrLesson = strtotime($date);
+            if(strtotime($date)>strtotime('now')){
+                $elgvst = Elgvst::model()->findByPk($st1);
+                if(empty($elgvst))
+                {
+                    $error = true;
+                    $errorType = 3;
+                }else{
+                    if(empty($elgvst->elgvst2)||empty($elgvst->elgvst3)){
+                        $error = true;
+                        $errorType = 3;
+                    }else{
+                        if(!(strtotime($elgvst->elgvst2)<=$dateCurrLesson&&strtotime($elgvst->elgvst3)>=$dateCurrLesson))
+                        {
+                            $error = true;
+                            $errorType = 3;
+                        }
+                    }
+                }
+            }
+
             try {
                 $sql = <<<SQL
                     select elgz3,r2,r1,elgz1
@@ -597,10 +912,20 @@ SQL;
                 }
             }
 
-            if(empty($elgz))
+            $_r1 = R::model()->getR1ByLesson($elgz1, $st1);
+
+            if($_r1!=$r1)
             {
                 $error = true;
-                $errorType=2;
+                $errorType = 2;
+            }
+
+            if(empty($elgz)||$error)
+            {
+                if(!$error) {
+                    $error = true;
+                    $errorType = 2;
+                }
             }else
             {
                 $elg = Elg::model()->findByPk($elgz->elgz2);
@@ -718,12 +1043,30 @@ SQL;
                     $error=true;
                     $errorType=5;
                 }
+                if($st->st167==1)
+                {
+                    $error=true;
+                    $errorType=5;
+                }
                 $sem7 = Gr::model()->getSem7ByGr1ByDate($gr1,date('d.m.Y'));
                 $ps60 = PortalSettings::model()->findByPk(60)->ps2;
                 if(($st['st71']!=$sem7&&$st['st71']!=$sem7+1)&&$ps60==1)
                 {
                     $error=true;
                     $errorType=5;
+                }
+                $ps107 = PortalSettings::model()->getSettingFor(107);
+                if($ps107==1) {
+                    $stusv = Stusv::model()->getStusvByJournalAndStudent($elg, $st1);
+                    if ($stusv!=null) {
+                        $stusvst = $stusv->getMarkForStudent($st1);
+                        if ($stusvst!=null) {
+                            if ($stusvst->stusvst4 > 0 || $stusvst->stusvst6 > 0) {
+                                $error = true;
+                                $errorType = 5;
+                            }
+                        }
+                    }
                 }
 
                 if(!$error)
@@ -774,7 +1117,7 @@ SQL;
                             if (!$error) {
                                 $attr = array_merge(array(
                                     $field => $value,
-                                    'elgzst7' => Yii::app()->user->dbModel->p1,
+                                    'elgzst7' => Yii::app()->user->isTch?Yii::app()->user->dbModel->p1:0,
                                     'elgzst6' => date('Y-m-d H:i:s'),
                                 ), $arr);
                                 $error = !$elgzst->saveAttributes($attr);
@@ -787,17 +1130,21 @@ SQL;
                         {
                             $error=true;
                         }else {
-                            $elgzst = new Elgzst();
-                            $elgzst->elgzst0 = new CDbExpression('GEN_ID(GEN_ELGZST, 1)');
-                            $elgzst->elgzst1 = $st1;
-                            $elgzst->elgzst2 = $elgz1;
-                            $elgzst->elgzst7 = Yii::app()->user->isTch?Yii::app()->user->dbModel->p1:0;
-                            $elgzst->elgzst6 = date('Y-m-d H:i:s');
-                            $elgzst->elgzst3 = 0;
-                            $elgzst->elgzst4 = 0;
-                            $elgzst->elgzst5 = 0;
-                            $elgzst->$field = $value;
-                            $error = !$elgzst->save();
+                            if($value==-2&&$field == 'elgzst4'){
+
+                            }else {
+                                $elgzst = new Elgzst();
+                                $elgzst->elgzst0 = new CDbExpression('GEN_ID(GEN_ELGZST, 1)');
+                                $elgzst->elgzst1 = $st1;
+                                $elgzst->elgzst2 = $elgz1;
+                                $elgzst->elgzst7 = Yii::app()->user->isTch ? Yii::app()->user->dbModel->p1 : 0;
+                                $elgzst->elgzst6 = date('Y-m-d H:i:s');
+                                $elgzst->elgzst3 = 0;
+                                $elgzst->elgzst4 = 0;
+                                $elgzst->elgzst5 = 0;
+                                $elgzst->$field = $value;
+                                $error = !$elgzst->save();
+                            }
 
                             if (!$error) {
                                 $elgzst = Elgzst::model()->findByAttributes(array('elgzst1' => $st1, 'elgzst2' => $elgz1));
@@ -814,7 +1161,11 @@ SQL;
 
                             $ps84 = PortalSettings::model()->findByPk(84)->ps2;
                             if ($ps84 == 1) {
-                                Stus::model()->recalculateStusMark($st1, $gr1, $sem7, $elg);
+                                if(!Stusv::model()->recalculateStusMark($st1, $gr1, $sem7, $elg))
+                                {
+                                    $error = true;
+                                    $errorType = 101;
+                                }
                             }
                         }
 
@@ -899,7 +1250,7 @@ SQL;
                         if ($ps84==1){
                             $elg = Elg::model()->findByPk($elg1);
                             $sem7 = Gr::model()->getSem7ByGr1ByDate($gr1,date('d.m.Y'));
-                            Stus::model()->recalculateStusMark($st1,$gr1,$sem7,$elg);
+                            Stusv::model()->recalculateStusMark($st1,$gr1,$sem7,$elg);
                         }
                     }
 
@@ -1130,137 +1481,150 @@ SQL;
                 $errorType=2;
             }else
             {
+                $r1 = R::model()->getR1ByLesson($elgzst->elgzst2, $elgzst->elgzst1);
+                if(empty($r1))
+                    $error = true;
+                else {
+                    $sql = <<<SQL
+            SELECT * FROM  EL_GURNAL(:P1,0,0,0,2,0,:R1,2,0);
+SQL;
+                    $command = Yii::app()->db->createCommand($sql);
+                    $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+                    $command->bindValue(':R1', $r1);
+                    $res = $command->queryRow();
+                    //var_dump($res);
+                    if (count($res) == 0 || empty($res) || $res['dostup'] == 0) {
+                        $error = true;
+                        $errorType = 3;
+                    }
+                }
 
-                $ps55 = PortalSettings::model()->findByPk(55)->ps2;
-                if($elgzst->elgzst3!=0||($elgzst->elgzst4<=$elgzst->getMin()&&($elgzst->elgzst4 != 0 || ($ps55 == 1 && $elgzst->elgzst4 == 0))))
-                {
-                    if($elgzst->checkMinRetakeForGrid())
-                    {
-                        $gr1 = St::model()->getGr1BySt1($elgzst->elgzst1);
 
-                        $elg = Elg::model()->getElgByElgzst0($elgzst->elgzst0);
+                if(!$error) {
+                    $ps55 = PortalSettings::model()->findByPk(55)->ps2;
+                    if ($elgzst->elgzst3 != 0 || ($elgzst->elgzst4 <= $elgzst->getMin() && ($elgzst->elgzst4 != 0 || ($ps55 == 1 && $elgzst->elgzst4 == 0)))) {
+                        if ($elgzst->checkMinRetakeForGrid()) {
+                            $gr1 = St::model()->getGr1BySt1($elgzst->elgzst1);
 
-                        $sem1 = Sem::model()->getSem1ByGr1($gr1);
+                            $elg = Elg::model()->getElgByElgzst0($elgzst->elgzst0);
 
-                        $sql=<<<SQL
+                            $sem1 = Sem::model()->getSem1ByGr1($gr1);
+
+                            $sql = <<<SQL
                 select first 1 us4 from EL_GURNAL_ZAN(:UO1,:GR1,:SEM1, :ELG4) where EL_GURNAL_ZAN.nom = :NOM
 SQL;
-                        $command=Yii::app()->db->createCommand($sql);
-                        $command->bindValue(':NOM', $elgz->elgz3);
-                        $command->bindValue(':GR1', $gr1);
-                        $command->bindValue(':SEM1', $sem1);
-                        $command->bindValue(':UO1', $elg['elg2']);
-                        $command->bindValue(':ELG4', $elg['elg4']);
-                        //print_r($elgz->elgz3.' /'.$gr1.'/'.$sem1.'/'.$elg['elg2'].'/'.$elg['elg4']);
-                        $us4 = $command->queryRow();
+                            $command = Yii::app()->db->createCommand($sql);
+                            $command->bindValue(':NOM', $elgz->elgz3);
+                            $command->bindValue(':GR1', $gr1);
+                            $command->bindValue(':SEM1', $sem1);
+                            $command->bindValue(':UO1', $elg['elg2']);
+                            $command->bindValue(':ELG4', $elg['elg4']);
+                            //print_r($elgz->elgz3.' /'.$gr1.'/'.$sem1.'/'.$elg['elg2'].'/'.$elg['elg4']);
+                            $us4 = $command->queryRow();
 
-                        $ps67 = PortalSettings::model()->findByPk(67)->ps2;
+                            $ps67 = PortalSettings::model()->findByPk(67)->ps2;
 
-                        $check=1;
-                        if($elgp2<4)
-                            $check=2;
+                            $check = 1;
+                            if ($elgp2 < 4)
+                                $check = 2;
 
-                        if($elgzst->elgzst3>0&&$ps67==1)
-                        {
-                            $elgp=Elgp::model()->findByAttributes(array('elgp1'=>$elgzst->elgzst0));
-                            if(empty($elgp))
-                            {
-                                $error = true;
-                                $errorType=2;
-                            }else
-                            {
-                                $elgp->elgp2=$elgp2;
-                                $elgp->elgp3=$elgp3;
-                                $elgp->elgp4=$elgp4;
-                                $elgp->elgp5=$elgp5;
-                                $error=!$elgp->save();
-                                if($error) {
-                                    $errorType = 9;
-                                   /* print_r($errorType);
-                                    echo '</br>';*/
-                                }else{
-                                    $elgzst->elgzst3=$check;
-                                    $elgzst->save();
+                            if ($elgzst->elgzst3 > 0 && $ps67 == 1) {
+                                $elgp = Elgp::model()->findByAttributes(array('elgp1' => $elgzst->elgzst0));
+                                if (empty($elgp)) {
+                                    $error = true;
+                                    $errorType = 2;
+                                } else {
+                                    $elgp->elgp2 = $elgp2;
+                                    $elgp->elgp3 = $elgp3;
+                                    $elgp->elgp4 = $elgp4;
+                                    $elgp->elgp5 = $elgp5;
+                                    $error = !$elgp->save();
+                                    if ($error) {
+                                        $errorType = 9;
+                                        /* print_r($errorType);
+                                         echo '</br>';*/
+                                    } else {
+                                        $elgzst->elgzst3 = $check;
+                                        $elgzst->save();
+                                    }
                                 }
                             }
-                        }
-                        /*print_r($errorType);
-                        echo '</br>';*/
-                        $ps40=PortalSettings::model()->findByPk(40)->ps2;
-                        if(! empty($ps40)){
-                            /*$date1  = new DateTime(date('Y-m-d H:i:s'));
-                            $date2  = new DateTime($stegn->stegn9);
-                            $diff = $date1->diff($date2)->days;
-                            if ($diff > $ps40)
-                                $error=true;*/
-                        }
+                            /*print_r($errorType);
+                            echo '</br>';*/
+                            $ps40 = PortalSettings::model()->findByPk(40)->ps2;
+                            if (!empty($ps40)) {
+                                /*$date1  = new DateTime(date('Y-m-d H:i:s'));
+                                $date2  = new DateTime($stegn->stegn9);
+                                $diff = $date1->diff($date2)->days;
+                                if ($diff > $ps40)
+                                    $error=true;*/
+                            }
 
-                        $ps57 = PortalSettings::model()->findByPk(57)->ps2;
-                        if($ps57==1){
-                            $sql=<<<SQL
+                            $ps57 = PortalSettings::model()->findByPk(57)->ps2;
+                            if ($ps57 == 1) {
+                                $sql = <<<SQL
                               SELECT MIN(elgz3) as nom FROM elgz
                                 INNER JOIN elg on (elgz2 = elg1)
                              WHERE elg3=:SEM1 AND elgz4=2 AND elg2=:UO1 AND elgz3>:NOM ORDER by nom asc
 SQL;
-                            $command = Yii::app()->db->createCommand($sql);
-                            $command->bindValue(':SEM1', $elg['elg3']);
-                            $command->bindValue(':NOM', $elgz->elgz3);
-                            $command->bindValue(':UO1', $elg['elg2']);
-                            $nom = $command->queryScalar();
+                                $command = Yii::app()->db->createCommand($sql);
+                                $command->bindValue(':SEM1', $elg['elg3']);
+                                $command->bindValue(':NOM', $elgz->elgz3);
+                                $command->bindValue(':UO1', $elg['elg2']);
+                                $nom = $command->queryScalar();
 
-                            if(!empty($nom)) {
+                                if (!empty($nom)) {
 
-                                $module = Vvmp::model()->checkModul($elg['elg2'], $gr1,$nom);
-                                if (!empty($module['vmpv6'])) {
-                                    $error = true;
-                                    $errorType = 6;
+                                    $module = Vvmp::model()->checkModul($elg['elg2'], $gr1, $nom);
+                                    if (!empty($module['vmpv6'])) {
+                                        $error = true;
+                                        $errorType = 6;
+                                    }
                                 }
                             }
-                        }
-                        if(!$error) {
-                            if (!empty($elgzst)) {
-                                $model = new Elgotr();
-                                $model->elgotr0 = new CDbExpression('GEN_ID(GEN_ELGOTR, 1)');
-                                $model->elgotr1 = $elgzst->elgzst0;
-                                $model->elgotr2 = $elgotr2;
-                                $model->elgotr3 = $elgotr3;
-                                $model->elgotr4 = $elgotr4;
-                                $model->elgotr5 = date('Y-m-d H:i:s');
-                                $error = !$model->save();
-                                if (!$error) {
-                                    $elgzst->elgzst5 = $elgotr2;
-                                    $elgzst->save();
+                            if (!$error) {
+                                if (!empty($elgzst)) {
+                                    $model = new Elgotr();
+                                    $model->elgotr0 = new CDbExpression('GEN_ID(GEN_ELGOTR, 1)');
+                                    $model->elgotr1 = $elgzst->elgzst0;
+                                    $model->elgotr2 = $elgotr2;
+                                    $model->elgotr3 = $elgotr3;
+                                    $model->elgotr4 = $elgotr4;
+                                    $model->elgotr5 = date('Y-m-d H:i:s');
+                                    $error = !$model->save();
+                                    if (!$error) {
+                                        $elgzst->elgzst5 = $elgotr2;
+                                        $elgzst->save();
 
-                                    if ($ps57==1) {
-                                        Vmp::model()->recalculate($elgzst->elgzst1, $elgz, $gr1);
-                                    }
+                                        if ($ps57 == 1) {
+                                            Vmp::model()->recalculate($elgzst->elgzst1, $elgz, $gr1);
+                                        }
 
-                                    $ps84 = PortalSettings::model()->findByPk(84)->ps2;
-                                    if ($ps84==1){
-                                        $sem7 = Gr::model()->getSem7ByGr1ByDate($gr1,date('d.m.Y'));
-                                        $elg = Elg::model()->findByPk($elg['elg1']);
-                                        Stus::model()->recalculateStusMark($elgzst->elgzst1,$gr1,$sem7,$elg);
+                                        $ps84 = PortalSettings::model()->findByPk(84)->ps2;
+                                        if ($ps84 == 1) {
+                                            $sem7 = Gr::model()->getSem7ByGr1ByDate($gr1, date('d.m.Y'));
+                                            $elg = Elg::model()->findByPk($elg['elg1']);
+                                            Stusv::model()->recalculateStusMark($elgzst->elgzst1, $gr1, $sem7, $elg);
+                                        }
+                                    } else {
+                                        $errorType = 7;
                                     }
                                 } else {
-                                    $errorType = 7;
+                                    /*print_r($error);*/
+                                    $error = true;
+                                    $errorType = 6;
+                                    /*print_r($elgzst);
+                                    print_r($us4);*/
                                 }
-                            } else {
-                                /*print_r($error);*/
-                                $error = true;
-                                $errorType = 6;
-                                /*print_r($elgzst);
-                                print_r($us4);*/
                             }
+                        } else {
+                            $error = true;
+                            $errorType = 2;
                         }
-                    }else
-                    {
+                    } else {
                         $error = true;
-                        $errorType=2;
+                        $errorType = 2;
                     }
-                }else
-                {
-                    $error = true;
-                    $errorType=2;
                 }
             }
         }
@@ -1944,10 +2308,26 @@ SQL;
             Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
             unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
         }
+
         if (isset($_REQUEST['FilterForm']))
-            $model->attributes=$_REQUEST['FilterForm'];
+        {
+            $model->attributes = $_REQUEST['FilterForm'];
+            Yii::app()->user->setState('SearchParamsFilterFormRetake', $_REQUEST['FilterForm']);
+        }
+        else
+        {
+            $searchParams = Yii::app()->user->getState('SearchParamsFilterFormRetake');
+            if ( isset($searchParams) )
+            {
+                $model->attributes = $searchParams;
+            }
+        }
+
         $retake = new Elgzst();
         $retake->unsetAttributes();
+
+        /**/
+
         $this->render('retake', array(
             'model'      => $model,
             'retake'      => $retake,
@@ -1956,8 +2336,8 @@ SQL;
 
     public function actionSearchRetake($uo1,$us1)
     {
-        //if (! Yii::app()->request->isAjaxRequest)
-            //throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+        if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
         $model = new Elgzst('search');
         $model->unsetAttributes();
         if (isset($_GET['pageSize'])) {
@@ -1967,8 +2347,20 @@ SQL;
         $model->uo1=$uo1;
         $us=Us::model()->findByPk($us1);
         $model->type_lesson=$us->us4;
+
         if (isset($_REQUEST['Elgzst']))
+        {
             $model->attributes = $_REQUEST['Elgzst'];
+            Yii::app()->user->setState('SearchParamsElgzstRetake', $_REQUEST['Elgzst']);
+        }
+        else
+        {
+            $searchParams = Yii::app()->user->getState('SearchParamsElgzstRetake');
+            if ( isset($searchParams) )
+            {
+                $model->attributes = $searchParams;
+            }
+        }
 
 
         $this->render('retake/_grid', array(
@@ -2113,6 +2505,7 @@ SQL;
         $p1 = Yii::app()->request->getParam('p1', null);
 
         $error=false;
+        $errorType = 0;
 
         if(empty($elgotr1)||$value===null||empty($date)||empty($p1))
             $error=true;
@@ -2122,10 +2515,28 @@ SQL;
             $ps40=PortalSettings::model()->findByPk(40)->ps2;
             if(! empty($ps40)){
                 /*$date1  = new DateTime(date('Y-m-d H:i:s'));
-                $date2  = new DateTime($stegn->stegn9);
+                $date2  = new DateTime($date);
                 $diff = $date1->diff($date2)->days;
                 if ($diff > $ps40)
                     $error=true;*/
+            }
+
+            $r1 = R::model()->getR1ByLesson($elgzst->elgzst2, $elgzst->elgzst1);
+            if(empty($r1))
+                $error = true;
+            else {
+                $sql = <<<SQL
+            SELECT * FROM  EL_GURNAL(:P1,0,0,0,2,0,:R1,2,0);
+SQL;
+                $command = Yii::app()->db->createCommand($sql);
+                $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+                $command->bindValue(':R1', $r1);
+                $res = $command->queryRow();
+                //var_dump($res);
+                if (count($res) == 0 || empty($res) || $res['dostup'] == 0) {
+                    $error = true;
+                    $errorType = 3;
+                }
             }
 
             if($elgzst->elgzst5<=$elgzst->getMin()&&!$error)
@@ -2153,6 +2564,7 @@ SQL;
         }
         $res = array(
             'error' => $error,
+            'errorType'=>$errorType
         );
 
 
@@ -2355,8 +2767,8 @@ SQL;
 
     public function actionRenderUstemTheme()
     {
-       //if (! Yii::app()->request->isAjaxRequest)
-            //throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+       if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
         $ustem1 = Yii::app()->request->getParam('ustem1', null);
         $d1     = Yii::app()->request->getParam('d1', null);
@@ -2764,10 +3176,120 @@ SQL;
 
         if (isset($_REQUEST['FilterForm']))
             $model->attributes=$_REQUEST['FilterForm'];
+
         $this->render('attendanceStatistic', array(
             'model' => $model,
             'type_statistic'=>PortalSettings::model()->findByPk(41)->ps2
         ));
+    }
+
+    public function actionAttendanceStatisticPrint()
+    {
+        $model = new TimeTableForm();
+        $model->scenario = 'attendanceStatisticPrint';
+
+        if (isset($_REQUEST['TimeTableForm']))
+            $model->attributes=$_REQUEST['TimeTableForm'];
+
+        if(empty($model->date2)) {
+            $model->date2 = date('d.m.Y');
+            $model->date1  = date('d.m.Y', strtotime("-1 months", strtotime( $model->date2)));
+        }
+        
+        $this->render('attendanceStatisticPrint', array(
+            'model' => $model,
+            'type_statistic'=>PortalSettings::model()->findByPk(41)->ps2
+        ));
+    }
+
+    public function actionAttendanceStatisticPrintExcel()
+    {
+        $model = new TimeTableForm();
+        $model->scenario = 'attendanceStatisticPrint';
+
+        if (isset($_REQUEST['TimeTableForm']))
+            $model->attributes=$_REQUEST['TimeTableForm'];
+
+        if(empty($model->date1)||empty($model->date2))
+            throw new Exception(tt('Введите даты'),400);
+
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel->getProperties()->setCreator("ACY")
+            ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
+            ->setTitle("Jornal Statistic ".date('Y-m-d H-i'))
+            ->setSubject("Jornal Statistic".date('Y-m-d H-i'))
+            ->setDescription("Jornal Statistic document, generated using ACY Portal. ".date('Y-m-d H:i:'))
+            ->setKeywords("")
+            ->setCategory("Result file");
+        $objPHPExcel->setActiveSheetIndex(0);
+        $sheet=$objPHPExcel->getActiveSheet();
+
+        $faculty = F::model()->findByPk($model->faculty);
+        $speciality = Sp::model()->findByPk($model->speciality);
+
+        $sheet->setCellValue('B1', tt("Факультет"));
+        $sheet->setCellValue('C1', $faculty->f3);
+        $sheet->setCellValue('B2', tt("Специальность"));
+        $sheet->setCellValue('C2', $speciality->sp2);
+        $sheet->setCellValue('B3', tt("Курс"));
+        $sheet->setCellValue('C3', $model->course);
+        $sheet->setCellValue('B4', tt("С"));
+        $sheet->setCellValue('C4', $model->date1);
+        $sheet->setCellValue('B5', tt("По"));
+        $sheet->setCellValue('C5', $model->date2);
+
+        $sheet->getColumnDimension('A')->setWidth(4);
+        $sheet->getColumnDimension('B')->setWidth(25);
+        $sheet->getColumnDimension('C')->setWidth(6);
+
+        $i = 7;
+
+        $sheet->setCellValue('A6', "#");
+        $sheet->setCellValue('B6', tt("Студент"));
+        $sheet->setCellValue('C6', tt("Группа"));
+        $sheet->setCellValue('D6', tt("занятий"));
+        $sheet->setCellValue('E6', tt("уваж."));
+        $sheet->setCellValue('F6', tt("неув."));
+
+        list($year, $sem) = SH::getCurrentYearAndSem();
+
+        /*var_dump($year);
+        var_dump($sem);
+        var_dump($speciality->sp1);
+        var_dump($model->course);*/
+        $students = St::model()->getStudentsBySpeciality($speciality->sp1, $model->course,$year, $sem);
+
+        foreach ($students as $student){
+
+            $sheet->setCellValueByColumnAndRow(0,$i,$i-6);
+            $sheet->setCellValueByColumnAndRow(1,$i,SH::getShortName($student['st2'],$student['st3'],$student['st4']));
+            $sheet->setCellValueByColumnAndRow(2,$i,Gr::model()->getGroupName( $model->course,$student));
+            list($respectful,$disrespectful,$count) = Elg::model()->getAttendanceStatisticInfoByDate($model->date1, $model->date2, $student['st1']);
+            $sheet->setCellValueByColumnAndRow(3,$i, $count);
+            $sheet->setCellValueByColumnAndRow(4,$i,$respectful);
+            $sheet->setCellValueByColumnAndRow(5,$i,$disrespectful);
+            $i++;
+        }
+
+        $sheet->getStyleByColumnAndRow(0,6,5,$i-1)->getBorders()->getAllBorders()->applyFromArray(array('style'=>PHPExcel_Style_Border::BORDER_THIN,'color' => array('rgb' => '000000')));
+
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Redirect output to a clientâ€™s web browser (Excel5)
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="ACY_Statistic_'.date('Y-m-d H-i').'.xls"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0*/
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
     }
 //----------------------------------------------------------------------------------------------
     public function actionSearchStudent()

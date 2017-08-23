@@ -9,6 +9,8 @@ class RegistrationInternationalForm extends CFormModel
 	public $password;
 	public $password2;
 
+    //public $verifyCode;
+
     private $_u5;
     private $_u6;
     private $_fio;
@@ -19,6 +21,7 @@ class RegistrationInternationalForm extends CFormModel
             array('number', 'required'),
             array('serial', 'required','on'=>'step-2'),
 			array('serial, email, username, password, password2, number', 'required','on'=>'step-3'),
+            //array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(),'on'=>'step-3'),
             array('serial', 'checkSerial'),
             array('number', 'checkNumber'),
             array('email', 'email'),
@@ -142,6 +145,7 @@ class RegistrationInternationalForm extends CFormModel
         $user->u4 = $this->email;
         $user->u5 = $this->_u5;
         $user->u6 = $this->_u6;
+        $user->u10 = '';
         $user->save(false);
 
         return true;

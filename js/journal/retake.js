@@ -93,7 +93,7 @@ $(document).ready(function(){
         $.get(url, params, function(data){
             $('#myModal').modal('hide');
             if (data.error) {
-                addGritter('', tt.error, 'error')
+                addGritter('', getError(data), 'error')
             } else {
                 addGritter('', tt.success, 'success');
                 $.fn.yiiGridView.update('retake');
@@ -104,3 +104,24 @@ $(document).ready(function(){
     });
 	
 });
+
+
+function getError(data)
+{
+    if (data.error) {
+        var error='';
+        switch (data.errorType) {
+            case 0:
+                error = tt.error;
+                break
+            case 3:
+                error = tt.access;
+                break
+            default:
+                error = tt.error;
+        }
+        return error;
+    }else {
+        return tt.success;
+    }
+}

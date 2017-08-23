@@ -36,6 +36,45 @@ SQL;
         return ' '.mb_substr($text, 0,1).'.';
     }
 
+    /**
+     * @param $us4
+     * @param $us6
+     * @return string
+     */
+    public static  function convertUsByStudentCard($us4, $us6){
+        $type = '-';
+        if($us4!==null)
+            switch($us4){
+                case 5:	$type = tt('Экз.'); break;
+                case 6:
+                    if($us6==1)
+                        $type = tt('Зач.');
+                    elseif($us6==2)
+                        $type = tt('Диф.зач.');
+                    break;
+                case 8:	$type = tt('Курсов.'); break;
+                default: $type='';
+            }
+        return $type;
+    }
+
+    public static  function getColorUsByStudentCard($us4, $us6){
+        $color = '';
+        if($us4!==null)
+            switch($us4){
+                case 5:	$color = '#ffe1e1'; break;
+                case 6:
+                    if($us6==1)
+                        $color = '#ddffdd';
+                    elseif($us6==2)
+                        $color = '#d6d6bd';
+                    break;
+                case 8:	$color = '#d3ffff'; break;
+                default: $color='';
+            }
+        return $color;
+    }
+
     public static  function convertStus19($stus19){
         if($stus19!==null)
             switch($stus19){
@@ -110,6 +149,24 @@ SQL;
             $type = '-';
         return $type;
     }*/
+    public static function convertTypeJournal($_type)
+    {
+        if($_type!==null) {
+
+            $arr = FilterForm::getTypesForJournal();
+            switch ($_type) {
+                case 0:
+                case 1:
+                    $type = $arr[$_type];
+                    break;
+
+                default:
+                    $type = '';
+            }
+        }else
+            $type = '-';
+        return $type;
+    }
 
     public static function convertUS4($us4)
     {
@@ -286,9 +343,12 @@ SQL;
                 }else
                 {
                     $sem  = 0;
-                    list($month,$day)=explode('-',$ps53);
-                    if((int)$month>8)
-                        $sem=1;
+                    $arr=explode('-',$ps53);
+                    if(count($arr)==2) {
+                        list($month,$day)=$arr;
+                        if ((int)$month > 8)
+                            $sem = 1;
+                    }
                 }
                 $year = date('Y', strtotime('-1 year'));
             }else {

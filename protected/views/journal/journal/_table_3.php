@@ -135,6 +135,13 @@ if($ps85==0) {
 $ps84 = PortalSettings::model()->getSettingFor(84);
 $sem = Sem::model()->findByPk($model->sem1);
 
+$us = Us::model()->getUsByStusvFromJournal($elg);
+
+/*$stusv = null;
+if($ps85==0&&$ps84 != 0)
+    $stusv = Stusv::model()->getStusvByJournal($elg, $gr1);*/
+//var_dump($stusv);
+
 foreach ($students as $st) {
     $st1 = $st['st1'];
     $val=  getTotal1($total_1[$st1],$total_count_1[$st1],$ps44);
@@ -166,22 +173,36 @@ foreach ($students as $st) {
         if ($ps84 == 0)
             $tr .= '<td data-total=2>' . $total_2[$st1] . '</td>'; // total 2
         else {
-            $mark = Stus::model()->getMarkForDisp($st1, $model->discipline, $sem->sem7);
-            if (!empty($mark)) {
-                if($mark['stus19']!=6)
-                    $stus8 = $mark['stus8'];
-                else
+            $stusv = Stusv::model()->getStusvByJournalAndStudent($elg, $st1);
+            if(!empty($stusv)) {
+                $mark = $stusv->getMarkForStudent($st1);
+                if (!empty($mark))
                 {
-                    if($mark['stus8']!=-1){
-                        $stus8 = tt('не зарах.');
-                    }else{
-                        $stus8 = tt('зарах.');
+                    $bal_='';
+                    switch ($us->us4) {
+                        case 5:
+                            $bal_ = $mark->stusvst6;
+                            break;
+                        /*ЗАЧЕТ ИЛИ ДИФЗАЧЕТ*/
+                        case 6:
+                            if ($us->us6 == 1)//ЗАЧЕТ
+                            {
+                                if ($mark->stusvst6 != -1) {
+                                    $bal_ = tt('не зарах.');
+                                } else {
+                                    $bal_ = tt('зарах.');
+                                }
+                            } elseif ($us->us6 == 2)//ДИФЗАЧЕТ
+                                $bal_ = $mark->stusvst6;
+                            break;
                     }
+                    $bal = '';
+                    $bal = $mark->stusvst4 . ' /' . $mark->stusvst5 . ' /' . $bal_;
+                    $tr .= '<td data-stus="' . $mark['stusvst1'] .'-' . $mark['stusvst3'] .'" data-total=2>' . $bal . '</td>';
+                } else {
+                    $tr .= '<td data-total=2></td>'; // total 2
                 }
-                $bal = '';
-                $bal = $mark['stus3'].' /'.$mark['stus11'].' /'.$stus8;
-                $tr .= '<td data-stus="' . $mark['stus0'] . '" data-total=2>' . $bal . '</td>';
-            } else {
+            }else {
                 $tr .= '<td data-total=2></td>'; // total 2
             }
         }

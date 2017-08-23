@@ -119,7 +119,7 @@ class Spo extends CActiveRecord
 		return parent::model($className);
 	}
 
-    public function getPlan()
+    public function getPlan($st1)
     {
         $sql = <<<SQL
             SELECT spo6 as y,'01' as m1, '12' as m2, spo2+spo7 as money
@@ -129,7 +129,7 @@ class Spo extends CActiveRecord
 SQL;
 
         $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':ST1', Yii::app()->user->dbModel->st1);
+        $command->bindValue(':ST1', $st1);
         $plan = $command->queryAll();
 
         return $plan;

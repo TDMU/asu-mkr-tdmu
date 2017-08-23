@@ -175,7 +175,7 @@ class Sem extends CActiveRecord
         $sql='select sem1 from sg
 			   inner join sem on (sg.sg1 = sem.sem2)
 			   inner join gr on (sg.sg1 = gr.gr2)
-			where gr.gr1='.$gr1.' and sem.sem3='.$year.' and sem.sem5>='.$sem;
+			where gr.gr1='.$gr1.' and sem.sem3='.$year.' and sem.sem5='.$sem;
         $command = Yii::app()->db->createCommand($sql);
 
         $sem1 = $command->queryScalar();

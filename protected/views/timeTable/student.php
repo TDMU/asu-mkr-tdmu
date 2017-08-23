@@ -33,6 +33,15 @@ if(!(PortalSettings::model()->findByPk(77)->ps2&&Yii::app()->user->isGuest)) {
 	<?php
 	$this->endWidget();
 }
+if($this->mobileCheck()) {
+	?>
+	<div class="pull-right">
+		<?=
+		CHtml::link('<i class="icon-hand-right"></i>'.' '.tt('Мобильный вид'), array('/mobile/timeTableStudent'));
+		?>
+	</div>
+	<?php
+}
 echo '<div class="noprint">';
 $this->renderPartial('/filter_form/timeTable/student', array(
     'model' => $model,

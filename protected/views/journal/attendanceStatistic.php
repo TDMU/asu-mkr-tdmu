@@ -7,7 +7,7 @@
 
 $this->pageHeader=tt('Статистика посещаемости');
 $this->breadcrumbs=array(
-    tt('Электронный журнал'),
+    tt('Статистика посещаемости'),
 );
 
 Yii::app()->clientScript->registerPackage('dataTables');

@@ -4,14 +4,17 @@ $(document).ready(function(){
 
     initFilterForm($spinner1);
 
-    $('#FilterForm_semester, #FilterForm_month').change(function(){
+    $('#FilterForm_semester, #FilterForm_month, #FilterForm_discipline ').change(function(){
 
         var $form = $('#filter-form');
 
         var selects = [];
         selects.push($('#FilterForm_semester'));
-        if ($(this).is('#FilterForm_month'))
-            selects.push($(this));
+        if ($(this).is('#FilterForm_month')||$(this).is('#FilterForm_discipline')) {
+            selects.push($('#FilterForm_month'));
+            selects.push($('#FilterForm_discipline'));
+        }
+
 
         for (var i in selects) {
             var $that   = selects[i];
@@ -21,7 +24,7 @@ $(document).ready(function(){
             if (value.length == 0)
                 continue;
 
-            $select.find('option[value='+$that.val()+']').attr('selected', 'selected');
+            $select.find('option[value="'+$that.val()+'"]').attr('selected', 'selected');
 
             $form.append($select);
         }

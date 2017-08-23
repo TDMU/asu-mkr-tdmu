@@ -212,8 +212,11 @@ class F extends CActiveRecord
 
 		return 'f3';
 	}
-
-    public function getFacultiesFor($filial)
+    /**
+     * @param int $type тип если 1 то нужно блокировать для юрки факультет номер 5
+     * @return array
+     */
+    public function getFacultiesFor($filial, $type=0)
     {
         $sql=<<<SQL
             SELECT f1, f3, f26, f27, f28, f30
@@ -228,6 +231,8 @@ SQL;
 
 		$res = array();
 		foreach($faculties as $key => $faculty){
+            if($type==1&&SH::getUniversityCod()==U_NULAU&&$faculty['f1']==5)
+                continue;
 			$name =  $faculty[F::getFieldByLanguage(false)];
 			$res[$key] = $faculty;
 			$res[$key]['name'] = (isset($name)&&!empty($name)&&$name!="")?$name:$faculty['f3'];

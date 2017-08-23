@@ -465,7 +465,7 @@ SQL;
 	public function getSearchTeachers($name)
     {
         if (empty($name))
-            return array();	
+            return array();
 		$sql = <<<SQL
         SELECT p1,p3,p4,p5,k1,k2,k3,ks1,ks3 FROM p
 			INNER JOIN PD ON (P1=PD2)
@@ -480,6 +480,28 @@ SQL;
         $teachers = $command->queryAll();
         return $teachers;
     }
+
+	/**
+	 * для прямой ссылки в расписании преподователя
+	 * @param $p1 int
+	 * @return array
+	 */
+	public function getTeacherParamsByP1($p1)
+	{
+		if (empty($p1))
+			return array();
+
+		$sql = <<<SQL
+        SELECT first 1 p1,k1,K10 as ks1, K7 as f1 FROM p
+			INNER JOIN PD ON (P1=PD2)
+			INNER JOIN K ON (PD4=K1)
+		WHERE pd2>0 and pd3='0' and pd28 in (0,2,5,9) and pd13 is null and p1=:P1
+SQL;
+		$command = Yii::app()->db->createCommand($sql);
+		$command->bindValue(':P1', $p1);
+		$teacher = $command->queryRow();
+		return $teacher;
+	}
 	
     public function getTeachersFor($chairId)
     {
@@ -522,6 +544,7 @@ SQL;
             'criteria'=>$criteria,
 			'pagination'=>array(
                 'pageSize'=> Yii::app()->user->getState('pageSize',10),
+				'currentPage'=> Yii::app()->user->getState('CurrentPageP',null),
             ),
             'sort' => array(
                 'defaultOrder' => 'p3 collate UNICODE',

@@ -163,6 +163,43 @@ class Pnsp extends CActiveRecord
 		return 'f3';
 	}
 
+    /**
+     * статистика посещаемости по потокам (получит ьспецаильности по факультетту)
+     * @param $faculty
+     * @return array
+     */
+    public function getSpFor($faculty)
+    {
+        if (empty($faculty))
+            return array();
+
+        $sql=<<<SQL
+            SELECT pnsp1, pnsp2, pnsp17, pnsp18, pnsp19, pnsp20, sp1, sp2
+            FROM sg
+            INNER JOIN sem on (sg.sg1 = sem.sem2)
+            INNER JOIN sp on (sg.sg2 = sp.sp1)
+            INNER JOIN pnsp on (sp.sp11 = pnsp.pnsp1)
+            WHERE sp5=:FACULTY and sp7 is null and sem3=:YEAR
+            GROUP BY pnsp1, pnsp2, pnsp17, pnsp18, pnsp19, pnsp20, sp1, sp2
+            ORDER BY pnsp2
+SQL;
+
+        list($year, ) = SH::getCurrentYearAndSem();
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':FACULTY', $faculty);
+        $command->bindValue(':YEAR', $year);
+        $specialities = $command->queryAll();
+
+        foreach ($specialities as $key => $speciality) {
+            $name =  $speciality[self::getFieldByLanguage()];
+            $specialities[$key]['name'] = (isset($name)&&!empty($name)&&$name!="")?$name:$speciality['pnsp2'];
+            $specialities[$key]['name'].=' ('.$speciality['sp2'].')';
+        }
+        //return CHtml::listData($specialities, 'pnsp1', 'name');
+        return $specialities;
+    }
+
     public function getSpecialitiesFor($faculty)
     {
         if (empty($faculty))

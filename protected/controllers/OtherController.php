@@ -55,7 +55,8 @@ class OtherController extends Controller
                     'searchStudent',
                     'studentCard',
                     'studentCardExcel',
-                    'showRetake'
+                    'showRetake',
+                    'orderAbiturient'
                 ),
             ),
             /*array('allow',
@@ -71,6 +72,42 @@ class OtherController extends Controller
         );
     }
 
+    public function actionOrderAbiturient()
+    {
+        $model = new Abtmpi('search');
+        $model->unsetAttributes();
+
+        $this->layout = 'clear1';
+
+        if (isset($_POST['Abtmpi']))
+        {
+            $model->attributes = $_POST['Abtmpi'];
+            //throw  new Exception(1);
+            Yii::app()->user->setState('SearchParamsAbtmpi', $_POST['Abtmpi']);
+
+            //var_dump($_REQUEST['Abtmpi']);
+            //var_dump(Yii::app()->user->getState('SearchParamsAbtmpi'));
+        }
+        else
+        {
+            $searchParams = Yii::app()->user->getState('SearchParamsAbtmpi');
+            if ( isset($searchParams) )
+            {
+                $model->attributes = $searchParams;
+            }
+        }
+        //var_dump($model);
+
+        if(empty($model->abtmpi7))
+            $model->abtmpi7 = date('d.m.Y');
+
+        $model->abtmpi10 = date('Y');
+
+        $this->render('ochered',array(
+            'model'=>$model,
+        ));
+    }
+
     public function actionShowRetake()
     {
         if (! Yii::app()->request->isAjaxRequest)
@@ -82,7 +119,7 @@ class OtherController extends Controller
         $st1 = Yii::app()->request->getParam('st1', null);
         $gr1 = Yii::app()->request->getParam('gr1', null);
 
-        if (empty($uo1) || empty($sem1) || empty($st1) || $type === null || empty($gr1))
+        if (empty($uo1) || empty($sem1) || empty($st1) || $type === null)
             throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
 
         if (Yii::app()->user->isAdmin) {
@@ -97,6 +134,10 @@ class OtherController extends Controller
         } else
             throw new CHttpException(403, 'You don\'t have an access to this service');
 
+        $uo = Uo::model()->findByPk($uo1);
+        $sem = Sem::model()->findByPk($sem1);
+
+        $gr1 = St::model()->getGroupByStudent($st1, $uo->uo19, $sem->sem3, $sem->sem5);
 
         $info = Elg::model()->getDispByStSemUoType($st1,$uo1,$sem1,$type);
         $error = false;
@@ -1343,7 +1384,7 @@ HTML;
         // Цикл ожидания окончания проверки
         while ($status->GetCheckStatusResult->Status === "InProgress")
         {
-            sleep($status->GetCheckStatusResult->EstimatedWaitTime * 0.1);
+            sleep($status->GetCheckStatusResult->EstimatedWaitTime * 0.2);
             $status = $client->GetCheckStatus(array("docId" => $id));
         }
 
@@ -1405,6 +1446,11 @@ HTML;
         $st1 = Yii::app()->request->getParam('st1', null);
         $us1 = Yii::app()->request->getParam('us1', null);
 
+        $sg1=St::model()->getSg1BySt1($st1);
+
+        if(Cwb::model()->findByPk($sg1)!==null)
+            throw new CHttpException(403, 'Редактирование тем закрыто.');
+
         if (! in_array($field, array('nkrs6', 'nkrs7')))
             throw new CHttpException(404, '1Invalid request. Please do not repeat this request again.');
 
@@ -1437,36 +1483,66 @@ HTML;
         Yii::app()->end(CJSON::encode(array('res' => $res)));
     }
 
+    /**
+     * @param $st1 int student id
+     * @param $p1 int teacher id (nkrs6)
+     * @param $url string url antiplagiat report
+     */
     public function sendEmails($st1, $p1, $url)
     {
         $student = Users::model()->find('u5 = 0 and u6 = '.$st1);
 
+        $st = St::model()->findByPk($st1);
+        $studentName = $st->getShortName();
+
+        $ps118 = PortalSettings::model()->getSettingFor(118);
+        $body = '{student} You can find you antiplagiat results here: {link}';
+        if(!empty($ps118))
+            $body = $ps118;
+
+        $link = tt('Отчет');
+        $body = str_replace('{student}',$studentName,$body);
+        $body = str_replace('{link}','<a href="'.$url.'">'.$link.'</a>',$body);
+
         if (! empty($student)) {
 
             if ($student->u4) {
-                $st = St::model()->findByPk($st1);
-
-                Apostle::setup("a596c9f9cb4066dd716911ef92be9bd040b0664d");
+                /*Apostle::setup("a596c9f9cb4066dd716911ef92be9bd040b0664d");
                 $mail = new Mail( "antiplagiat-notification", array( "email" => $student->u4 ) );
                 $mail->url  = $url;
                 $mail->textFrom = implode(' ', array($st->st2, $st->st3, $st->st4));
-                $mail->deliver();
+                $mail->deliver();*/
+                $message = str_replace('{username}',$student->u2,$body);
+                $message = str_replace('{name}',$studentName,$message);
+
+                list($status, $message)  = $this->mailsend($student->u4, 'Antiplagiat results', $message);
+
+                if(!$status)
+                    Yii::app()->user->setFlash('error', tt('Ошибка отправки email. Текст ошибки: ').$message);
             }
 
         }
 
         if ($p1) {
             $teacher = Users::model()->find('u5 = 1 and u6 = '.$p1);
+            if(empty($teacher))
+                return;
 
             if ($teacher->u4) {
 
-                $st = St::model()->findByPk($st1);
-
-                Apostle::setup("a596c9f9cb4066dd716911ef92be9bd040b0664d");
+                $p = P::model()->findByPk($p1);
+                /*Apostle::setup("a596c9f9cb4066dd716911ef92be9bd040b0664d");
                 $mail = new Mail( "antiplagiat-notification", array( "email" => $teacher->u4 ) );
                 $mail->url  = $url;
                 $mail->textFrom = implode(' ', array($st->st2, $st->st3, $st->st4));
-                $mail->deliver();
+                $mail->deliver();*/
+
+                $message = str_replace('{username}',$teacher->u2,$body);
+                $message = str_replace('{name}',$p->getShortName(),$message);
+
+                list($status, $message) =  $this->mailsend($student->u4, 'Antiplagiat results '.$studentName, $message);
+                if(!$status)
+                    Yii::app()->user->setFlash('error', tt('Ошибка отправки email для преподователя. Текст ошибки: ').$message);
             }
         }
 

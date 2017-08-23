@@ -23,10 +23,16 @@ if ($model->semester) {
 	if(empty($model->student))
 	{
 		$data = CHtml::listData(Sem::model()->getMonthsNamesForAttendanceStatistic($model->semester), 'firstDay', 'name');
-		$html .= '<div class="span2 ace-select">';
-		$html .= CHtml::label(tt('Месяц'), 'FilterForm_month');
-		$html .= CHtml::dropDownList('FilterForm[month]', $model->month, $data, $options);
-		$html .= '</div>';
+        $html .= '<div class="span2 ace-select">';
+        $html .= CHtml::label(tt('Месяц'), 'FilterForm_month');
+        $html .= CHtml::dropDownList('FilterForm[month]', $model->month, $data, $options);
+        $html .= '</div>';
+
+        $data = CHtml::listData(D::model()->getDisciplinesForAttendanceStatistic($model->group,$model->semester), 'd2', 'd2');
+        $html .= '<div class="span2 ace-select">';
+        $html .= CHtml::label(tt('Дисциплина'), 'FilterForm_discipline');
+        $html .= CHtml::dropDownList('FilterForm[discipline]', $model->discipline, $data, $options);
+        $html .= '</div>';
 	}
 	$html .= CHtml::hiddenField('FilterForm[student]', $model->student, array('id'=>'student-field'));
 }

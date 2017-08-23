@@ -2,7 +2,7 @@
 /**
  *
  * @var TimeTableController $this
- * @var TimeTableForm $model
+ * @var St $model
  * @var CActiveForm $form
  */
 $this->pageHeader=tt('Поиск студента:');

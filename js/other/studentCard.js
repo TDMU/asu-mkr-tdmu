@@ -4,6 +4,8 @@ $(document).ready(function(){
 
     initTooltips();
 
+    initFilterForm($spinner1);
+
     $(document).on('click', '.btn-retake', function(){
 
         var $that = $(this);

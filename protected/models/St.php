@@ -113,6 +113,7 @@
  * @property string $st146
  * @property string $st147
  * @property string $st148
+ * @property string $st167
  *
  * From ShortNameBehaviour:
  * @method string getShortName() Returns default truncated name.
@@ -137,7 +138,7 @@ class St extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('st1', 'required'),
-			array('st1, st9, st29, st32, st33, st34, st35, st45, st56, st57, st63, st64, st65, st71, st78, st101, st103, st104, st114, st115, st116, st100, st99, st133, st139, st144', 'numerical', 'integerOnly'=>true),
+			array('st1,st167, st9, st29, st32, st33, st34, st35, st45, st56, st57, st63, st64, st65, st71, st78, st101, st103, st104, st114, st115, st116, st100, st99, st133, st139, st144', 'numerical', 'integerOnly'=>true),
 			array('st2, st28, st74, st117, st120, st123', 'length', 'max'=>140),
 			array('st3, st4, st75, st76, st118, st119, st121, st122, st124, st125, st131, st132', 'length', 'max'=>80),
 			array('st5, st12, st15, st38, st108, st135, st148', 'length', 'max'=>60),
@@ -417,6 +418,7 @@ class St extends CActiveRecord
 		$criteria->compare('st146',$this->st146,true);
 		$criteria->compare('st147',$this->st147,true);
 		$criteria->compare('st148',$this->st148,true);
+        $criteria->compare('st167',$this->st148,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -610,6 +612,11 @@ SQL;
             return array();
 			
 		list($year, $sem) = SH::getCurrentYearAndSem();
+
+		$where="";
+		if(SH::getUniversityCod()==U_NULAU)
+            $where = "AND f1!=5";
+
 		$sql = <<<SQL
         SELECT st1,st2,st3,st4,gr1,gr3,f1,f2,ks1,ks3,sem4,sg1,sp1,pnsp1, gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26 FROM ks
 			inner join f on (ks.ks1 = f.f14)
@@ -620,7 +627,7 @@ SQL;
 			inner join std on (gr.gr1 = std.std3)
 			inner join st on (std.std2 = st.st1)
 			inner join sem on (sg.sg1 = sem.sem2)
-		where std7 is null and std11 in (0, 5, 6, 8) and st2 CONTAINING :name and sem3=:YEAR1 and sem5=:SEM1 and st101!=7
+		where std7 is null and std11 in (0, 5, 6, 8) and st2 CONTAINING :name and sem3=:YEAR1 and sem5=:SEM1 and st101!=7 {$where}
 		GROUP BY st1,st2,st3,st4,gr1,gr3,f1,f2,ks1,ks3,sem4,sg1,sp1,pnsp1, gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26
         ORDER BY st2 collate UNICODE,ks3,gr3,f2
 SQL;
@@ -670,6 +677,7 @@ SQL;
             'criteria'=>$criteria,
             'pagination'=>array(
                 'pageSize'=> Yii::app()->user->getState('pageSize',10),
+				'currentPage'=> Yii::app()->user->getState('CurrentPageSt',null),
             ),
             'sort' => array(
                 'defaultOrder' => 'st2 collate UNICODE,st3 collate UNICODE,st4 collate UNICODE',
@@ -751,11 +759,18 @@ SQL;
 		return $info;
 	}
 
+	/**
+	 * Список студентов по группе дял журнала
+	 * @param $gr1
+	 * @param $uo1
+	 * @return mixed
+	 */
     public function getStudentsForJournal($gr1, $uo1)
     {
         $sql = <<<SQL
-       select st1,st2,st3,st4,st45,st71,st163
+       select st1,st2,st3,st4,st45,st71,st163,st167, elgvst2, elgvst3
         from st
+           left join elgvst on (st.st1 = elgvst1)
            inner join ucsn on (st.st1 = ucsn.ucsn2)
            inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
            inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
@@ -764,7 +779,7 @@ SQL;
            inner join us on (nr.nr2 = us.us1)
            inner join std on (st1 = std2) /*Єто бі закомнтировано (Раскометировали ИС, изза виртуальніх групп)*/
         where UCGNS5=:YEAR and UCGNS6=:SEM and us2=:UO1 and ug2=:GR1 and std11 in (0,6,8) and (std7 is null) and st101!=7
-        group by st1,st2,st3,st4,st45,st71,st163
+        group by st1,st2,st3,st4,st45,st71,st163,st167, elgvst2, elgvst3
         order by st2 collate UNICODE
 SQL;
 
@@ -840,6 +855,41 @@ SQL;
 
         return $students;
     }
+
+	public function getStudentsOfGroupForPayment($gr1, $type)
+	{
+		if (empty($gr1))
+			return array();
+		if($type==0) { //общежите
+			$sql = <<<SQL
+            SELECT ST1,ST2,ST3,ST4
+				FROM st
+				INNER JOIN std on (st.st1 = std.std2)
+				WHERE st101<>7 and STD3=:GR1 and STD11 in (0,5,6,8) and (STD7 is null) and st66=1
+				ORDER BY ST2 collate UNICODE
+SQL;
+		}else{//оючучение
+			$sql = <<<SQL
+				SELECT ST1,ST2,ST3,ST4
+				FROM st
+				INNER JOIN std on (st.st1 = std.std2)
+				LEFT JOIN SK ON (SK.SK2 = ST.ST1)
+				WHERE st101<>7 and STD3=:GR1 and STD11 in (0,5,6,8) and (STD7 is null) and sk5 is null and sk3=1
+				ORDER BY ST2 collate UNICODE
+SQL;
+
+		}
+
+		$command = Yii::app()->db->createCommand($sql);
+		$command->bindValue(':GR1', $gr1);
+		$students = $command->queryAll();
+
+		foreach($students as $key => $student) {
+			$students[$key]['name'] = SH::getShortName($student['st2'], $student['st3'], $student['st4']);
+		}
+
+		return $students;
+	}
 	
 	public function getListGroup($gr1)
     {
@@ -1094,6 +1144,32 @@ SQL;
         return $info;
     }
 
+	/**
+	 * Получение кода группы(возможно вирутальной) по студенту по году сметсру и дисциплине
+	 * @param $st1 {int} код студента
+	 * @param $uo19 {int}
+	 * @param $year {int} год
+	 * @param $sem {int} семестр
+	 */
+	public function getGroupByStudent($st1,$uo19,$year,$sem){
+		$sql = <<<SQL
+			select first 1 ucgn2, gr3
+			  from ucsn
+				 inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
+				 inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
+				 inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
+				 inner join gr on (ucgn.ucgn2=gr.gr1)
+			  where ucxg3=0 and ucxg1=:UO19 and ucsn2=:ST1 and ucgns5=:YEAR and ucgns6=:SEM
+SQL;
+		$command= Yii::app()->db->createCommand($sql);
+		$command->bindValue(':ST1', $st1);
+		$command->bindValue(':UO19', $uo19);
+		$command->bindValue(':YEAR', $year);
+		$command->bindValue(':SEM', $sem);
+		$gr1 = $command->queryScalar();
+		return $gr1;
+	}
+
 	public function getGr1BySt1($st1)
 	{
 		$sql=<<<SQL
@@ -1167,7 +1243,7 @@ SQL;
 
         return $students;
     }
-
+	/*старая процедура времено используеться в карточке стдента, до перехода на стусв, новая в стусв*/
 	public function getDisciplineExam($st1,$gr1)
 	{
 		$sql = <<<SQL
@@ -1197,6 +1273,33 @@ SQL;
 
 		return $disciplines;
 	}
+
+    /**
+     * получить код потока по студенту
+     * @param $st1
+     * @return int
+     */
+    public function getSg1BySt1($st1){
+        if (empty($st1))
+            return array();
+        list($sg40, $sg41) =D::model()->getSg40Sg41($st1);
+
+        $sql = <<<SQL
+        SELECT sg1 FROM std
+			inner join gr on (std.std3 = gr.gr1)
+			inner join sg on (gr.gr2 = sg.sg1)
+			inner join sem on (sg.sg1 = sem.sem2)
+		where std7 is null and std11 in (0, 5, 6, 8) and sem3=:YEAR1 and sem5=:SEM1 and std2=:st1
+		GROUP BY sg1
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':st1', $st1);
+        $command->bindValue(':YEAR1', $sg40);
+        $command->bindValue(':SEM1', $sg41);
+        $res= $command->queryScalar();
+        return $res;
+    }
+
 	public function enableSubcription($st1){
 		$sql = <<<SQL
 		select count(sg1)
@@ -1228,4 +1331,60 @@ SQL;
 
 		return $row;
 	}
+
+
+    /**
+     * являеться ли текущий студент старостой для группы(возможн овиртуальной)
+     * @param $gr1 int код группы
+     * @return bool
+     */
+    public function isSstByGroup($gr1){
+        $sql = <<<SQL
+		select st1
+        from sst
+           inner join gr on (sst.sst3 = gr.gr1)
+           inner join std on (gr.gr1 = std.std3)
+           inner join st on (std.std2 = st.st1)
+           inner join ucsn on (st.st1 = ucsn.ucsn2)
+           inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
+           inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
+        where std11 in (0,5,6,8) and std7 is null and sst2=:ST1 and ucgn2=:GR1 and sst6 is null
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':ST1', $this->st1);
+        $command->bindValue(':GR1', $gr1);
+        $row = $command->queryRow();
+
+        return !empty($row);
+    }
+
+    /**
+     * статистика посещаемости по потокм (поулчить всех студентов по потоку)
+     * @param $sp1
+     * @param $course
+     * @param $year
+     * @param $sem
+     * @return mixed
+     */
+    public function getStudentsBySpeciality($sp1,$course,$year, $sem){
+        $sql=<<<SQL
+            SELECT st1,st2,st3,st4,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28
+			 FROM ST
+			   INNER JOIN STD ON (ST.ST1 = STD.STD2)
+			   INNER JOIN gr on (std.std3 = gr.gr1)
+			   INNER JOIN sg on (gr.gr2 = sg.sg1)  
+               inner join sem on (sg.sg1 = sem.sem2)
+			 WHERE gr13=0 and sg2=:sp1 and sem4=:sem4 and sem3=:YEAR and sem5=:SEM and std7 is null and std11 in (0,5,6,8) and st101!=7
+			 ORDER BY gr3 ASC,st2 collate UNICODE
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':sp1', $sp1);
+        $command->bindValue(':sem4', $course);
+        $command->bindValue(':YEAR', $year);
+        $command->bindValue(':SEM', $sem);
+        $students = $command->queryAll();
+
+        return $students;
+    }
 }

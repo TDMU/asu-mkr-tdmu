@@ -56,9 +56,7 @@ HTML;
     $ps55=PortalSettings::model()->findByPk(55)->ps2;
     foreach($disciplines as $discipline)
     {
-        $type=0;
-        if($discipline['us4']>1)
-            $type=1;
+        $type=$discipline['type_journal'];
         list($respectful,$disrespectful,$f,$nbretake,$fretake,$count) = Elg::model()->getRetakeInfo($discipline['uo1'],$discipline['sem1'],$type,$st->st1,$ps55);
         $tr.='<tr>';
             $tr.='<td>'.$i.'</td>';
@@ -74,7 +72,7 @@ HTML;
                 $d2=$discipline['d2'];
 
             $tr.='<td class="text-left">'.$d2.' | '.tt("Семестр").' №'.$discipline['sem7'].'</td>';
-            $tr.='<td>'.SH::convertUS4($discipline['us4']).'</td>';
+            $tr.='<td>'.SH::convertTypeJournal($discipline['type_journal']).'</td>';
             //$tr.='<td>'.round($discipline['us6'],2).'</td>';
             $tr.='<td>'.$count.'</td>';
             $tr.='<td>'.$respectful.'</td>';

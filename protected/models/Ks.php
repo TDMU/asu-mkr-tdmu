@@ -141,7 +141,7 @@ class Ks extends CActiveRecord
 		$res = array();
 		/*--------------госаудит-----------скрывать все филиалы кроме ихнего*/
 		$univeristyCod = SH::getUniversityCod();
-		if($univeristyCod==7){
+		if($univeristyCod==U_URFAK){
 			if($_SERVER['SERVER_NAME']=='tt.audit.msu.ru')
 			{
 				$filial = Ks::model()->findByPk(1);

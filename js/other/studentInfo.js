@@ -86,13 +86,38 @@ $(document).ready(function(){
             'us1' : $(this).parent().data('us1')
         };
 
-        $.post(url, post, function(data){
+        /*$.post(url, post, function(data){
             if (data.res) {
                 addGritter('', 'Название курсовой было изменено!', 'success');
                 $('#nkrs7-eng').val(post.value);
             } else
                 addGritter('', 'Произошла ошибка!', 'error')
-        }, 'json')
+        }, 'json')*/
+
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            data:post,
+            success: function( data ) {
+                if (data.res) {
+                    addGritter('', 'Название курсовой было изменено!', 'success');
+                    $('#nkrs7-eng').val(post.value);
+                } else
+                    addGritter('', 'Произошла ошибка!', 'error')
+            },
+            error: function(jqXHR, textStatus){
+                if (jqXHR.status == 500) {
+                    addGritter('', 'Internal error 500: ' + jqXHR.responseText, 'error')
+                } else {
+                    if (jqXHR.status == 403) {
+                        addGritter('', 'Access error 403: ' + jqXHR.responseText, 'error')
+                    } else {
+                        addGritter('', 'Unexpected error '+ jqXHR.status +': '+jqXHR.responseText, 'error')
+                    }
+                }
+
+            }
+        });
     });
     
     $(document).on('click', '.show-passport', function(){

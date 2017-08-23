@@ -133,6 +133,45 @@ class Sp extends CActiveRecord
 		return parent::model($className);
 	}
 
+    /**
+     * статитика посещаемости по потокам (курсы по специальности)
+     * @param $faculty
+     * @param $speciality
+     * @return array
+     */
+    public function getCoursesForSp($faculty, $speciality)
+    {
+        if (empty($faculty)||empty($speciality))
+            return array();
+
+
+        $extraCondition = ' and sp1='.$speciality;
+
+        $sql=<<<SQL
+            SELECT sem4
+            FROM SP
+            INNER JOIN SG ON (SP.SP1 = SG.SG2)
+            INNER JOIN SEM ON (SG.SG1 = SEM.SEM2)
+            WHERE sp5=:FACULTY and sem3=:YEAR and sem5=:SEM {$extraCondition}
+            GROUP BY sem4
+SQL;
+
+        list($year, $sem) = SH::getCurrentYearAndSem();
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':FACULTY', $faculty);
+        $command->bindValue(':YEAR', $year);
+        $command->bindValue(':SEM', $sem);
+        $courses = $command->queryAll();
+
+        $res = array();
+        foreach ($courses as $course) {
+            $res[$course['sem4']] = $course['sem4'];
+        }
+
+        return $res;
+    }
+
     public function getCoursesFor($faculty, $speciality = null)
     {
         if (empty($faculty))
