@@ -1,12 +1,16 @@
 
-<form class="form-inline" method="POST">
+<form class="form-inline" id="filter-year-sem-form" method="POST">
     <?php
+        $previousYear2 = date('Y', strtotime('-3 year'));
+        $previousYear1 = date('Y', strtotime('-2 year'));
         $previousYear = date('Y', strtotime('-1 year'));
         $currentYear  = date('Y');
         $nextYear     = date('Y', strtotime('+1 year'));
 		$nextYear1     = date('Y', strtotime('+2 year'));
 		
         $options = array(
+            $previousYear2 => $previousYear2.'/'.$previousYear1,
+            $previousYear1 => $previousYear1.'/'.$previousYear,
             $previousYear => $previousYear.'/'.$currentYear,
             $currentYear  => $currentYear.'/'.$nextYear,
             $nextYear     => $nextYear.'/'.$nextYear1,
@@ -20,9 +24,10 @@
             tt('Весенний')
         );
         echo CHtml::dropDownList('sem', Yii::app()->session['sem'], $options, array('class'=>'input-medium'));
-    ?>
-    <button class="btn btn-info btn-small" type="submit">
+
+    /*<button class="btn btn-info btn-small" type="submit">
         <i class="icon-ok bigger-110"></i>
         <?=tt('Ок')?>
-    </button>
+    </button>*/
+    ?>
 </form>

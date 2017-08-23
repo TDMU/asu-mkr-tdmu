@@ -1,4 +1,7 @@
 <?php
+/**
+ * @var $retake Elgzst
+ */
 $this->pageHeader=tt('Отработка');
     $this->breadcrumbs=array(
         tt('Электронный журнал'),
@@ -12,12 +15,14 @@ $error       = tt('Ошибка! Проверьте правильность в�
 $error_load  = tt('Ошибка! Ошибка загрузки данных!');
 $success     = tt('Cохранено!');
 $minMaxError = tt('Оценка за пределами допустимого интервала!');
+$access= tt('Ошибка! Нет доступа!');
 
 Yii::app()->clientScript->registerScript('translations', <<<JS
     tt.error       = "{$error}"
     tt.error_load       = "{$error_load}"
     tt.success     = "{$success}"
     tt.minMaxError = "{$minMaxError}"
+    tt.access = "{$access}";
 JS
 , CClientScript::POS_READY);
         

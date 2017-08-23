@@ -5,13 +5,15 @@
  * LoginForm is the data structure for keeping
  * user login form data. It is used by the 'login' action of 'SiteController'.
  */
-class LoginForm extends CFormModel
+class LoginForm extends FormValidation
 {
 	public $username;
 	public $password;
 	public $rememberMe;
 
 	private $_identity;
+
+	//public $verifyCode;
 
 	/**
 	 * Declares the validation rules.
@@ -21,12 +23,15 @@ class LoginForm extends CFormModel
 	public function rules()
 	{
 		return array(
+			array('validationKey', 'validateKey', 'fieldError'=>'username'),
 			// username and password are required
 			array('username, password', 'required'),
 			// rememberMe needs to be a boolean
 			array('rememberMe', 'boolean'),
 			// password needs to be authenticated
 			array('password', 'authenticate'),
+			//array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements()),
+
 		);
 	}
 
@@ -51,8 +56,20 @@ class LoginForm extends CFormModel
 		if(!$this->hasErrors())
 		{
 			$this->_identity=new UserIdentity($this->username,$this->password);
-			if(!$this->_identity->authenticate())
+			$errorCode = $this->_identity->authenticate();
+
+			/*var_dump($errorCode);
+
+			var_dump($this->_identity);*/
+
+			if($errorCode === 3) {
+				$this->addError('password', tt('Ваша учетная запись заблокирована на {min_count} минут, так как вы {count} раз неправильно ввели свой пароль',array(
+					'{min_count}'=>$this->_identity->_lockout_min,
+					'{count}'=>$this->_identity->_lockout_attempts
+				)));
+			}elseif($errorCode!==0){
 				$this->addError('password', tt('Неправильный логин или пароль'));
+			}
 		}
 	}
 

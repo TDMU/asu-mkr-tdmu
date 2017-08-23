@@ -382,7 +382,7 @@ foreach($students as $st) {
         //если нет оценки добавляем ее ps89
         //костыль баг если выставить настроку ставить ноль
         if(!isset($marks[$_nom])&&$date1>=$date2&&$ps89==1){
-            $elgzst = Elg::model()->addRowMark($st1,$date['elgz1']);
+            $elgzst = Elg::model()->addRowMark($st1,$date['elgz1'], $elg->elg4);
             $marks[$_nom] = array(
                 'elgz3'=>$_nom,
                 'elgzst3'=>$elgzst->elgzst3,

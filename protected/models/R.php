@@ -120,7 +120,7 @@ class R extends CActiveRecord
 			return array();*/
 
 		$sql = <<<SQL
-			select elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12
+			select elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12
 			from elgz
 			inner join elg on (elgz.elgz2 = elg.elg1 and elg2=:UO1 and elg4=:TYPE_LESSON and elg3={$sem1})
 			inner join ustem on (elgz.elgz7 = ustem.ustem1)
@@ -246,5 +246,56 @@ SQL;
 
 		}
 		return $rows;
+	}
+
+	public function getR1ByLesson($elgz1,$st1){
+		/**
+		 * @var $elgz Elgz
+		 * @var $elg Elg
+		 */
+		$elgz = Elgz::model()->findByPk($elgz1);
+		if(empty($elgz))
+			return null;
+
+		$elg = $elgz->elgz20;
+		if(empty($elg))
+			return null;
+
+		$sem = $elg->elg30;
+		if(empty($sem))
+			return null;
+
+		$uo = $elg->elg20;
+		if(empty($uo))
+			return null;
+
+		//$gr1 = St::model()->getGr1BySt1($st1);
+		$gr1 = St::model()->getGroupByStudent($st1, $uo->uo19, $sem->sem3, $sem->sem5);
+		if(empty($gr1))
+			return null;
+
+		//var_dump($gr1);
+
+		$sql = <<<SQL
+			select r1
+			from elgz
+			inner join EL_GURNAL_ZAN(:UO1,:GR1,:SEM1, :TYPE_LESSON) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
+			WHERE elgz1 = :ELGZ1
+SQL;
+
+		$command = Yii::app()->db->createCommand($sql);
+		$command->bindValue(':UO1', $elg->elg2);
+		$command->bindValue(':GR1', $gr1);
+		$command->bindValue(':TYPE_LESSON',$elg->elg4 );
+		$command->bindValue(':SEM1', $elg->elg3);
+		$command->bindValue(':ELGZ1', $elgz1);
+
+		//var_dump($command);
+
+		$r1 = $command->queryScalar();
+
+		//var_dump($r1);
+
+		return $r1;
 	}
 }

@@ -83,6 +83,8 @@
                     $tem_name_full=str_replace( '"','&quot', $tem_name_full);
                     $tem_name_full=str_replace( "'",'&quot', $tem_name_full);
 
+                    $fio= str_replace("'",'`', $fio);
+
                     $text='{';
                     $text.="id:'".$i."',";
                     $color = SH::getLessonColor($event['tip']);

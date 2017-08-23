@@ -2,6 +2,43 @@
 
 class DefaultController extends AdminController
 {
+    public function actions()
+    {
+        return array(
+            // captcha action renders the CAPTCHA image displayed on the contact page
+            'connector' => array(
+                'class' => 'ext.elFinder.ElFinderConnectorAction',
+                'settings' => array(
+                    'root' => Yii::getPathOfAlias('webroot') . '/images/uploads/',
+                    'URL' => Yii::app()->request->baseUrl . '/images/uploads/',
+                    'rootAlias' => 'Home',
+                    'mimeDetect' => 'none',
+                    'uploadAllow'=>array('doc', 'xls', 'ppt', 'pps', 'pdf', 'bmp','jpg','jpeg','gif','png'),
+                    'uploadDeny'=>array('php', 'exe', 'js', 'sh', 'pdf', 'pl','rb','java','py','sql')
+                )
+            ),
+            'captcha'=>array(
+                'class'=>'CCaptchaAction',
+                'backColor'=>0xFFFFFF,
+            ),
+        );
+    }
+
+    public function actionSecurity()
+    {
+        $settings = Yii::app()->request->getParam('settings', array());
+
+        foreach ($settings as $key => $value) {
+            PortalSettings::model()
+                ->findByPk($key)
+                ->saveAttributes(array(
+                    'ps2' => $value
+                ));
+        }
+
+        $this->render('security');
+    }
+
     public function actionSt165($id)
     {
         $model = St::model()->findByPk($id);
@@ -208,10 +245,11 @@ class DefaultController extends AdminController
         $identity = new CUserIdentity($user->u2, 'passwords are broken');
         Yii::app()->user->login($identity);
         Yii::app()->user->id = $user->u1;
+        $user->afterLogin();
 
         UsersHistory::getNewLogin();
 
-        $this->redirect('/site/index');
+        $this->redirect(array('/site/index'));
     }
 
     public function actionStudentCard()
@@ -480,39 +518,47 @@ class DefaultController extends AdminController
             Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
             unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
         }
-        if (isset($_REQUEST['P']))
-            $model->attributes = $_REQUEST['P'];
 
-        /*if (isset($_REQUEST['P']))
+        if (isset($_REQUEST['P']))
         {
             $model->attributes = $_REQUEST['P'];
-            Yii::app()->user->setState('SearchParamsP', $_REQUEST['P']);
-            Yii::app()->user->setState('CurrentPageP', null);
+            Yii::app()->user->setState('SearchParamsPAdmin', $_REQUEST['P']);
         }
         else
         {
-            $searchParams = Yii::app()->user->getState('SearchParamsP');
-            //print_r($searchParams);
+            $searchParams = Yii::app()->user->getState('SearchParamsPAdmin');
             if ( isset($searchParams) )
             {
                 $model->attributes = $searchParams;
             }
-        }*/
-        /*$page = null;
-        if (isset($_REQUEST['P_page']))
+        }
+
+        //$page = null;
+        /*if (isset($_REQUEST['P_page']))
         {
-            Yii::app()->user->setState('CurrentPageP', $_REQUEST['P_page']);
+            Yii::app()->user->setState('CurrentPageP', $_REQUEST['P_page']-1);
             $page = $_REQUEST['P_page'];
         }
         else
         {
             $page = Yii::app()->user->getState('CurrentPageP');
-            print_r($page);
+            //print_r($page);
             if ( isset($page) )
             {
                 $_REQUEST['P_page'] = $page;
             }
         }*/
+
+        if (isset($_REQUEST['P_page']))
+        {
+            Yii::app()->user->setState('CurrentPageP',$_REQUEST['P_page']-1);
+        } else
+        {
+            if (Yii::app()->user->hasState('P_page'))
+            {
+                $_REQUEST['P_page'] = Yii::app()->user->getState('CurrentPageP')+1;
+            }
+        }
 
         $this->render('teachers', array(
             'model' => $model,
@@ -621,9 +667,31 @@ class DefaultController extends AdminController
             Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
             unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
         }
-        if (isset($_REQUEST['St']))
-            $model->attributes = $_REQUEST['St'];
 
+        if (isset($_REQUEST['St']))
+        {
+            $model->attributes = $_REQUEST['St'];
+            Yii::app()->user->setState('SearchParamsStAdmin', $_REQUEST['St']);
+        }
+        else
+        {
+            $searchParams = Yii::app()->user->getState('SearchParamsStAdmin');
+            if ( isset($searchParams) )
+            {
+                $model->attributes = $searchParams;
+            }
+        }
+
+        if (isset($_REQUEST['St_page']))
+        {
+            Yii::app()->user->setState('CurrentPageSt',$_REQUEST['St_page']-1);
+        } else
+        {
+            if (Yii::app()->user->hasState('St_page'))
+            {
+                $_REQUEST['St_page'] = Yii::app()->user->getState('CurrentPageSt')+1;
+            }
+        }
 
         $this->render('students', array(
             'model' => $model,
@@ -680,6 +748,7 @@ class DefaultController extends AdminController
 				'top2'=>$_POST['ConfigForm']['top2'],
                 'banner'=>$_POST['ConfigForm']['banner'],
                 'month'=>$_POST['ConfigForm']['month'],
+                'login-key'=>$_POST['ConfigForm']['loginKey'],
 			);
 			$str = base64_encode(serialize($config));
 			$errors=!file_put_contents($file, $str);

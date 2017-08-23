@@ -553,8 +553,8 @@ class ProgressController extends Controller
 
     public function actionInsertJpvd()
     {
-        //if (! Yii::app()->request->isAjaxRequest)
-            //throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+        if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
         $error =false;
 

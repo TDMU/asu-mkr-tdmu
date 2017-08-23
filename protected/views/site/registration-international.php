@@ -87,7 +87,18 @@ $this->pageHeader=$this->pageTitle;
                                         <i class="icon-retweet"></i>
                                     </span>
                                 </label>
-                                <?php } ?>
+                                <?php
+                                /*if(CCaptcha::checkRequirements()): ?>
+                                    <div class="form-group">
+                                        <?php $form->labelEx($model,'verifyCode'); ?>
+                                        <div>
+                                            <?php $this->widget('CCaptcha'); ?>
+                                            <?php echo $form->textField($model,'verifyCode'); ?>
+                                        </div>
+                                        <?php echo $form->error($model,'verifyCode'); ?>
+                                    </div>
+                                <?php endif;*/
+                                } ?>
 
                                 <div class="space-24"></div>
 

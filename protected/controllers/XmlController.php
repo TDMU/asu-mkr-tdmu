@@ -135,7 +135,7 @@ class XmlController extends Controller
     public function actionGetVersion(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             if($xml->getName()!='Request'||!isset($xml->GetVersion))
                 $this->errorXml(self::ERROR_XML_STRUCTURE,'Ошибка струтуры xml');
@@ -155,7 +155,7 @@ class XmlController extends Controller
 
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetPersonByINN*/
             if($xml->getName()!='Request'||!isset($xml->GetJournalMark))
@@ -285,7 +285,7 @@ SQL;
     public function actionGetStudentPerson(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetStudentPerson*/
             if($xml->getName()!='Request'||!isset($xml->GetStudentPerson))
@@ -327,7 +327,7 @@ SQL;
     public function actionGetTeacherPerson(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetTeacherPerson*/
             if($xml->getName()!='Request'||!isset($xml->GetTeacherPerson))
@@ -369,7 +369,7 @@ SQL;
     public function actionGetPersonByINN(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetPersonByINN*/
             if($xml->getName()!='Request'||!isset($xml->GetPersonByINN))
@@ -431,7 +431,7 @@ SQL;
     public function actionGetPersonByPassport(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetPersonByPassport*/
             if($xml->getName()!='Request'||!isset($xml->GetPersonByPassport))
@@ -494,7 +494,7 @@ SQL;
     public function actionGetTimetableForGroup(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег TimetableForGroup*/
             if($xml->getName()!='Request'||!isset($xml->TimetableForGroup))
@@ -551,7 +551,7 @@ SQL;
     public function actionGetTimetableForAudience(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег TimetableForAudience*/
             if($xml->getName()!='Request'||!isset($xml->TimetableForAudience))
@@ -607,7 +607,7 @@ SQL;
     public function actionGetTimetableForTeacher(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег TimetableForTeacher*/
             if($xml->getName()!='Request'||!isset($xml->TimetableForTeacher))
@@ -673,7 +673,7 @@ SQL;
     public function actionGetTimetableForStudent(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег TimetableForStudent*/
             if($xml->getName()!='Request'||!isset($xml->TimetableForStudent))
@@ -740,7 +740,7 @@ SQL;
     public function actionGetAudiences(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetAudiences*/
             if($xml->getName()!='Request'||!isset($xml->GetAudiences))
@@ -800,7 +800,7 @@ SQL;
     public function actionGetGroups(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetGroups*/
             if($xml->getName()!='Request'||!isset($xml->GetGroups))
@@ -893,7 +893,7 @@ SQL;
     public function actionGetChairs(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetChairs*/
             if($xml->getName()!='Request'||!isset($xml->GetChairs))
@@ -964,7 +964,7 @@ SQL;
     public function actionGetTeachers(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetTeachers*/
             if($xml->getName()!='Request'||!isset($xml->GetTeachers))
@@ -1031,7 +1031,7 @@ SQL;
     public function actionGetFaculties(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег GetFaculties*/
             if($xml->getName()!='Request'||!isset($xml->GetFaculties))
@@ -1092,7 +1092,7 @@ SQL;
     public function actionUploadStudentsId(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег UploadStudentsID*/
             if($xml->getName()!='Request'||!isset($xml->UploadStudentsID))
@@ -1246,7 +1246,7 @@ SQL;
     public function actionUploadTeachersId(){
         $xml = $this->getXmlFromPost();
         if(empty($xml))
-            Yii::app()->end;
+            Yii::app()->end();
         else{
             /*Проверка есть ли тег UploadTeachersID*/
             if($xml->getName()!='Request'||!isset($xml->UploadTeachersID))

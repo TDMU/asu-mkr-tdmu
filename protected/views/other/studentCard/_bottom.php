@@ -89,7 +89,7 @@ HTML;
     echo sprintf($infoHtml,
         tt('ФИО'),$name,
         tt('Гражданство'),$studentInfo['sgr2'],
-        tt('Дата рождения'),date("m.d.y",strtotime($st->st7)),
+        tt('Дата рождения'),date("d.m.y",strtotime($st->st7)),
         tt('Факультет'), $studentInfo['f3'],
         tt('Специальность'), $studentInfo['sp2'],
         tt('Форма обучения'),SH::convertEducationType($studentInfo['sg4']),
@@ -115,22 +115,29 @@ HTML;
     echo '<div class="bottom-block">';
 
     $disciplines = Elg::model()->getDispBySt($st->st1);
+    //стусв или стус (временно)
+    $ps107 = PortalSettings::model()->findByPk(107)->ps2;
+    $_pref ='';//приставка в конец дял вида со сус или стусв
+    if($ps107==1)
+        $_pref = '_new';
 
     $params = array('gr1'=>$studentInfo['gr1'],'st'=>$st);
     $ps50 = PortalSettings::model()->findByPk(50)->ps2;
     $tabs = array();
     if(PortalSettings::model()->findByPk(47)->ps2==1)
-        array_push($tabs,array('label'=>tt('Успеваемость'), 'content'=>$this->renderPartial('studentCard/_journal', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==0));
+        array_push($tabs,array('label'=>tt('Успеваемость (журнал)'), 'content'=>$this->renderPartial('studentCard/_journal', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==0));
     if(PortalSettings::model()->findByPk(48)->ps2==1)
-        array_push($tabs,array('label'=>tt('Текущая задолженость'), 'content'=>$this->renderPartial('studentCard/_retake', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==1));
+        array_push($tabs,array('label'=>tt('Текущая задолженость (журнал)'), 'content'=>$this->renderPartial('studentCard/_retake', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==1));
     if(PortalSettings::model()->findByPk(49)->ps2==1)
         array_push($tabs,array('label'=>tt('Модульный контроль'), 'content'=>$this->renderPartial((PortalSettings::model()->findByPk(76)->ps2==1)?'studentCard/_module':'studentCard/_module_pmk', $params,true), 'active'=>$ps50==2));
     if(PortalSettings::model()->findByPk(51)->ps2==1)
-        array_push($tabs,array('label'=>tt('Екзаменационная сессия'), 'content'=>$this->renderPartial('studentCard/_exam', $params,true), 'active'=>$ps50==3));
+        array_push($tabs,array('label'=>tt('Екзаменационная сессия'), 'content'=>$this->renderPartial('studentCard/_exam'.$_pref, $params,true), 'active'=>$ps50==3));
     if(PortalSettings::model()->findByPk(52)->ps2==1)
-        array_push($tabs,array('label'=>tt('Общая успеваемость'), 'content'=>$this->renderPartial('studentCard/_progress', $params,true), 'active'=>$ps50==4));
+        array_push($tabs,array('label'=>tt('Общая успеваемость'), 'content'=>$this->renderPartial('studentCard/_progress'.$_pref, $params,true), 'active'=>$ps50==4));
     if(PortalSettings::model()->findByPk(91)->ps2==1)
         array_push($tabs,array('label'=>tt('Общая информация'), 'content'=>$st->st165, 'active'=>$ps50==5));
+    if(PortalSettings::model()->findByPk(109)->ps2==1)
+        array_push($tabs,array('label'=>tt('Итоговая успеваемость (журнал)'), 'content'=>$this->renderPartial('studentCard/_itog_progress', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==6));
 
     /*array('label'=>Yii::t('main', 'Текущая задолженость'), 'content'=>$this->renderPartial('studentCard/_retake',$params,true), 'active'=>$ps50==1,'visible'=>PortalSettings::model()->findByPk(48)->ps2==1);
     array('label'=>Yii::t('main', 'Модульный контроль'), 'content'=>$this->renderPartial('studentCard/_module', $params,true), 'active'=>$ps50==2,'visible'=>PortalSettings::model()->findByPk(49)->ps2==1);

@@ -212,6 +212,13 @@ class Tddo extends CActiveRecord
 		$criteria->addCondition("tddo3>0");
 		$criteria->addCondition("tddo24=0");
 
+		$criteria->join = " JOIN IDO ON (IDO1 = tddo1)";
+		$criteria->join .= " LEFT JOIN PD ON (IDO2 = PD1)";
+		$criteria->join .= " LEFT JOIN INNFP ON (IDO4 = INNFP2)";
+
+		$p1 = Yii::app()->user->dbModel->p1;
+		$criteria->addCondition(" (pd2={$p1} OR innfp1={$p1}) ");
+
 		return new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
 				'sort' => array(
@@ -368,7 +375,7 @@ SQL;
 
 	/**
 	 * Являеться ли пикрепленый файл изображением
-	 * @param $nameFile название_файла
+	 * @param $nameFile string название_файла
 	 * @return bool
 	 */
 	public function isImage($nameFile){
@@ -378,6 +385,8 @@ SQL;
 		switch($ext){
 			case 'doc':
 			case 'docx':
+            case 'xls':
+            case 'xlsx':
 			case 'pdf':
 				$result = false;
 				break;

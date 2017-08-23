@@ -19,16 +19,35 @@
     //echo CHtml::label(tt('Кафедра'), 'chairs');
     echo CHtml::dropDownList('chairs', '', $chairs, array('class'=>'chosen-select', 'autocomplete' => 'off', 'empty' => ''));
 
-    //print_r($model);
-
     $provider = $model->getTeachersFor($chairId);
-    /*if(isset($_REQUEST['P_page'])&&!empty($_REQUEST['P_page']))*/
-        //$provider->pagination->currentPage =$page>0?$page-1:null;
+
+    $template = <<<HTML
+            <div>
+                <div class="pull-left">{summary}</div>
+                <div class="pull-right">{pager}</div>
+            </div>
+            {items}
+            <div>
+                <div class="pull-right">{pager}</div>
+            </div>
+HTML;
+
     $this->widget('bootstrap.widgets.TbGridView', array(
         'id' => 'teachers',
         'dataProvider' => $provider,
         'filter' => $model,
+        'pager' => array(
+            'firstPageLabel'=>'<<',
+            'prevPageLabel'=>'<',
+            'nextPageLabel'=>'>',
+            'lastPageLabel'=>'>>',
+            'class'=>'bootstrap.widgets.TbPager',
+            'displayFirstAndLast'=>true
+            //'maxButtonCount'=>'10',
+            //'header'=>'<span>Листалка страниц:</span>',
+        ),
         //'enableHistory'=>true,
+        'template' => $template,
         'type' => 'striped bordered',
         'ajaxUrl' => Yii::app()->createAbsoluteUrl('/admin/default/teachers'),
         'columns' => array(

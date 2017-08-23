@@ -12,12 +12,32 @@ $this->breadcrumbs=array(
 ?>
 
 <?php
+$template = <<<HTML
+            <div>
+                <div class="pull-left">{summary}</div>
+                <div class="pull-right">{pager}</div>
+            </div>
+            {items}
+            <div>
+                <div class="pull-right">{pager}</div>
+            </div>
+HTML;
+
 $pageSize=Yii::app()->user->getState('pageSize',10);
 $provider = $model->getStudentsForAdmin();
 $this->widget('bootstrap.widgets.TbGridView', array(
     'id' => 'students',
     'dataProvider' => $provider,
     'filter' => $model,
+    'pager' => array(
+        'firstPageLabel'=>'<<',
+        'prevPageLabel'=>'<',
+        'nextPageLabel'=>'>',
+        'lastPageLabel'=>'>>',
+        'class'=>'bootstrap.widgets.TbPager',
+        'displayFirstAndLast'=>true
+    ),
+    'template' => $template,
     'type' => 'striped bordered',
     'ajaxUrl' => Yii::app()->createAbsoluteUrl('/admin/default/students'),
     'columns' => array(

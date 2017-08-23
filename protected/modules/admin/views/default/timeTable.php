@@ -28,6 +28,10 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/a
 </div>
 HTML;
 
+    $title = tt('Обшие настройки');
+    $html  = $this->renderPartial('timeTable/_general', array(), true);
+    echo sprintf($widget, $title, $html);
+
     $title = tt('Расписание преподователя');
     $html  = $this->renderPartial('timeTable/_teacher', array(), true);
     echo sprintf($widget, $title, $html);

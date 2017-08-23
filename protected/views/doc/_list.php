@@ -12,6 +12,7 @@
  * @var $docTypeModel Ddo
  */
 
+$action = Yii::app()->controller->action->id;
 
 Yii::app()->clientScript->registerPackage('autosize');
 Yii::app()->clientScript->registerPackage('jquery.ui');
@@ -24,7 +25,7 @@ $options = array('class'=>'chosen-select', 'autocomplete' => 'off', 'empty' => '
 $form=$this->beginWidget('CActiveForm', array(
     'id'=>'filter-form',
     'method'=>'get',
-    'action'=> Yii::app()->createUrl('doc/index'),
+    'action'=> Yii::app()->createUrl('doc/'.$action),
     'htmlOptions' => array('class' => 'form-inline')
 ));
 $html  = '<div>';
@@ -132,7 +133,7 @@ HTML;
             'template' => $pageTop.'{items} '.sprintf($pager, tt('Распечатать')),
             'rowHtmlOptionsExpression' => 'array("data-id" => $data->tddo1, "class"=>$data->isControl()?"warning":"")',
             'filter' => $model,
-            'ajaxUrl' => Yii::app()->createAbsoluteUrl('/doc/index',array('docType'=>$model->tddo2,'docYear'=>$model->tddo23)),
+            'ajaxUrl' => Yii::app()->createAbsoluteUrl('/doc/'.$action,array('docType'=>$model->tddo2,'docYear'=>$model->tddo23)),
             'columns' =>
                 array_merge(
                 /*array(

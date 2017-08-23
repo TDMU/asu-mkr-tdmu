@@ -282,7 +282,7 @@ SQL;
 			) and vvmp25=(
 			SELECT  gr2 from gr where gr1={$gr1}
 			)
-			GROUP BY vvmp1,vvmp6,vvmp4
+			GROUP BY vvmp1,vvmp6,vvmp4 ORDER BY vvmp6 asc
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':GR1', $gr1);

@@ -9,6 +9,10 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/m
 Yii::app()->clientScript->registerPackage('datepicker-mobile');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/mobile/datepicker/locales/bootstrap-datepicker.'.Yii::app()->language.'.min.js', CClientScript::POS_END);
 
+echo '<div class="pull-right">';
+echo CHtml::link('<i class="glyphicon glyphicon-hand-right"></i>'.' '.tt('Общий вид'), array('/timeTable/student'));
+echo '</div>';
+echo '<div class="clearfix"></div>';
 
 $this->renderPartial('/filter_form/default/mobile/_accordion_select', array(
     'render' => '/filter_form/mobile/timeTableStudent',

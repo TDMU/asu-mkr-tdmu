@@ -14,6 +14,11 @@ $(document).ready(function(){
             (key.charCode<1040 ||key.charCode > 1105)) return false;
     });
 
+    $(document).on('change', '#filter-year-sem-form select', function(){
+        var $form  = $(this).closest('form');
+        $form.submit();
+    });
+
 });
 
 function initDialogSettings()

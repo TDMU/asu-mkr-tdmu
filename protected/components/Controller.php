@@ -48,6 +48,18 @@ class Controller extends CController
 
     public function beforeAction($action)
     {
+        if($this->checkLoginUser()) {
+
+
+            Yii::app()->user->setFlash(
+                'warning',
+                '<strong>'.tt('Внимание!').'</strong> '.tt('Ошибка сессии, вы разлогинены!')
+            );
+
+            $this->refresh();
+            //return false;
+        }
+
         $this->checkBlockUser($action);
 
         $this->checkClosePortal($action);
@@ -69,6 +81,37 @@ class Controller extends CController
         return parent::beforeAction($action);
     }
 
+    /**
+     * проверка пользователя
+     * @return bool если тру значит нужно разлогинить
+     */
+    private function checkLoginUser(){
+        if(Yii::app()->user->isGuest)
+            return false;
+
+        $logout = false;
+
+        $user = Users::model()->findByPk(Yii::app()->user->id);
+        /**
+         * @var $user Users
+         */
+        if($user==null)
+            $logout = true;
+        else{
+            $logout = !$user->validateLogin();
+        }
+
+        if($logout)
+        {
+            Yii::app()->user->logout();
+            Yii::app()->session->destroy();
+            Yii::app()->request->cookies->clear();
+            Yii::app()->session->open();
+        }
+
+        return $logout;
+    }
+
     private function checkBlockUser($action){
 
         $enable_close=true;
@@ -77,7 +120,7 @@ class Controller extends CController
             $enable_close=false;
 
         if(Yii::app()->user->isBlock&&$enable_close)
-            throw new CHttpException(403, tt('Доступ закрыт! Учеьная запись заблокирована!'));
+            throw new CHttpException(403, tt('Доступ закрыт! Учетная запись заблокирована!'));
     }
 
     private function processAccess($action)

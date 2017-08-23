@@ -129,15 +129,19 @@ SQL;
         return $res;
     }
 
-	public function addRowMark($st1, $elgz1)
+	public function addRowMark($st1, $elgz1, $type)
 	{
-		$elgzst = new Elgzst();
+	    $id = $type==1?119:120;
+
+	    $ps = PortalSettings::model()->getSettingFor($id);
+
+	    $elgzst = new Elgzst();
 		$elgzst->elgzst0 = new CDbExpression('GEN_ID(GEN_ELGZST, 1)');
 		$elgzst->elgzst1 = $st1;
 		$elgzst->elgzst2 = $elgz1;
-		$elgzst->elgzst7 = Yii::app()->user->dbModel->p1;
+		$elgzst->elgzst7 = Yii::app()->user->isTch?Yii::app()->user->dbModel->p1:0;
 		$elgzst->elgzst6 = date('Y-m-d H:i:s');
-		$elgzst->elgzst3 = 0;
+		$elgzst->elgzst3 = $ps==1?1:0;
 		$elgzst->elgzst4 = 0;
 		$elgzst->elgzst5 = 0;
 		$error = !$elgzst->save();
@@ -233,7 +237,12 @@ SQL;
               WHERE elgzst1=:ST1 AND sem3=:YEAR AND sem5=:SEM*/
 SQL;
 		$sql=<<<SQL
-              SELECT d2,us4,us6,k2,k15,uo3,u16,u1,d1,d27,d32,d34,d36,uo1,sem1, sem7
+              SELECT d2,
+					(CASE us4
+					  WHEN 1 THEN 0
+					  ELSE 1
+					END) as type_journal,
+					k2,k15,uo3,u16,u1,d1,d27,d32,d34,d36,uo1,sem1, sem7,ucgn2
                     from ucxg
                        inner join ucgn on (ucxg.ucxg2 = ucgn.ucgn1)
                        inner join ucx on (ucxg.ucxg1 = ucx.ucx1)
@@ -246,8 +255,8 @@ SQL;
                        inner join k on (uo.uo4 = k.k1)
                        inner join sem on (us.us3 = sem.sem1)
                     WHERE ucxg3=0 and ucsn2=:ST1 and sem3=:YEAR and sem5=:SEM and us6<>0 and us4 in (1,2,3,4)
-                    group by d2,us4,us6,k2, k15,uo3,u16,u1,d1,d27,d32,d34,d36,uo1,sem1, sem7
-                    ORDER BY d2,us4,uo3
+                    group by d2,type_journal,k2, k15,uo3,u16,u1,d1,d27,d32,d34,d36,uo1,sem1, sem7,ucgn2
+                    ORDER BY d2,type_journal,uo3
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':ST1', $st1);
@@ -258,6 +267,11 @@ SQL;
 	}
 
 	public function getOmissions($st1,$uo1,$sem1,$type,$gr1){
+		$ps57 = PortalSettings::model()->getSettingFor(57);
+		$elgz4_str = '';
+		if($ps57==1)
+			$elgz4_str = ' AND elgz4<2 ';
+
 		$sql=<<<SQL
               SELECT r2,us4,elgz3,ustem5, elgzst3,elgzst4,elgzst5, elgp.*,rz8, rz2, rz3,elgz1 from elgzst
               	inner join elgz on (elgzst.elgzst2 = elgz.elgz1)
@@ -266,7 +280,7 @@ SQL;
 				inner join ustem on (elgz.elgz7 = ustem.ustem1)
 				inner join EL_GURNAL_ZAN({$uo1},:GR1,:SEM1, {$type}) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
 				inner join rz on (EL_GURNAL_ZAN.r4 = rz1)
-			  WHERE elgzst1=:ST1 AND elgzst3 > 0
+			  WHERE elgzst1=:ST1 AND elgzst3 > 0 {$elgz4_str}
 SQL;
 
 		$command = Yii::app()->db->createCommand($sql);
@@ -293,6 +307,10 @@ SQL;
 		if($ps55==1){
 			$elgzst4_str = " elgzst4>=0 ";
 		}
+		$ps57 = PortalSettings::model()->getSettingFor(57);
+		$elgz4_str = '';
+		if($ps57==1)
+			$elgz4_str = ' AND elgz4<2 ';
 		$min = Elgzst::model()->getMin();
 
 		$sql=<<<SQL
@@ -302,7 +320,7 @@ SQL;
 				inner join ustem on (elgz.elgz7 = ustem.ustem1)
 				inner join EL_GURNAL_ZAN({$uo1},:GR1,:SEM1, {$type}) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
 				inner join rz on (EL_GURNAL_ZAN.r4 = rz1)
-			  WHERE elgzst1=:ST1 AND elg4!=0 AND elgzst3=0 AND {$elgzst4_str} AND elgzst4<=:MIN
+			  WHERE elgzst1=:ST1 AND elg4!=0 AND elgzst3=0 AND {$elgzst4_str} AND elgzst4<=:MIN {$elgz4_str}
 
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
@@ -316,8 +334,190 @@ SQL;
 		return $res;
 	}
 
+	/**
+	 * Карточка тудента Итоговая успеваемость
+	 * @param $uo1
+	 * @param $sem1
+	 * @param $elg4
+	 * @param $st1
+	 */
+	public function getItogProgressInfo($uo1,$sem1,$elg4,$st1, $gr1)
+	{
+		$elgz4Filter = '';
+		/*просталять ли 0*/
+		$ps55 = PortalSettings::model()->getSettingFor(55);
+		/*обьединять ли с модулями*/
+		$ps57 = PortalSettings::model()->getSettingFor(57);
+		if($ps57){
+			$elgz4Filter = 'AND elgz4 in (0,1)';
+		}
+		$sql = <<<SQL
+			SELECT elgzst3,elgzst4,elgzst5,elgz5, elgz6,r2 FROM elgzst
+				INNER JOIN elgz on (elgzst2 = elgz1)
+				INNER JOIN elg on (elgz2 = elg1 and elg2={$uo1} and elg4=:TYPE_LESSON and elg3={$sem1})
+				inner join EL_GURNAL_ZAN({$uo1},:GR1,:SEM1, 1) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
+			WHERE elg2=:UO1 AND elg4=:ELG4 AND elgzst1=:ST1 AND r2<=:DATE $elgz4Filter
+SQL;
+		$command = Yii::app()->db->createCommand($sql);
+		$command->bindValue(':ST1', $st1);
+		$command->bindValue(':UO1', $uo1);
+		$command->bindValue(':GR1', $gr1);
+		$command->bindValue(':SEM1', $sem1);
+		$command->bindValue(':TYPE_LESSON', 1);
+		$command->bindValue(':DATE', date('Y-m-d H:i:s'));
+		$command->bindValue(':ELG4', $elg4);
+		$marks = $command->queryAll();
+
+		$min = $max = $bal = $countLesson = $countOmissions = $countOmissions1 =0;// $countOmissions1 по уваж причине
+
+		foreach($marks as $mark){
+
+			$min+=$mark['elgz5'];
+			$max+=$mark['elgz6'];
+
+			if(!empty($mark['elgzst5'])&&$mark['elgzst5']!=0){
+				$bal+=$mark['elgzst5'];
+			}else{
+				$bal+=$mark['elgzst4'];
+			}
+
+			if($mark['elgzst3']>0){
+				$countOmissions++;
+				if($mark['elgzst3']==2)
+					$countOmissions1++;
+			}
+
+			//$countLesson++;
+		}
+
+		$sql=<<<SQL
+              SELECT count(*) from elgz
+              	inner join elg on (elgz.elgz2 = elg.elg1 and elg2={$uo1} and elg4=:TYPE_LESSON and elg3={$sem1})
+				inner join EL_GURNAL_ZAN({$uo1},:GR1,:SEM1, 1) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
+			  WHERE elg4!=0 AND r2<=:DATE $elgz4Filter
+
+SQL;
+		$command = Yii::app()->db->createCommand($sql);
+		$command->bindValue(':UO1', $uo1);
+		$command->bindValue(':ST1', $st1);
+		$command->bindValue(':SEM1', $sem1);
+		$command->bindValue(':GR1', $gr1);
+		$command->bindValue(':DATE', date('Y-m-d H:i:s'));
+		$command->bindValue(':TYPE_LESSON', 1);
+		$countLesson = $command->queryScalar();
+
+		return array(
+				'min'=>$min,
+				'max'=>$max,
+				'bal'=>$bal,
+				'countLesson'=>$countLesson,
+				'countOmissions'=>$countOmissions,
+				'countOmissions1'=>$countOmissions1
+		);
+	}
+    /**
+     * Статистика посещаемости по студенту с и по
+     * @param $date1
+     * @param $date2
+     * @param $st1
+     * @return array
+     */
+    public function getAttendanceStatisticInfoByDate($date1,$date2,$st1)
+    {
+        $sql=<<<SQL
+                SELECT *
+                FROM STAT_PROP(:ST1,:DATE1, :DATE2)
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':ST1', $st1);
+        $command->bindValue(':DATE1', $date1);
+        $command->bindValue(':DATE2', $date2);
+        $rows = $command->queryAll();
+
+        $respectful = 0;
+        $disrespectful = 0;
+        $count = 0;
+
+        foreach ($rows as $row){
+            $elgzst3 = $row['prop'];
+            if ($elgzst3 == 1) $disrespectful++;
+            if ($elgzst3 == 2) $respectful++;
+            $count++;
+        }
+
+        return array($respectful,$disrespectful,$count);
+    }
+    /**
+     * Статистика посещаемости по студенту за семестр
+     * @param $year
+     * @param $sem
+     * @param $st1
+     * @return array
+     */
+    public function getAttendanceStatisticInfo($year,$sem,$st1)
+    {
+        $ps57 = PortalSettings::model()->getSettingFor(57);
+        $elgz4_str='';
+        if($ps57==1)
+            $elgz4_str = ' AND elgz4<2 ';
+
+        $sql = <<<SQL
+			SELECT COUNT(*) FROM elgzst
+				INNER JOIN elgz on (elgzst2 = elgz1)
+				INNER JOIN elg on (elgz2 = elg1)
+				INNER JOIN sem on (elg3 = sem1)
+			WHERE sem3=:YEAR AND sem5=:SEM AND elgzst1=:ST1 AND elgzst3=2 {$elgz4_str}
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':ST1', $st1);
+        $command->bindValue(':YEAR', $year);
+        $command->bindValue(':SEM', $sem);
+        $respectful = $command->queryScalar();
+
+        $sql = <<<SQL
+			SELECT COUNT(*) FROM elgzst
+				INNER JOIN elgz on (elgzst2 = elgz1)
+				INNER JOIN elg on (elgz2 = elg1)
+				INNER JOIN sem on (elg3 = sem1)
+			WHERE sem3=:YEAR AND sem5=:SEM AND elgzst1=:ST1 AND elgzst3=1 {$elgz4_str}
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':ST1', $st1);
+        $command->bindValue(':YEAR', $year);
+        $command->bindValue(':SEM', $sem);
+        $disrespectful = $command->queryScalar();
+
+        $sql = <<<SQL
+			SELECT COUNT(*) FROM elgzst
+			  INNER JOIN elgz on (elgzst2 = elgz1)
+				INNER JOIN elg on (elgz2 = elg1)
+				INNER JOIN sem on (elg3 = sem1)
+			WHERE  sem3=:YEAR AND sem5=:SEM  AND elgzst1=:ST1
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':ST1', $st1);
+        $command->bindValue(':YEAR', $year);
+        $command->bindValue(':SEM', $sem);
+        $count = $command->queryScalar();
+
+        return array($respectful,$disrespectful,$count);
+    }
+
+	/**
+	 * Карточка тудента текущая задолженость
+	 * @param $uo1
+	 * @param $sem1
+	 * @param $elg4
+	 * @param $st1
+	 * @param $ps55
+	 * @return array
+	 */
 	public function getRetakeInfo($uo1,$sem1,$elg4,$st1,$ps55)
 	{
+		$ps57 = PortalSettings::model()->getSettingFor(57);
+		$elgz4_str='';
+		if($ps57==1)
+			$elgz4_str = ' AND elgz4<2 ';
 		$elgzst4_str = " elgzst4>0 ";
 		if($ps55==1){
 			$elgzst4_str = " elgzst4>=0 ";
@@ -326,7 +526,7 @@ SQL;
 			SELECT COUNT(*) FROM elgzst
 				INNER JOIN elgz on (elgzst2 = elgz1)
 				INNER JOIN elg on (elgz2 = elg1)
-			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elgzst1=:ST1 AND elgzst3=2
+			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elgzst1=:ST1 AND elgzst3=2 {$elgz4_str}
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':ST1', $st1);
@@ -339,7 +539,7 @@ SQL;
 			SELECT COUNT(*) FROM elgzst
 				INNER JOIN elgz on (elgzst2 = elgz1)
 				INNER JOIN elg on (elgz2 = elg1)
-			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elgzst1=:ST1 AND elgzst3=1
+			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elgzst1=:ST1 AND elgzst3=1 {$elgz4_str}
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':ST1', $st1);
@@ -352,7 +552,7 @@ SQL;
 			SELECT COUNT(*) FROM elgzst
 				INNER JOIN elgz on (elgzst2 = elgz1)
 				INNER JOIN elg on (elgz2 = elg1)
-			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elg4!=0 AND elgzst1=:ST1 AND elgzst3=0 AND {$elgzst4_str} AND elgzst4<=:MIN
+			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elg4!=0 AND elgzst1=:ST1 AND elgzst3=0 AND {$elgzst4_str} AND elgzst4<=:MIN {$elgz4_str}
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':ST1', $st1);
@@ -366,7 +566,7 @@ SQL;
 			SELECT COUNT(*) FROM elgzst
 				INNER JOIN elgz on (elgzst2 = elgz1)
 				INNER JOIN elg on (elgz2 = elg1)
-			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elgzst1=:ST1 AND elgzst3>0 AND (elgzst5>:MIN OR elgzst5=-1)
+			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elgzst1=:ST1 AND elgzst3>0 AND (elgzst5>:MIN OR elgzst5=-1) {$elgz4_str}
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':ST1', $st1);
@@ -380,7 +580,7 @@ SQL;
 			SELECT COUNT(*) FROM elgzst
 				INNER JOIN elgz on (elgzst2 = elgz1)
 				INNER JOIN elg on (elgz2 = elg1)
-			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elg4!=0 AND elgzst1=:ST1 AND elgzst3=0 AND {$elgzst4_str} AND elgzst4<=:MIN1 AND (elgzst5>:MIN2  OR elgzst5=-1)
+			WHERE elg2=:UO1 AND elg3=:SEM1 AND elg4=:ELG4 AND elg4!=0 AND elgzst1=:ST1 AND elgzst3=0 AND {$elgzst4_str} AND elgzst4<=:MIN1 AND (elgzst5>:MIN2  OR elgzst5=-1) {$elgz4_str}
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':ST1', $st1);

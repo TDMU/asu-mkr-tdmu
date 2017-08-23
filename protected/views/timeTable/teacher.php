@@ -44,9 +44,19 @@ if(!(PortalSettings::model()->findByPk(75)->ps2&&Yii::app()->user->isGuest)) {
 	<?php
 	$this->endWidget();
 }
+if($this->mobileCheck()) {
+	?>
+	<div class="pull-right">
+		<?=
+		CHtml::link('<i class="icon-hand-right"></i>'.' '.tt('Мобильный вид'), array('/mobile/timeTableTeacher'));
+		?>
+	</div>
+	<?php
+}
 
 $form=$this->beginWidget('CActiveForm', array(
     'id'=>'timeTable-form',
+	'action'=>array('teacher'),
     'htmlOptions' => array('class' => 'form-inline noprint')
 ));
 

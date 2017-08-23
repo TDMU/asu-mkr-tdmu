@@ -1,20 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "ddo".
+ * This is the model class for table "elgpmkst".
  *
- * The followings are the available columns in table 'ddo':
- * @property integer $ddo1
- * @property string $ddo2
+ * The followings are the available columns in table 'elgpmkst':
+ * @property integer $elgpmkst1
+ * @property integer $elgpmkst2
+ * @property integer $elgpmkst3
+ * @property integer $elgpmkst4
+ * @property double $elgpmkst5
+ *
+ * The followings are the available model relations:
+ * @property Elg $elgpmkst20
+ * @property St $elgpmkst30
  */
-class Ddo1 extends CActiveRecord
+class Elgpmkst extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'ddo';
+		return 'elgpmkst';
 	}
 
 	/**
@@ -25,11 +32,11 @@ class Ddo1 extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ddo1', 'numerical', 'integerOnly'=>true),
-			array('ddo2', 'length', 'max'=>180),
+			array('elgpmkst2, elgpmkst3, elgpmkst4', 'numerical', 'integerOnly'=>true),
+			array('elgpmkst5', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('ddo1, ddo2', 'safe', 'on'=>'search'),
+			array('elgpmkst1, elgpmkst2, elgpmkst3, elgpmkst4, elgpmkst5', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -41,6 +48,8 @@ class Ddo1 extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'elgpmkst20' => array(self::BELONGS_TO, 'Elg', 'elgpmkst2'),
+			'elgpmkst30' => array(self::BELONGS_TO, 'St', 'elgpmkst3'),
 		);
 	}
 
@@ -50,8 +59,11 @@ class Ddo1 extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'ddo1' => 'Ddo1',
-			'ddo2' => 'Ddo2',
+			'elgpmkst1' => 'Elgpmkst1',
+			'elgpmkst2' => 'Elgpmkst2',
+			'elgpmkst3' => 'Elgpmkst3',
+			'elgpmkst4' => 'Elgpmkst4',
+			'elgpmkst5' => 'Elgpmkst5',
 		);
 	}
 
@@ -73,8 +85,11 @@ class Ddo1 extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('ddo1',$this->ddo1);
-		$criteria->compare('ddo2',$this->ddo2,true);
+		$criteria->compare('elgpmkst1',$this->elgpmkst1);
+		$criteria->compare('elgpmkst2',$this->elgpmkst2);
+		$criteria->compare('elgpmkst3',$this->elgpmkst3);
+		$criteria->compare('elgpmkst4',$this->elgpmkst4);
+		$criteria->compare('elgpmkst5',$this->elgpmkst5);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -85,7 +100,7 @@ class Ddo1 extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Ddo the static model class
+	 * @return Elgpmkst the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

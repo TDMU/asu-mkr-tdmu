@@ -82,71 +82,83 @@ $form=$this->beginWidget('CActiveForm', array(
     <?php $url2 = $this->createUrl('/other/updateNkrs') ?>
 
     <?php
-    $cod = SH::getUniversityCod();
-    if($cod==7){
-        ?>
-        <div class="alert alert-warning">
-            <strong>Внимание!</strong></br>
-            При занесении темы курсовой/дипломной работы придерживайтесь следующих правил:</br>
-            1. Тема должна состоять из одного предложения (использование точек не допускается). Точка в конце предложения НЕ ставится;</br>
-            2. Избегайте кавычек и лишних пробелов;</br>
-            3. Использование аббревиатур не допускается;</br>
-            4. При возникновении проблем с оформлением заявления пишите на почту edu@law.msu.ru c пометкой Выпуск-[год].</br>
-        </div>
-    <?php } ?>
+    /*$blockTheme = false;
+    if(PortalSettings::model()->getSettingFor(72)==1)
+        $blockTheme = true;
 
-    <div class="control-group" data-autocompleteUrl="<?= $url1?>" data-updateNkrs="<?= $url2?>">
-        <?= CHtml::label(tt('Тема курсовой'), '', array('class' => 'control-label')) ?>
-        <div class="controls">
-            <?php
-                $discipline = D::model()->getDisciplineForCourseWork($model->student);
-                list($rus, $eng) = Spkr::model()->findAllInArray();
-                if ($discipline) {
+    $sg1 = St::model()->getSg1BySt1($model->student);
+    if(Cwb::model()->findByPk($sg1)!==null)
+        $blockTheme = true;*/
 
-                    echo '<strong>'.$discipline['d2'].'</strong>'.'<br>';
-
-                    $courseWork = D::model()->getFirstCourseWork($model->student, $discipline['us1']);
-                    if(!empty($courseWork))
-                    {
-                        $nkrs1 = $courseWork['nkrs1'];
-                        $p1    = $courseWork['nkrs6'];
-                        $nkrs6 = P::model()->getTeacherNameWithDol($courseWork['nkrs6']);
-                        $nkrs7 = $courseWork['nkrs7'];
-                    }
-                    else
-                    {
-                        $nkrs1 = -1;
-                        $nkrs6='';
-                        $nkrs7=-1;
-
-                    }
-                        echo CHtml::tag('div', array('data-nkrs1' => $nkrs1,'data-st1' =>$model->student,'data-us1' =>$discipline['us1'])).
-                                CHtml::dropDownList('nkrs7', $nkrs7,  array('0' => '--Select--')+$rus, array('id' => false, 'class' => 'chosen-select', 'style'=>'width:50%')).
-                                CHtml::label(tt('Научный руководитель'), '', array()).
-                                CHtml::textField('nkrs6', $nkrs6, array('class' => 'autocomplete')).'<br>'.
-                             CHtml::closeTag('div');
-
-
-                }
+    $blockTheme = false;
+    if(!$blockTheme):
+        $cod = SH::getUniversityCod();
+        if($cod==7){
             ?>
+            <div class="alert alert-warning">
+                <strong>Внимание!</strong></br>
+                При занесении темы курсовой/дипломной работы придерживайтесь следующих правил:</br>
+                1. Тема должна состоять из одного предложения (использование точек не допускается). Точка в конце предложения НЕ ставится;</br>
+                2. Избегайте кавычек и лишних пробелов;</br>
+                3. Использование аббревиатур не допускается;</br>
+                4. При возникновении проблем с оформлением заявления пишите на почту edu@law.msu.ru c пометкой Выпуск-[год].</br>
+            </div>
+        <?php } ?>
+
+        <div class="control-group" data-autocompleteUrl="<?= $url1?>" data-updateNkrs="<?= $url2?>">
+            <?= CHtml::label(tt('Тема курсовой'), '', array('class' => 'control-label')) ?>
+            <div class="controls">
+                <?php
+                    $discipline = D::model()->getDisciplineForCourseWork($model->student);
+                    list($rus, $eng) = Spkr::model()->findAllInArray();
+                    if ($discipline) {
+
+                        echo '<strong>'.$discipline['d2'].'</strong>'.'<br>';
+
+                        $courseWork = D::model()->getFirstCourseWork($model->student, $discipline['us1']);
+                        if(!empty($courseWork))
+                        {
+                            $nkrs1 = $courseWork['nkrs1'];
+                            $p1    = $courseWork['nkrs6'];
+                            $nkrs6 = P::model()->getTeacherNameWithDol($courseWork['nkrs6']);
+                            $nkrs7 = $courseWork['nkrs7'];
+                        }
+                        else
+                        {
+                            $nkrs1 = -1;
+                            $nkrs6='';
+                            $nkrs7=-1;
+
+                        }
+                            echo CHtml::tag('div', array('data-nkrs1' => $nkrs1,'data-st1' =>$model->student,'data-us1' =>$discipline['us1'])).
+                                    CHtml::dropDownList('nkrs7', $nkrs7,  array('0' => '--Select--')+$rus, array('id' => false, 'class' => 'chosen-select', 'style'=>'width:50%')).
+                                    CHtml::label(tt('Научный руководитель'), '', array()).
+                                    CHtml::textField('nkrs6', $nkrs6, array('class' => 'autocomplete')).'<br>'.
+                                 CHtml::closeTag('div');
+
+
+                    }
+                ?>
+            </div>
         </div>
-    </div>
 
-    <div class="control-group">
-        <?= CHtml::label(tt('Тема курсовой (англ.)'), '', array('class' => 'control-label')) ?>
-        <div class="controls">
-            <?php
-                if ($discipline) {
+        <div class="control-group">
+            <?= CHtml::label(tt('Тема курсовой (англ.)'), '', array('class' => 'control-label')) ?>
+            <div class="controls">
+                <?php
+                    if ($discipline) {
 
-                    echo '<strong>'.$discipline['d2'].'</strong>'.'<br>';
-                        echo CHtml::tag('div').
-                                CHtml::dropDownList('nkrs7-eng', $nkrs7,  array('0' => '--Select--')+$eng, array('style'=>'width:72%', 'disabled' => true)).
-                             CHtml::closeTag('div');
-                }
-            ?>
+                        echo '<strong>'.$discipline['d2'].'</strong>'.'<br>';
+                            echo CHtml::tag('div').
+                                    CHtml::dropDownList('nkrs7-eng', $nkrs7,  array('0' => '--Select--')+$eng, array('style'=>'width:72%', 'disabled' => true)).
+                                 CHtml::closeTag('div');
+                    }
+                ?>
+            </div>
         </div>
-    </div>
-
+    <?php else: ?>
+        <div class="alert alert-warning"><?=tt('Редактирование тем закрыто.')?></div>
+    <?php endif; ?>
     <div class="form-actions">
         <button type="submit" class="btn btn-info">
             <i class="icon-ok bigger-110"></i>

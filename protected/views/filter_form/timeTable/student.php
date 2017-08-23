@@ -25,9 +25,13 @@ $form=$this->beginWidget('CActiveForm', array(
     }
 
     //$faculties = CHtml::listData(F::model()->getFacultiesFor($model->filial), 'f1', 'f3');
-    $faculties = F::model()->getFacultiesFor($model->filial);
+    $faculties = F::model()->getFacultiesFor($model->filial,1);
     if(count($faculties)==1)
         $model->faculty = key($faculties);
+
+    if($model->faculty==5&&SH::getUniversityCod()==U_NULAU)
+        $model->faculty = 1;
+
     $html .= '<div class="span2 ace-select">';
     $html .= $form->label($model, 'faculty');
     $html .= $form->dropDownList($model, 'faculty', $faculties, $options);

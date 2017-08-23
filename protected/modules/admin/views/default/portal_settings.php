@@ -4,8 +4,9 @@ $this->breadcrumbs=array(
 tt('Настройки портала'),
 );
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/journal.js');
+Yii::app()->clientScript->registerPackage('jquery.ui');
 Yii::app()->clientScript->registerPackage('datepicker');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/psettings.js');
+//Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/psettings.js');
 
 $htmlOptions2 = array(
     'class'=>'ace',
@@ -16,6 +17,22 @@ $options = array(
     'ru'=>tt('Ru'),
     'en'=>tt('en'),
 );
+
+
+$js =<<<JS
+    $('.sem-start').datepicker({
+        format: 'mm-dd',
+        language: 'ru',
+        maxViewMode:1,
+        minViewMode:0
+    })
+    .on('changeDate', function (ev) {
+        $(this).datepicker('hide');
+    })
+    //.focus();
+JS;
+
+Yii::app()->clientScript->registerScript('sem-start', $js);
 ?>
 <div class="span6">
     <div class="widget-box">
@@ -40,6 +57,11 @@ $options = array(
                     'class'=>'ace',
                 );
                 ?>
+                <div class="control-group">
+                    <?=CHtml::checkBox('', PortalSettings::model()->findByPk(107)->ps2, $checkboxStyle)?>
+                    <span class="lbl"> <?=tt('Использовать стусв')?></span>
+                    <?=CHtml::hiddenField('settings[107]', PortalSettings::model()->findByPk(107)->ps2)?>
+                </div>
 
                 <div class="control-group">
                     <?=CHtml::checkBox('', PortalSettings::model()->findByPk(80)->ps2, $checkboxStyle)?>
@@ -121,7 +143,7 @@ $options = array(
 
                 <div class="control-group">
                     <span class="lbl"> <?=tt('Начало Весеннего семестра')?>:</span>
-                    <?=CHtml::textField('settings[53]', PortalSettings::model()->findByPk(53)->ps2,array('class' => 'sem-start datepicker'))?>
+                    <?=CHtml::textField('settings[53]', PortalSettings::model()->findByPk(53)->ps2,array('class' => 'sem-start datepicker','date-format'=>'mm-dd'))?>
                 </div>
 
                 <div class="control-group">
@@ -133,7 +155,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                             /*'settings'=>array(
                                 'theme' => "advanced",
@@ -152,7 +174,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                             /*'settings'=>array(
                                 'theme' => "advanced",
@@ -171,7 +193,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                             /*'settings'=>array(
                                 'theme' => "advanced",
@@ -191,7 +213,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                             /*'settings'=>array(
                                 'theme' => "advanced",
@@ -211,7 +233,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                             /*'settings'=>array(
                                 'theme' => "advanced",
@@ -273,6 +295,20 @@ $options = array(
                     <span class="lbl"> <?=tt('APICORP_ADDRESS')?>:</span>
                     <?=CHtml::textField('settings[71]', PortalSettings::model()->findByPk(71)->ps2)?>
                 </div>
+
+
+                <span class="lbl"> <?=tt('Шаблон письма с отчетом')?>:</span><br>
+                <span class="blue">{username}-логин, {name}- имя, {student}-имя студента, {link}-ссылка на отчет</span>
+                <?php $this->widget('application.extensions.elFinderTinyMce.TinyMce',
+                    array(
+                        'name'=>'settings[118]',
+                        'value'=>PortalSettings::model()->findByPk(118)->ps2,
+                        'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
+                        'fileManager' => array(
+                            'class' => 'ext.elFinder.TinyMceElFinder',
+                            'connectorRoute'=>'/admin/default/connector',
+                        ),
+                    )); ?>
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-info btn-small">
@@ -355,7 +391,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                         )); ?>
                 </div>
@@ -369,7 +405,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                         )); ?>
                 </div>
@@ -383,7 +419,7 @@ $options = array(
                             'htmlOptions'=>array('rows'=>6, 'cols'=>50, 'class'=>'tinymce'),
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
-                                'connectorRoute'=>'/site/connector',
+                                'connectorRoute'=>'/admin/default/connector',
                             ),
                         )); ?>
                 </div>

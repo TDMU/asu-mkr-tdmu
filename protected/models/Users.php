@@ -14,6 +14,8 @@
  * @property integer $u8
  * @property string $u9
  * @property string $u10
+ * @property string $u11
+ * @property string $u12
  */
 class Users extends CActiveRecord
 {
@@ -48,19 +50,22 @@ class Users extends CActiveRecord
 			//array('u2, u3','length',  'min' => 8,'max'=>30),
 			array('u3', 'match', 'pattern'=>'/^[a-zA-Z0-9-_\.,\/$|]{7,}$/','message'=>tt('В password могут быть только строчные и прописные латинские буквы, цифры, спецсимволы. Минимум 8 символов')),
 			array('u4', 'length', 'max'=>400),
-			array('u9, u10', 'length', 'max'=>45),
+			array('u9, u10, u12', 'length', 'max'=>45),
             array('u2, u4', 'checkIfUnique'),
             //array('u2', 'length', 'min'=>5, 'max'=>30),
             // Логин должен соответствовать шаблону
-            array('u2', 'match', 'pattern'=>'/^[a-zA-Z][a-zA-Z0-9]{7,30}$/','message'=>tt('В login могут быть только латинские символы и цифры,  длиной от 8 до 30 символов')),
+            array('u2', 'match', 'pattern'=>'/^[a-zA-Z][a-zA-Z0-9]{7,30}$/','message'=>tt('В login могут быть только латинские символы и цифры,  длиной от 8 до 30 символов. Также логин должен начинаться с латинской буквы')),
             array('u4', 'email'),
             array('u2, u3, u4, password', 'required', 'on'=>'admin-create,admin-update'),
 			array('u2,u4 ,u3, password', 'safe', 'on'=>'change-password'),
+			array('u8', 'unsafe', 'on'=>'change-password'),
 			array('u2,u4 ,u3, password', 'required', 'on'=>'change-password'),
 			array('u3', 'compare', 'compareAttribute'=>'password', 'on'=>'change-password,admin-create,admin-update'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('u1, u2, u3, u4, u5, u6, u7,u8', 'safe', 'on'=>'search'),
+			array('u5,u6,u7,u9,u10,u11,u12','unsafe')
+
 		);
 	}
 
@@ -310,9 +315,17 @@ HTML;
 		Controller::mail($this->u4, tt('Пароль изменен'), $message);
 	}
 
+	private function genAuthKey(){
+        $token = openssl_random_pseudo_bytes(12);
+        $key   = bin2hex($token);
+
+        $this->u12 = $key;
+    }
+
 	public function beforeSave(){
 		if($this->isNewRecord){
 			$this->setPassword();
+			$this->genAuthKey();
 		}
 		else{
 			$model=self::model()->findByPk($this->u1);
@@ -350,6 +363,172 @@ HTML;
 		$timestamp = (int) substr($token, strrpos($token, '_') + 1);
 		$expire = 3600;
 		return $timestamp + $expire >= time();
+	}
+
+	/**
+	 * доп ключ для востановления пароля
+	 */
+	public function getValidationKey(){
+		$uCod = SH::getUniversityCod();
+		return md5(crypt($uCod.'mkp'.$uCod.$this->u2.'mkr',$this->u1.$uCod.$this->u10));
+	}
+
+	public function isValidKey($key){
+		$uCod = SH::getUniversityCod();
+		return $key===md5(crypt($uCod.'mkp'.$uCod.$this->u2.'mkr',$this->u1.$uCod.$this->u10));
+	}
+
+	/**
+	 * Количество неудачных попыток авторизаций за последнии $countMin минут
+	 * @param $countMin int количетво минут
+	 * @return int
+	 */
+	public function getCountFail($countMin){
+		//getAttribute('loginAttempt')
+
+		$date = new DateTime();
+		$date->modify("-{$countMin} minutes");
+
+		/*var_dump($date);
+
+		var_dump($date->format('d.m.Y H:i:s'));
+
+		var_dump(date('Y-m-d H:i:s', strtotime("-{$countMin} minute")));*/
+		$count = Yii::app()->db->createCommand()
+				->select('count(*)')
+				->from('users_auth_fail')
+				->where('user_id=:id and date_fail>=:date', array(':id'=>$this->u1, ':date'=>$date->format('d.m.Y H:i:s')))
+				->queryScalar();
+		return $count;
+	}
+
+	public function saveNewFail(){
+		$command = Yii::app()->db->createCommand();
+		$command->insert('users_auth_fail', array(
+				'user_id'=>$this->u1,
+				'date_fail'=>date('Y-m-d H:i:s')
+		));
+	}
+
+	const COOKIE_NAME_AUTH_KEY = 'akc';
+
+	//const COOKIE_NAME_AUTH_KEY1 = 'akc1';
+
+	const SESSION_NAME_AUTH_KEY = 'aks';
+
+	const SESSION_NAME_AUTH_KEY1 = 'aks1';
+
+	public function afterLogin(){
+		$ps114 = PortalSettings::model()->getSettingFor(114);
+		if($ps114==1){
+			$this->_generateU12();
+		}
+		$ps115 = PortalSettings::model()->getSettingFor(115);
+		if($ps115==1) {
+			$key = $this->_getKey();
+
+			$nameCookie = self::COOKIE_NAME_AUTH_KEY;
+			$cookie = new CHttpCookie($nameCookie, $this->_getCookieKey($key));
+			//$cookie->httpOnly = true;
+			Yii::app()->request->cookies[$nameCookie] = $cookie;
+
+			//записіваем в сессию
+			Yii::app()->session[self::SESSION_NAME_AUTH_KEY] = $this->_getSessionKey($key);
+
+			/*$nameCookie = self::COOKIE_NAME_AUTH_KEY1;
+            $cookie=new CHttpCookie($nameCookie,$this->_getCookieKey1($key));
+            //$cookie->httpOnly = true;
+            Yii::app()->request->cookies[$nameCookie]=$cookie;*/
+
+			//записіваем в сессию
+			Yii::app()->session[self::SESSION_NAME_AUTH_KEY1] = $this->_getSessionKey1($key);
+		}
+	}
+
+	public function validateLogin(){
+		$ps115 = PortalSettings::model()->getSettingFor(115);
+		if($ps115==0)
+			return true;
+		$key = $this->_getKey();
+		//проверка на совпадении спец ключа в куки
+		$cookie=Yii::app()->request->cookies[self::COOKIE_NAME_AUTH_KEY];
+		if($cookie==null)
+			return false;
+		if($cookie->value !== $this->_getCookieKey($key))
+			return false;
+
+		//проверка на совпадении спец ключа в куки
+		/*$cookie=Yii::app()->request->cookies[self::COOKIE_NAME_AUTH_KEY1];
+		if($cookie==null)
+			return false;
+		if($cookie->value !== $this->_getCookieKey1($key))
+			return false;*/
+
+		if(Yii::app()->session[self::SESSION_NAME_AUTH_KEY]!==$this->_getSessionKey($key))
+            return false;
+
+		if(Yii::app()->session[self::SESSION_NAME_AUTH_KEY1]!==$this->_getSessionKey1($key))
+			return false;
+
+		return true;
+	}
+
+	/**
+	 * доб ключ для сессии и кук
+	 * @return string
+	 */
+	protected function _getKey(){
+		$key = '';
+		if(isset(Yii::app()->params['login-key']))
+			$key .= Yii::app()->params['login-key'];
+		$ps117 = PortalSettings::model()->getSettingFor(117);
+		if($ps117==1)
+			$key.=Yii::app()->request->userAgent;
+
+		$ps116 = PortalSettings::model()->getSettingFor(116);
+		if($ps116==1)
+			$key.=Yii::app()->request->userHostAddress;
+
+		return $key;
+	}
+
+	const CRYPT_KEY_COOKIE = 'fsdfsd1';
+	const CRYPT_KEY_SESSION = 'sada32';
+	/**
+	 * шифровка названиии ключа для сессии
+	 * @return string
+	 */
+	protected function _getSessionKey($key){
+
+		return md5($this->u12.self::CRYPT_KEY_SESSION.$key);
+	}
+	/**
+	 * шифровка названиии ключа для куки
+	 * @return string
+	 */
+	protected function _getCookieKey($key){
+		return crypt($key.$this->u12,self::CRYPT_KEY_COOKIE);
+	}
+	/**
+	 * шифровка названиии ключа для куки1
+	 * @return string
+	 */
+	/*protected function _getCookieKey1($key = ''){
+		return md5('mkp'.$this->u2..$key);
+	}*/
+	/**
+	 * шифровка названиии ключа для сессии1
+	 * @return string
+	 */
+	protected function _getSessionKey1($key = ''){
+		return crypt($this->u1,$key.'mkp');
+	}
+
+	protected function _generateU12(){
+		$token = openssl_random_pseudo_bytes(10);
+		$key   = bin2hex($token);
+
+		$this->saveAttributes(array('u12'=>$key));
 	}
 
 }

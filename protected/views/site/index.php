@@ -17,7 +17,7 @@ switch (Yii::app()->language){
         case 'en': $id=63; break;
         default: $id=62; break;
 }
-
+echo '<div style="margin-top: 50px">';
 $univeristyCod = SH::getUniversityCod();
 if($univeristyCod==7) {
         if ($_SERVER['SERVER_NAME'] == 'tt.audit.msu.ru') {
@@ -27,5 +27,6 @@ if($univeristyCod==7) {
         }
 }else
         echo PortalSettings::model()->findByPk($id)->ps2;
+echo '</div>';
 ?>
 

@@ -82,7 +82,7 @@ if (!empty($model->sem1)):
             'type' => 'danger',
 
             'icon' => 'refresh',
-            'label' => tt('Пересчетать ведомости'),
+            'label' => tt('Пересчитать ведомости'),
             'htmlOptions' => array(
                 'class' => 'btn-small',
                 'data-url' => Yii::app()->createUrl('/journal/recalculateVmp', array('uo1' => $uo1, 'gr1' => $gr1, 'sem1' => $model->sem1, 'type' => $model->type_lesson)),
@@ -91,8 +91,31 @@ if (!empty($model->sem1)):
         ));
     }
 
+    $ps84 = PortalSettings::model()->findByPk(84)->ps2;
+    if ($ps84 == 1) {
+        $this->widget('bootstrap.widgets.TbButton', array(
+            'buttonType' => 'button',
+            'type' => 'inverse',
+
+            'icon' => 'refresh',
+            'label' => tt('Пересчитать ведомости(и.)'),
+            'htmlOptions' => array(
+                'class' => 'btn-small',
+                'data-url' => Yii::app()->createUrl('/journal/recalculateStus', array('uo1' => $uo1, 'gr1' => $gr1, 'sem1' => $model->sem1, 'type' => $model->type_lesson)),
+                'id' => 'recalculate-stus',
+            )
+        ));
+    }
+
     ?>
         <span><label class="label label-warning">&nbsp;&nbsp;</label> - <?=tt('Информация требует обновления страницы')?></span>
+        <div class="span-12">
+            <?= tt("Режим чтения")?>:
+            <label class="label label-warning">+</label> - <?= tt("Присутствовал на занятии")?>
+            <label class="label label-warning">-</label> - <?= tt("Отсутствовал на занятии")?>
+            <label class="label label-success">5</label> - <?= tt("Оценка за занятие")?>
+            <label class="label label-inverse">5</label> - <?= tt("Отработка занятия")?>
+        </div>
     <?php
     endif;
 
@@ -189,6 +212,19 @@ JS
         <?=tt('Вы уверены?')?>
     </p>
 </div><!-- #dialog-confirm -->
+
+    <div id="dialog-confirm-fin-block" class="hide" title="Empty the recycle bin?">
+        <div class="alert alert-info bigger-110">
+            <?=tt('Проставление отметки о извещении студента о задолжености по оплате!')?>
+        </div>
+
+        <div class="space-6"></div>
+
+        <p class="bigger-110 bolder center grey">
+            <i class="icon-hand-right blue bigger-120"></i>
+            <?=tt('Вы уверены?')?>
+        </p>
+    </div><!-- #dialog-confirm -->
 
 <?php  $this->beginWidget(
         'bootstrap.widgets.TbModal',

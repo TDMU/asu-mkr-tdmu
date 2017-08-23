@@ -17,6 +17,15 @@ $this->breadcrumbs=array(
 
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/timetable/timetable.js', CClientScript::POS_HEAD);
 
+if($this->mobileCheck()) {
+	?>
+	<div class="pull-right">
+		<?=
+		CHtml::link('<i class="icon-hand-right"></i>'.' '.tt('Мобильный вид'), array('/mobile/timeTableSelf'));
+		?>
+	</div>
+	<?php
+}
 
 echo '<div class="noprint">';
 $this->renderPartial('/filter_form/timeTable/self', array(

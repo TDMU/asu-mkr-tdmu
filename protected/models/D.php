@@ -394,8 +394,16 @@ SQL;
         return $disciplines;
     }
 
+    /**
+     * списоу дисциплин для журнала для старосты по гурппе
+     * @param $group int группа возможно виртуальная
+     * @return array
+     */
     public function getDisciplinesForSstPermition($group)
     {
+        if(empty($group))
+            return array();
+
         $sql = <<<SQL
             select d2,d1,uo1
             from gr
@@ -408,7 +416,7 @@ SQL;
                inner join uo on (us.us2 = uo.uo1)
                inner join d on (uo.uo3 = d.d1)
                inner join sem on (us.us12 = sem.sem1)
-            where UCSN3=:GR1 and sem3=:YEAR and sem5=:SEM and UCGNS5=:YEAR1 and UCGNS6=:SEM1
+            where ucgn2=:GR1 and sem3=:YEAR and sem5=:SEM and UCGNS5=:YEAR1 and UCGNS6=:SEM1
             group by d2,d1,uo1
             order by d2 collate UNICODE
 SQL;
@@ -744,11 +752,15 @@ SQL;
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':d1', $d1);
         $ad = $command->queryRow();
+
         if($ad==null)
             return '';
         else {
-			return CHtml::link('<i class="icon-file"></i>','#', array('data-disp'=>$ad['d2'],'data-content'=>$ad['ad4'],'class'=>'disp-ad','style'=>'margin-left:10px'));
-	
+            if(mb_detect_encoding($ad['ad4'], 'UTF-8', true))
+                $str = $ad['ad4'];
+            else
+                $str = mb_convert_encoding($ad['ad4'], "UTF-8", "CP1251");
+			return CHtml::link('<i class="icon-file"></i>','#', array('data-disp'=>$ad['d2'],'data-content'=> nl2br($str),'class'=>'disp-ad','style'=>'margin-left:10px'));
             //return '<a class="disp-ad" data-toggle="popover" data-placement="bottom" data-content="'.$ad['ad4'].'"><i class="icon-file"></i></a>';
         }
     }
@@ -1277,5 +1289,35 @@ SQL;
             return array($year, $sem);
 
         return array($params['sg40'], $params['sg41']);
+    }
+
+    /**
+     * список дисциплин для статистики посещаемости погруппе
+     * @param $gr1 int
+     * @param $sem1 int
+     * @return mixed
+     */
+    public function getDisciplinesForAttendanceStatistic($gr1, $sem1){
+        $sql = <<<SQL
+        SELECT d1,d2 from ucsn
+            inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
+            inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
+            inner join st on (ucsn.ucsn2 = st.st1)
+            INNER JOIN std on (st.st1 = std.std2)
+            inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
+            inner join ucx on (ucxg.ucxg1 = ucx.ucx1)
+            inner join uo on (ucx.ucx1 = uo.uo19)
+            inner join elg on (uo.uo1 = elg.elg2)
+            inner join d on (uo.uo3 = d.d1)
+        WHERE std3 = :GR1 and elg3 = :SEM1 and STD11 in (0,5,6,8) and (STD7 is null)
+        GROUP BY d1,d2 order by d2 collate UNICODE
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':GR1', $gr1);
+        $command->bindValue(':SEM1', $sem1);
+        $disciplines = $command->queryAll();
+
+        return $disciplines;
     }
 }

@@ -12,6 +12,8 @@ class TimeTableForm extends CFormModel
 	public $classroom;
 	public $housing = 0;
 
+	public $speciality;
+
 	public $lessonStart = 1;
 	public $lessonEnd   = 1;
 
@@ -48,8 +50,17 @@ class TimeTableForm extends CFormModel
 
             array('filial, faculty, course, group', 'required', 'on' => 'list-group'),
             array('filial, chair', 'required', 'on' => 'list-chair'),
+
+            array('filial, faculty, speciality, course', 'required', 'on' => 'attendanceStatisticPrint'),
 		);
 	}
+
+    public function __construct($scenario='')
+    {
+        $this->r11 = PortalSettings::model()->getSettingFor(108);
+
+        parent::__construct($scenario='');
+    }
 
 	/**
 	 * Declares customized attribute labels.
@@ -86,6 +97,7 @@ SQL;
                     //'filial'=> tt('Филиал'),
                     'chair'=> tt('Кафедра'),
                     //'faculty'=> tt('Факультет'),
+                    'speciality'=> tt('Специальность'),
                     'course'=> tt('Курс'),
                     'printAttr'=>tt('Печать расписания с аббревиатурой дисциплин'),
                     'group'=> tt('Группа'),
@@ -95,6 +107,7 @@ SQL;
                     'housing'=> tt('Корпус'),
                     'r11' => tt('Индикация изменений в расписании'),
                     'date1' => tt('Дата'),
+                    'date2' => tt('Дата 2'),
                     'lessonStart' => tt('Начало'),
                     'lessonEnd' => tt('Окончание'),
                         )+$arr;
@@ -422,7 +435,7 @@ HTML;
 {$time}
  {$tem_name}
  <br>{$d2}[{$tip}]<br>
- {$gr3_}<br>
+ {$gr3}<br>
 {$class}. {$a2}<br>
 {$fio}<br>
 {$text}: {$added}<br>
@@ -510,14 +523,26 @@ HTML;
                 //$res[$r2]['timeTable'][$r3]['printText']  = '=СЦЕПИТЬ("'.$this->cellPrintTextFor($day, $type).'";СИМВОЛ(10))';
 
                 $res[$r2]['timeTable'][$r3][] = $day;
+                $res[$r2]['timeTable'][$r3]['day'] = $day;
+                $res[$r2]['timeTable'][$r3]['gr3'] = $day['gr3'];
 
             } else {
+                if($day['fio']!=$res[$r2]['timeTable'][$r3]['day']['fio']) {
+                    $res[$r2]['timeTable'][$r3]['shortText'] .= $this->cellShortTextFor($day, $type);
 
-                $res[$r2]['timeTable'][$r3]['shortText'] .= $this->cellShortTextFor($day, $type);
-                $res[$r2]['timeTable'][$r3]['fullText']  .= $this->cellFullTextFor($day, $type);
-                $res[$r2]['timeTable'][$r3]['printText']  .= ' '.$this->cellPrintTextFor($day, $type);
+                    $res[$r2]['timeTable'][$r3]['fullText'] = str_replace('{$gr3}',$res[$r2]['timeTable'][$r3]['gr3'],$res[$r2]['timeTable'][$r3]['fullText']);
+                    $res[$r2]['timeTable'][$r3]['printText'] = str_replace('{$gr3}',$res[$r2]['timeTable'][$r3]['gr3'],$res[$r2]['timeTable'][$r3]['printText']);
 
-                $res[$r2]['timeTable'][$r3][] = $day;
+                    $res[$r2]['timeTable'][$r3]['fullText'] .= $this->cellFullTextFor($day, $type);
+                    $res[$r2]['timeTable'][$r3]['printText'] .= ' ' . $this->cellPrintTextFor($day, $type);
+
+                    $res[$r2]['timeTable'][$r3][] = $day;
+                    $res[$r2]['timeTable'][$r3]['day'] = $day;
+                    $res[$r2]['timeTable'][$r3]['gr3'] = $day['gr3'];
+                }else
+                {
+                    $res[$r2]['timeTable'][$r3]['gr3'] .= ','.$day['gr3'];
+                }
             }
 
         }
@@ -533,7 +558,7 @@ HTML;
 
             foreach ($params['timeTable'] as $lessonNum => $data) {
 
-                unset($data['shortText'], $data['fullText'], $data['printText'], $data['color']);
+                unset($data['day'],$data['gr3'],$data['shortText'], $data['fullText'], $data['printText'], $data['color']);
 
                 $lessonAmount = count($data);
 
@@ -592,5 +617,27 @@ HTML;
         $fullTimeTable = $this->fillTameTable($timeTable, 1);
 
         return array($minMax, $fullTimeTable);
+    }
+
+    /**
+     * загрузка пареметров преподователя для прямой ссылки
+     * @param $p1 int
+     */
+    public function loadByP1($p1){
+
+        if($this->scenario!='teacher'&&$this->scenario!="mobile-teacher")
+            return;
+
+        if(empty($p1))
+            return;
+
+        $teacherParams = P::model()->getTeacherParamsByP1(intval($p1));
+        if(empty($teacherParams))
+            return;
+
+        $this->filial = $teacherParams['ks1'];
+        $this->faculty = $teacherParams['f1'];
+        $this->chair = $teacherParams['k1'];
+        $this->teacher = $teacherParams['p1'];
     }
 }
