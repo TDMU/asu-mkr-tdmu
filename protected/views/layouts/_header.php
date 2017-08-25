@@ -69,8 +69,7 @@
                                 </a>
                             </li>
                             <?php
-                            //$ps102= PortalSettings::model()->findByPk(102)->ps2;
-                            $ps102=0;
+							$ps102 = (isset(PortalSettings::model()->findByPk(102)->ps2)?PortalSettings::model()->findByPk(102)->ps2:0);
                             if($ps102==0) {
                             ?>
                                 <li>
@@ -81,8 +80,7 @@
                                 </li>
                                 <?php
                             }
-                             //$ps98 = PortalSettings::model()->findByPk(98)->ps2;
-                             $ps98 =0;
+							 $ps98 = (isset(PortalSettings::model()->findByPk(98)->ps2)?PortalSettings::model()->findByPk(98)->ps2:0);
                              if($ps98==0){
                              ?>
                                 <li>
@@ -93,8 +91,7 @@
                                 </li>
                              <?php
                              }
-                             //$ps103= PortalSettings::model()->findByPk(103)->ps2;
-                             $ps103=0;
+							 $ps103 = (isset(PortalSettings::model()->findByPk(103)->ps2)?PortalSettings::model()->findByPk(103)->ps2:0);
                              if($ps103==0) {
                              ?>
                                 <li>

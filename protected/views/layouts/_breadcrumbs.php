@@ -1,6 +1,7 @@
 <div class="noprint">
 <?php
-    //if(PortalSettings::model()->findByPk(105)->ps2!=1):
+	$ps105 = (isset(PortalSettings::model()->findByPk(105)->ps2)?PortalSettings::model()->findByPk(105)->ps2:0);
+    if($ps105!=1):
 ?>
 <div id="breadcrumbs" class="breadcrumbs breadcrumbs-fixed">
     <script type="text/javascript">
@@ -15,12 +16,12 @@
     )); ?>
 
 </div>
-    <?php //else:
-        //Yii::app()->clientScript->registerCss('breadcrumbs', <<<CSS
-        //        .main-container .main-content .page-header {
-        //            margin-top: 15px!important;
-        //        }
-//CSS
-  //      );
-  //  endif;?>
+    <?php else:
+        Yii::app()->clientScript->registerCss('breadcrumbs', <<<CSS
+                .main-container .main-content .page-header {
+                    margin-top: 15px!important;
+                }
+CSS
+        );
+    endif;?>
 </div>
