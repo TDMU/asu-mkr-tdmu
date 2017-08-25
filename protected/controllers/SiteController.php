@@ -86,9 +86,6 @@ class SiteController extends Controller
 	 */
 	public function actionLogin()
 	{
-          
-
-        
        // if (! Yii::app()->request->isAjaxRequest)
        //     $this->redirect('index');
  
@@ -102,8 +99,7 @@ class SiteController extends Controller
 		}
 
 		// collect user input data
-		if(isset($_POST['LoginForm']))
-		{
+		if(isset($_POST['LoginForm'])) {
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
 			if($model->validate()&&$model->login()) {
@@ -124,9 +120,7 @@ class SiteController extends Controller
 						break;
 				}
 
-				if(!empty($message))
-					Yii::app()->user->setState('info_message', $message);
-
+				if(!empty($message)) Yii::app()->user->setState('info_message', $message);
 
 				if($this->universityCode==U_ZSMU){
 					//$sKeySettings = PortalSettings::model()->findByPk(PortalSettings::ZAP_SUPPORT_SECRET_KEY_ID);
@@ -141,82 +135,80 @@ class SiteController extends Controller
 			}
 				//$this->redirect(Yii::app()->user->returnUrl);
 		} else {
-        
-        $serviceName = Yii::app()->request->getQuery('service');
-		if (isset($serviceName)) {
-			/** @var $eauth EAuthServiceBase */
-			$eauth = Yii::app()->eauth->getIdentity($serviceName);
-			$eauth->redirectUrl = Yii::app()->user->returnUrl;
+			$serviceName = Yii::app()->request->getQuery('service');
+			if (isset($serviceName)) {
+				/** @var $eauth EAuthServiceBase */
+				$eauth = Yii::app()->eauth->getIdentity($serviceName);
+				$eauth->redirectUrl = Yii::app()->user->returnUrl;
 //var_dump(Yii::app()->user);            
-			$eauth->cancelUrl = $this->createAbsoluteUrl('site/login');
+				$eauth->cancelUrl = $this->createAbsoluteUrl('site/login');
 
-			try {
-				if ($eauth->authenticate()) {
-					//var_dump($eauth->getIsAuthenticated(), $eauth->getAttributes());
-					$identity = new EAuthUserIdentity($eauth);
+				try {
+					if ($eauth->authenticate()) {
+//var_dump($eauth->getIsAuthenticated(), $eauth->getAttributes());
+						$identity = new EAuthUserIdentity($eauth);
 
-					// successful authentication
-					if ($identity->authenticate()) {
-                        $gUser = Users::model()->findByAttributes(array('u4'=>$identity->attributes['email']));
-                        if ($gUser) {
-                            //$identity->id = $gUser->u1;
-                            $yiiIdentity=new UserIdentity($gUser->u2,$gUser->u3);
-                            $yiiIdentity->errorCode = 0;
-                            $yiiIdentity->setId($gUser->u1);
+						// successful authentication
+						if ($identity->authenticate()) {
+							$gUser = Users::model()->findByAttributes(array('u4'=>$identity->attributes['email']));
+							if ($gUser) {
+								//$identity->id = $gUser->u1;
+								$yiiIdentity = new UserIdentity($gUser->u2,$gUser->u3);
+								$yiiIdentity->errorCode = 0;
+								$yiiIdentity->setId($gUser->u1);
 //var_dump($identity);
 //var_dump($yiiIdentity);                            die();
-                            //Yii::app()->user->login($identity);                            
-                            Yii::app()->user->login($yiiIdentity);
-                            UsersHistory::getNewLogin();
+								//Yii::app()->user->login($identity);                            
+								Yii::app()->user->login($yiiIdentity);
+								UsersHistory::getNewLogin();
 //var_dump($identity);                        
 //var_dump($gUser->u1);
-                            //var_dump($identity->attributes);
-                            //var_dump($identity->id, $identity->name, Yii::app()->user->id); die();  exit;
-				$message = '';
-				//$user = Users::model()->findByPk(Yii::app()->user->id);
-				switch($gUser->u5){
-					case 0:
-						$message = (isset(PortalSettings::model()->findByPk(92)->ps2)?PortalSettings::model()->findByPk(92)->ps2:'');
-						break;
-					case 1:
-						//$message = PortalSettings::model()->findByPk(93)->ps2;
-                        $message = (isset(PortalSettings::model()->findByPk(93)->ps2)?PortalSettings::model()->findByPk(93)->ps2:'');
-						break;
-					case 2:
-						//$message = PortalSettings::model()->findByPk(94)->ps2;
-                        $message = (isset(PortalSettings::model()->findByPk(94)->ps2)?PortalSettings::model()->findByPk(94)->ps2:'');
-						break;
-				}
+//var_dump($identity->attributes);
+//var_dump($identity->id, $identity->name, Yii::app()->user->id); die();  exit;
+								$message = '';
+								//$user = Users::model()->findByPk(Yii::app()->user->id);
+								$gUser->afterLogin();
+								switch($gUser->u5){
+									case 0:
+										$message = (isset(PortalSettings::model()->findByPk(92)->ps2)?PortalSettings::model()->findByPk(92)->ps2:'');
+										break;
+									case 1:
+										$message = (isset(PortalSettings::model()->findByPk(93)->ps2)?PortalSettings::model()->findByPk(93)->ps2:'');
+										break;
+									case 2:
+										$message = (isset(PortalSettings::model()->findByPk(94)->ps2)?PortalSettings::model()->findByPk(94)->ps2:'');
+										break;
+								}
 
-				if(!empty($message))
-					Yii::app()->user->setState('info_message', $message);
-                    
-                    
-                            // special redirect with closing popup window
-                            $eauth->redirect('index');
-                            //Yii::app()->end('ok');
-                        } else {
-                            $eauth->cancel();
-                        }
+								if(!empty($message)) Yii::app()->user->setState('info_message', $message);
+
+								// special redirect
+								$this->redirect('/');
+							} else {
+								throw new CHttpException(403, 'Unregisterd user');
+								//$eauth->cancel();
+								$eauth->redirect($eauth->getCancelUrl());
+							}
+						}
+						else {
+							throw new CHttpException(403, 'Wrong user identication!');
+							// close popup window and redirect to cancelUrl
+							$eauth->redirect($eauth->getCancelUrl());
+						}
+					} else {
+						throw new CHttpException(403, 'Wrong user authentication!');
+						// Something went wrong, redirect to login page
+						$eauth->redirect($eauth->getCancelUrl());
+						//$this->redirect(array('site/login'));
 					}
-					else {
-						// close popup window and redirect to cancelUrl
-						$eauth->cancel();
-					}
 				}
-
-				// Something went wrong, redirect to login page
-				$this->redirect(array('site/login'));
+				catch (EAuthException $e) {
+					// save authentication error to session
+					Yii::app()->user->setFlash('error', 'EAuthException: '.$e->getMessage());
+					// close popup window and redirect to cancelUrl
+					$eauth->redirect($eauth->getCancelUrl());
+				}
 			}
-			catch (EAuthException $e) {
-				// save authentication error to session
-				Yii::app()->user->setFlash('error', 'EAuthException: '.$e->getMessage());
-
-				// close popup window and redirect to cancelUrl
-				$eauth->redirect($eauth->getCancelUrl());
-			}
-		}
-        
         }
 		// display the login form
 		$this->render('login',array('model'=>$model));
