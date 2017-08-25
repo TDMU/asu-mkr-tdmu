@@ -4,8 +4,7 @@
         try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
     </script>
     <?php
-        //$ps101= PortalSettings::model()->findByPk(101)->ps2;
-        $ps101=0;
+		$ps101 = (isset(PortalSettings::model()->findByPk(101)->ps2)?PortalSettings::model()->findByPk(101)->ps2:'');
         if($ps101==0) {
     ?>
         <div id="sidebar-shortcuts" class="sidebar-shortcuts">
