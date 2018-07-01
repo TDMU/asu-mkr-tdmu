@@ -9,6 +9,7 @@ $this->pageHeader=tt('Студенты');
 $this->breadcrumbs=array(
     tt('Админ. панель'),
 );
+Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite.js');
 ?>
 
 <?php
@@ -81,7 +82,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
         ),
         array(
             'class'=>'CButtonColumn',
-            'template'=>'{st165} {grants} {enter} {delete} ',
+            'template'=>'{st165} {grants} {gsuite} {enter} {delete} ',
             //'header' => tt('Настройки'),
             'header'=>CHtml::dropDownList(
                     'pageSize',
@@ -110,6 +111,18 @@ $this->widget('bootstrap.widgets.TbGridView', array(
                         'class' => 'btn btn-mini btn-success',
                         'title'=>tt('Редактировать'),
                     ),
+                ),
+                'gsuite' => array(
+                    'label'=>'<i class="icon-share bigger-120"></i>',
+                    'imageUrl'=>false,
+                    'url'=>'Yii::app()->createAbsoluteUrl("/admin/default/students", array("uname" => !empty($data->account)? $data->account->u2: "-1"))',
+                    'options' => array(
+                        'class' => 'btn btn-mini btn-primary',
+                        //'class' => 'btn btn-mini btn-primary gsuite',
+                        'title'=>tt('GSuite info'),
+                    ),
+                    'click'=>"function( e ){ e.preventDefault(); g2Click((this)); return false;}",
+                    'visible'=>'!empty($data->account)'
                 ),
                 'enter' => array(
                     'label'=>'<i class="icon-share bigger-120"></i>',
