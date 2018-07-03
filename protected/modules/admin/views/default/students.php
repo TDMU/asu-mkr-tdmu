@@ -10,6 +10,7 @@ $this->breadcrumbs=array(
     tt('Админ. панель'),
 );
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite.js');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite2.js');
 ?>
 
 <?php
@@ -115,13 +116,13 @@ $this->widget('bootstrap.widgets.TbGridView', array(
                 'gsuite' => array(
                     'label'=>'<i class="icon-share bigger-120"></i>',
                     'imageUrl'=>false,
-                    'url'=>'Yii::app()->createAbsoluteUrl("/admin/default/students", array("uname" => !empty($data->account)? $data->account->u2: "-1"))',
+                    'url'=>'Yii::app()->createAbsoluteUrl("/admin/default/GsuiteInfo", array("uname" => !empty($data->account)? $data->account->u2: "-1"))',
                     'options' => array(
                         'class' => 'btn btn-mini btn-primary',
                         //'class' => 'btn btn-mini btn-primary gsuite',
                         'title'=>tt('GSuite info'),
                     ),
-                    'click'=>"function( e ){ e.preventDefault(); g2Click((this)); return false;}",
+                    'click'=>"function( e ){ e.preventDefault(); g22Click((this).href); return false;}",
                     'visible'=>'!empty($data->account)'
                 ),
                 'enter' => array(

@@ -1,7 +1,70 @@
 <?php
+//require_once (dirname(__FILE__) . '..'.DS.'..'.DS.'..'.DS.'..'.DS.'vendor'.DS.'autoload.php');
 
 class DefaultController extends AdminController
 {
+    /**
+ * Returns an authorized API client.
+ * @return Google_Client the authorized client object
+ */
+protected function getClient()
+{
+    $client = new Google_Client();
+    $client->setApplicationName('G Suite Directory API PHP Quickstart');
+    $client->setScopes(Google_Service_Directory::ADMIN_DIRECTORY_USER_READONLY);
+    $client_secret_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'client_secret.json';
+    $client->setAuthConfig($client_secret_file);
+    $client->setAccessType('offline');
+
+    // Load previously authorized credentials from a file.
+    $credentials_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'credentials.json';
+    var_dump($credentials_file);
+    $credentialsPath = $this->expandHomeDirectory($credentials_file);
+    var_dump($credentialsPath);
+    if (file_exists($credentialsPath)) {
+        $accessToken = json_decode(file_get_contents($credentialsPath), true);
+        var_dump($accessToken);
+    } else {
+        // Request authorization from the user.
+        $authUrl = $client->createAuthUrl();
+        printf("Open the following link in your browser:\n%s\n", $authUrl);
+        print 'Enter verification code: ';
+        $authCode = trim(fgets(STDIN));
+
+        // Exchange authorization code for an access token.
+        $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
+
+        // Store the credentials to disk.
+        if (!file_exists(dirname($credentialsPath))) {
+            mkdir(dirname($credentialsPath), 0700, true);
+        }
+        file_put_contents($credentialsPath, json_encode($accessToken));
+        printf("Credentials saved to %s\n", $credentialsPath);
+    }
+    $client->setAccessToken($accessToken);
+
+    // Refresh the token if it's expired.
+    if ($client->isAccessTokenExpired()) {
+        $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+        file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+    }
+    return $client;
+}
+
+/**
+ * Expands the home directory alias '~' to the full path.
+ * @param string $path the path to expand.
+ * @return string the expanded path.
+ */
+protected function expandHomeDirectory($path)
+{
+    $homeDirectory = getenv('HOME');
+    if (empty($homeDirectory)) {
+        $homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
+    }
+    return str_replace('~', realpath($homeDirectory), $path);
+}
+
     public function beforeAction($action)
     {
         if(!Yii::app()->user->isAdmin)
@@ -1046,5 +1109,31 @@ class DefaultController extends AdminController
 
         $this->render('employment', array(
         ));
+    }
+    
+    public function actionGsuiteInfo($uname)
+    {
+        // Get the API client and construct the service object.
+$client = $this->getClient();
+$service = new Google_Service_Directory($client);
+//var_dump($service);
+// Print the first 10 users in the domain.
+$optParams = array(
+  'customer' => 'my_customer',
+  'maxResults' => 10,
+  'orderBy' => 'email',
+);
+$results = $service->users->listUsers($optParams);
+var_dump($results);
+//if (count($results->getUsers()) == 0) {
+//  print "No users found.\n";
+//} else {
+//  print "Users:\n";
+//  foreach ($results->getUsers() as $user) {
+//    printf("%s (%s)\n", $user->getPrimaryEmail(),
+//        $user->getName()->getFullName());
+//  }
+//}
+return $results;
     }
 }

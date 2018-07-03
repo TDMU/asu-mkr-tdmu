@@ -9,6 +9,7 @@
         "ext-mbstring": "*",
         "ext-PDO": "*",
         "ext-PDO_Firebird": "*",
-        "apostle/apostle-php": "dev-master"
+        "apostle/apostle-php": "dev-master",
+        "google/apiclient": "2.0"
     }
 }
