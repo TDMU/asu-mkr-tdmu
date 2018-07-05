@@ -18,12 +18,12 @@ protected function getClient()
 
     // Load previously authorized credentials from a file.
     $credentials_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'credentials.json';
-    var_dump($credentials_file);
+    //var_dump($credentials_file);
     $credentialsPath = $this->expandHomeDirectory($credentials_file);
-    var_dump($credentialsPath);
+    //var_dump($credentialsPath);
     if (file_exists($credentialsPath)) {
         $accessToken = json_decode(file_get_contents($credentialsPath), true);
-        var_dump($accessToken);
+        //var_dump($accessToken);
     } else {
         // Request authorization from the user.
         $authUrl = $client->createAuthUrl();
@@ -46,7 +46,9 @@ protected function getClient()
     // Refresh the token if it's expired.
     if ($client->isAccessTokenExpired()) {
         $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-        file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+        $newAccessToken = $client->getAccessToken();
+        $accessToken = array_merge($accessToken, $newAccessToken);
+        file_put_contents($credentialsPath, json_encode($accessToken));
     }
     return $client;
 }
@@ -1124,16 +1126,25 @@ $optParams = array(
   'orderBy' => 'email',
 );
 $results = $service->users->listUsers($optParams);
-var_dump($results);
+//var_dump($results->getUsers());
+$gusers = array();
 //if (count($results->getUsers()) == 0) {
 //  print "No users found.\n";
 //} else {
 //  print "Users:\n";
-//  foreach ($results->getUsers() as $user) {
+  foreach ($results->getUsers() as $user) {
 //    printf("%s (%s)\n", $user->getPrimaryEmail(),
 //        $user->getName()->getFullName());
-//  }
+    $gusers[]= array("uemail"=>$user->getPrimaryEmail(), "ufullname"=>$user->getName()->getFullName());
+  }
 //}
-return $results;
+//return json_encode($results->getUsers());
+//var_dump($gusers);
+//$response = Yii::$app->response;
+                        //$response->format = \yii\web\Response::FORMAT_JSON;
+                       // $response->data = ['gusers' => $gusers];
+                       // $response->statusCode = 200;
+         print_r(json_encode($gusers));              
+//return $response;
     }
 }

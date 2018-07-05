@@ -14,7 +14,7 @@ $.ajax({
          console.log(data);
 	         if(data==null){
 	              //$("#product_type").empty();    
-                  
+                  alert(data);
 	         }else{
                  alert(data);
 	              //var obj = eval(data);
