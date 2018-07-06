@@ -80,6 +80,27 @@ $this->breadcrumbs=array(
         </div>
     </div>
 
+    <div class="control-group">
+    <?php
+        echo CHtml::ajaxButton(
+            'Get GSuite Info',
+            array('/admin/default/GsuiteInfo/uname/'.$user->u2),
+            array(
+                'data'=>array('uname'=>$user->u2),
+                'type'=>'POST',
+//                'update'=>'#gsuiteinfo',
+                'success' => 'js:function(data){alert(data);$("#gsuiteinfo").html(JSON.stringify(JSON.parse(data),null,2));}'
+            )
+        );
+?>
+<?php 
+        echo CHtml::ajaxLink(
+            'Get GSuite Info', 
+            array('/admin/default/GsuiteInfo/uname/'.$user->u2),
+            array('success' => 'js:function(data){alert(data);$("#gsuiteinfo").html(data);}')
+        );
+?>    
+    </div>
 
     <div class="form-actions">
         <button type="submit" class="btn btn-info">
@@ -87,5 +108,7 @@ $this->breadcrumbs=array(
             <?=tt('Сохранить')?>
         </button>
     </div>
-
+<div id="gsuiteinfo">
+No GSuite Info...
+</div>
 <?php $this->endWidget();

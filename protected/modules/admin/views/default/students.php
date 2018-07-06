@@ -9,7 +9,7 @@ $this->pageHeader=tt('Студенты');
 $this->breadcrumbs=array(
     tt('Админ. панель'),
 );
-Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite.js');
+//Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite2.js');
 ?>
 

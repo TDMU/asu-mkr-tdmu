@@ -1119,22 +1119,26 @@ protected function expandHomeDirectory($path)
         $client = $this->getClient();
         $service = new Google_Service_Directory($client);
         //var_dump($service);
+        
         // Print the first 10 users in the domain.
         $optParams = array(
             'customer' => 'my_customer',
             'maxResults' => 10,
             'orderBy' => 'email',
-        );
-        
+        );        
         $results = $service->users->listUsers($optParams);
         //var_dump($results->getUsers());
-
         $gusers = array();
         foreach ($results->getUsers() as $user) {
             $gusers[]= array("uemail"=>$user->getPrimaryEmail(), "ufullname"=>$user->getName()->getFullName());
         }
+        
+        //get single user
+        $guser = $service->users->get($uname.'@tdmu.edu.ua');
+        
         if(Yii::app()->request->isAjaxRequest){
-            echo json_encode($gusers);
+            //print_r(json_encode($gusers)); //display multiple users
+            print_r(json_encode($guser));
             Yii::app()->end();
         }         
     }
