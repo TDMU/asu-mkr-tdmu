@@ -1116,35 +1116,26 @@ protected function expandHomeDirectory($path)
     public function actionGsuiteInfo($uname)
     {
         // Get the API client and construct the service object.
-$client = $this->getClient();
-$service = new Google_Service_Directory($client);
-//var_dump($service);
-// Print the first 10 users in the domain.
-$optParams = array(
-  'customer' => 'my_customer',
-  'maxResults' => 10,
-  'orderBy' => 'email',
-);
-$results = $service->users->listUsers($optParams);
-//var_dump($results->getUsers());
-$gusers = array();
-//if (count($results->getUsers()) == 0) {
-//  print "No users found.\n";
-//} else {
-//  print "Users:\n";
-  foreach ($results->getUsers() as $user) {
-//    printf("%s (%s)\n", $user->getPrimaryEmail(),
-//        $user->getName()->getFullName());
-    $gusers[]= array("uemail"=>$user->getPrimaryEmail(), "ufullname"=>$user->getName()->getFullName());
-  }
-//}
-//return json_encode($results->getUsers());
-//var_dump($gusers);
-//$response = Yii::$app->response;
-                        //$response->format = \yii\web\Response::FORMAT_JSON;
-                       // $response->data = ['gusers' => $gusers];
-                       // $response->statusCode = 200;
-         print_r(json_encode($gusers));              
-//return $response;
+        $client = $this->getClient();
+        $service = new Google_Service_Directory($client);
+        //var_dump($service);
+        // Print the first 10 users in the domain.
+        $optParams = array(
+            'customer' => 'my_customer',
+            'maxResults' => 10,
+            'orderBy' => 'email',
+        );
+        
+        $results = $service->users->listUsers($optParams);
+        //var_dump($results->getUsers());
+
+        $gusers = array();
+        foreach ($results->getUsers() as $user) {
+            $gusers[]= array("uemail"=>$user->getPrimaryEmail(), "ufullname"=>$user->getName()->getFullName());
+        }
+        if(Yii::app()->request->isAjaxRequest){
+            echo json_encode($gusers);
+            Yii::app()->end();
+        }         
     }
 }
