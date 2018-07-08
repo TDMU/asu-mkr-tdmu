@@ -2,6 +2,77 @@
 
 class DefaultController extends AdminController
 {
+    private static $ukrainianToEnglishRules = [
+        'А' => 'A',
+        'Б' => 'B',
+        'В' => 'V',
+        'Г' => 'G',
+        'Ґ' => 'G',
+        'Д' => 'D',
+        'Е' => 'E',
+        'Є' => 'E',
+        'Ж' => 'J',
+        'З' => 'Z',
+        'И' => 'Y',
+        'І' => 'I',
+        'Ї' => 'Yi',
+        'Й' => 'J',
+        'К' => 'K',
+        'Л' => 'L',
+        'М' => 'M',
+        'Н' => 'N',
+        'О' => 'O',
+        'П' => 'P',
+        'Р' => 'R',
+        'С' => 'S',
+        'Т' => 'T',
+        'У' => 'U',
+        'Ф' => 'F',
+        'Х' => 'H',
+        'Ц' => 'Ts',
+        'Ч' => 'Ch',
+        'Ш' => 'Sh',
+        'Щ' => 'Shch',
+        'Ь' => '',
+        'Ю' => 'Yu',
+        'Я' => 'Ya',
+        'а' => 'a',
+        'б' => 'b',
+        'в' => 'v',
+        'г' => 'g',
+        'ґ' => 'g',
+        'д' => 'd',
+        'е' => 'e',
+        'є' => 'e',
+        'ж' => 'j',
+        'з' => 'z',
+        'и' => 'y',
+        'і' => 'i',
+        'ї' => 'yi',
+        'й' => 'j',
+        'к' => 'k',
+        'л' => 'l',
+        'м' => 'm',
+        'н' => 'n',
+        'о' => 'o',
+        'п' => 'p',
+        'р' => 'r',
+        'с' => 's',
+        'т' => 't',
+        'у' => 'u',
+        'ф' => 'f',
+        'х' => 'h',
+        'ц' => 'ts',
+        'ч' => 'ch',
+        'ш' => 'sh',
+        'щ' => 'shch',
+        'ь'  => '',
+        'ю' => 'yu',
+        'я' => 'ya',
+        '\'' => ''
+    ];
+    
+/**
     public function beforeAction($action)
     {
         if(!Yii::app()->user->isAdmin)
@@ -155,7 +226,7 @@ class DefaultController extends AdminController
                 if(!empty($_card)) {
                     //$name = SH::getShortName($_card->st2, $_card->st3, $_card->st4);
                     $name = $_card->st2 .' '. $_card->st3 .' '. $_card->st4;
-                    $bDate = $_card->st7;;
+                    $bDate = $_card->st7;
                 }
             }
             if($type==1){
@@ -179,13 +250,15 @@ class DefaultController extends AdminController
                 continue;
             }
 
-            $username = 'user'.($id+100000000).$type;
+            $username = $this->create_Google_username($_card, $type); //TDMU-specific
+            //$username = 'user'.($id+100000000).$type; //origin
             $password = bin2hex(openssl_random_pseudo_bytes(5));
             $model = new Users;
             $model->u1 = new CDbExpression('GEN_ID(GEN_USERS, 1)');
             $model->u2 = $username;
             $model->u3 = $password;
-            $model->u4 = '';
+            $model->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
+            //$model->u4 = '';//origin
             $model->u5 = $type;
             $model->u6 = $id;
             if($model->save(false)){
@@ -223,7 +296,92 @@ class DefaultController extends AdminController
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
     }
-
+    
+    /*
+     * TDMU - create user name for GMail
+     */    
+    private function create_Google_username($_card, $type){
+        if($type==1){
+            $tmpFname = $this->_create_username($this->_name_cleanup($_card->p4));
+            $tmpMname = $this->_create_username($this->_name_cleanup($_card->p5));
+            $tmpLastName = $this->_create_username($this->_name_cleanup($_card->p3));
+        } else {
+            if ($_card->st32 == 804){ //ukrainians
+                $tmpFname = $this->_create_username($this->_name_cleanup($_card->st3));
+                $tmpMname = $this->_create_username($this->_name_cleanup($_card->st4));
+                $tmpLastName = $this->_create_username($this->_name_cleanup($_card->st2));
+            } else {                            //foreign
+                $tmpFname = $this->_create_username(($_card->st75!=null?$this->_name_cleanup($_card->st75):$this->_name_cleanup($_card->st3)));
+                $tmpMname = $this->_create_username(($_card->st76!=null?$this->_name_cleanup($_card->st76):$this->_name_cleanup($_card->st4)));
+                $tmpLastName = $this->_create_username(($_card->st74!=null?$this->_name_cleanup($_card->st74):$this->_name_cleanup($_card->st2)));
+            }
+        }
+        if (strlen($tmpLastName)<2) {
+            if (strlen($tmpFname)>2){
+                $tmpLastName = $tmpFname;
+            } elseif (strlen($tmpMname)>2) {
+                $tmpLastName = $tmpMname;
+            } else {
+                $tmpLastName = 'nolastname';
+            }
+        }
+        if (strlen($tmpFname)<2) {
+            if (strlen($tmpFname)>2){
+                $tmpFname = substr($tmpLastName,0,3);
+            } elseif (strlen($tmpMname)>2) {
+                $tmpFname = substr($tmpMname,0,3);
+            } else {
+                $tmpFname = 'nfn';
+            }
+        } else {
+            $tmpFname = substr($tmpFname,0,3);
+        }
+        if (strlen($tmpMname)<2) {
+            if (strlen($tmpFname)>2){
+                $tmpMname = substr($tmpLastName,0,3);
+            } elseif (strlen($tmpFname)>2) {
+                $tmpMname = substr($tmpFname,0,3);
+            } else {
+                $tmpMname = 'nmn';
+            }
+        } else {
+            $tmpMname = substr($tmpMname,0,3);
+        }
+        $username = $tmpLastName."_".$tmpFname.$tmpMname;
+        return $username;
+    }
+    
+    /*
+     * TDMU - create user name
+     */
+    private function _create_username($ukrainianText){
+            $transliteratedText = '';
+            if (mb_strlen($ukrainianText) > 0) {
+                $transliteratedText = str_replace(
+                    array_keys(self::$ukrainianToEnglishRules),
+                    array_values(self::$ukrainianToEnglishRules),
+                    $ukrainianText
+                );
+            }
+            return strtolower($transliteratedText);
+    }
+    /*
+     * TDMU - clean-up string (especially - for names clean-up)
+     */
+    private function _name_cleanup($str){
+        //if ($str[0]==' '){$str = substr($str, 1);}  //TODO: Remove all leading and trailing spaces 
+        $str = trim($str);
+        $str = str_replace("(","",$str);
+        $str = str_replace(")","",$str);
+        $str = str_replace("-","",$str);
+        $str = str_replace("'","",$str);
+        $str = str_replace(":","",$str);
+        $str = str_replace(".","",$str);
+        $str = str_replace("`","",$str);
+        $str = str_replace("\"","",$str);
+        return $str;
+    }
+    
     public function actionDeleteUser($id)
     {
         if(Yii::app()->request->isPostRequest)
