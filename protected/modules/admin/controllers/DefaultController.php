@@ -74,53 +74,30 @@ class DefaultController extends AdminController
     ];
     
 /**
- * Returns an authorized API client.
+ * Returns an authorized API client (based on Service Account).
  * @return Google_Client the authorized client object
  */
-protected function getClient()
+protected function getServiceClient()
 {
     $client = new Google_Client();
-    $client->setApplicationName('G Suite Directory API PHP Quickstart');
-    $client->setScopes(Google_Service_Directory::ADMIN_DIRECTORY_USER_READONLY);
-    $client_secret_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'client_secret.json';
-    $client->setAuthConfig($client_secret_file);
-    $client->setAccessType('offline');
-
-    // Load previously authorized credentials from a file.
-    $credentials_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'credentials.json';
-    //var_dump($credentials_file);
-    $credentialsPath = $this->expandHomeDirectory($credentials_file);
-    //var_dump($credentialsPath);
-    if (file_exists($credentialsPath)) {
-        $accessToken = json_decode(file_get_contents($credentialsPath), true);
-        //var_dump($accessToken);
+    //prepare service account credentials
+    $client_secret_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'phpdirectoryapi-719704fe21c9.json';
+    putenv('GOOGLE_APPLICATION_CREDENTIALS='.$client_secret_file);
+    if (file_exists($client_secret_file)) {
+        // set the location manually
+        $client->setAuthConfig($client_secret_file);
+    } elseif (getenv('GOOGLE_APPLICATION_CREDENTIALS')) {
+        // use the application default credentials
+        $client->useApplicationDefaultCredentials();
     } else {
-        // Request authorization from the user.
-        $authUrl = $client->createAuthUrl();
-        printf("Open the following link in your browser:\n%s\n", $authUrl);
-        print 'Enter verification code: ';
-        $authCode = trim(fgets(STDIN));
-
-        // Exchange authorization code for an access token.
-        $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
-
-        // Store the credentials to disk.
-        if (!file_exists(dirname($credentialsPath))) {
-            mkdir(dirname($credentialsPath), 0700, true);
-        }
-        file_put_contents($credentialsPath, json_encode($accessToken));
-        printf("Credentials saved to %s\n", $credentialsPath);
+        echo missingServiceAccountDetailsWarning();
+        return;
     }
-    $client->setAccessToken($accessToken);
-
-    // Refresh the token if it's expired.
-    if ($client->isAccessTokenExpired()) {
-        $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-        $newAccessToken = $client->getAccessToken();
-        $accessToken = array_merge($accessToken, $newAccessToken);
-        file_put_contents($credentialsPath, json_encode($accessToken));
-    }
+    $client->setApplicationName('G Suite Directory API PHP Quickstart-service account');
+    $client->setScopes(Google_Service_Directory::ADMIN_DIRECTORY_USER);
+    $client->setSubject('admin@tdmu.edu.ua');
     return $client;
+
 }
 
 /**
@@ -226,13 +203,19 @@ protected function expandHomeDirectory($path)
         ));
     }
 
-    public function actionGenerateUserExcel()
+    public function actionGenerateUserExcel($createGogle=false)
     {
         $model = new GenerateUserForm();
         $model->unsetAttributes();  // clear any default values
         if(isset($_POST['GenerateUserForm']))
             $model->attributes=$_POST['GenerateUserForm'];
-
+        
+        if(isset($_POST['createGogle'])) {
+            $createGogle = $_POST['createGogle'];
+        }
+        if ($createGogle) {
+            var_dump($createGogle);die(); //deal with google API
+        }
         //var_dump($model->users);
 
         if(empty($model->users))
@@ -1273,9 +1256,8 @@ protected function expandHomeDirectory($path)
     public function actionGsuiteInfo($uname)
     {
         // Get the API client and construct the service object.
-        $client = $this->getClient();
+        $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
-        //var_dump($service);
         
         // Print the first 10 users in the domain.
         $optParams = array(
@@ -1289,7 +1271,7 @@ protected function expandHomeDirectory($path)
         foreach ($results->getUsers() as $user) {
             $gusers[]= array("uemail"=>$user->getPrimaryEmail(), "ufullname"=>$user->getName()->getFullName());
         }
-        
+
         //get single user
         $guser = $service->users->get($uname.'@tdmu.edu.ua');
         
