@@ -72,7 +72,7 @@ class DefaultController extends AdminController
         '\'' => ''
     ];
     
-/**
+
     public function beforeAction($action)
     {
         if(!Yii::app()->user->isAdmin)
@@ -371,6 +371,7 @@ class DefaultController extends AdminController
     private function _name_cleanup($str){
         //if ($str[0]==' '){$str = substr($str, 1);}  //TODO: Remove all leading and trailing spaces 
         $str = trim($str);
+        $str = str_replace(" ","",$str); //remove space inside string - happen for foreign
         $str = str_replace("(","",$str);
         $str = str_replace(")","",$str);
         $str = str_replace("-","",$str);
