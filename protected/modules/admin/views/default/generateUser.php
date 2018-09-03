@@ -155,7 +155,9 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/a
                 'action'=>array('generateUserExcel')
             )); ?>
             <?=$form->hiddenField($model,'users')?>
+            <input type="hidden" name="createGogle" value="0">
             <input type="submit" href="#" class="btn btn-primary btn-generate-user" value="<?=tt('Сгенерировать')?>"/>
+            <input type="button" href="#" class="btn btn-primary btn-generate-user" value="Згенерувати(+Google)"/>
             <?php $this->endWidget(); ?>
         </li>
     </ul>
