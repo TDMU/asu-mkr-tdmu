@@ -169,10 +169,10 @@
                     'name'       => 'Док.-оборот',
                     'controller' => 'doc',
                     'items' => array(
-                        'index' => array(
+                        'index' => 'Документооборот',/* array(
                             'name'=>'Документооборот',
-                            'authOnly' => $teacherStr
-                        ),
+                            //'authOnly' => $teacherStr
+                        ),*/
                         'selfDoc' => array(
                             'name'=>'Личные документы',
                             'authOnly' => $teacherStr

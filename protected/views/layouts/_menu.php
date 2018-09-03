@@ -632,7 +632,7 @@ $this->widget('zii.widgets.CMenu', array(
                 array(
                     'label'   => $_l2.tt('Документооборот'),
                     'url'     => _u('/doc/index'),
-                    'visible' => _ch('doc', 'index') && ($isTch||$isAdmin),
+                    'visible' => _ch('doc', 'index') && ($isTch||$isAdmin||$isStd),
                     'active'  => $_c=='doc' && stristr($_a, 'index')
                 ),
                 array(
@@ -642,7 +642,7 @@ $this->widget('zii.widgets.CMenu', array(
                     'active'  => $_c=='doc' && stristr($_a, 'selfDoc')
                 ),
             ),
-            'visible' => _ch('doc', 'main') && ($isTch||$isAdmin),
+            'visible' => _ch('doc', 'main') && ($isTch||$isAdmin||$isStd),
         ),
         array(
             'label' => _l('Абитуриент', 'book'),

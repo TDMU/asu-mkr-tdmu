@@ -27,10 +27,13 @@
  * @property string $tddo21
  * @property integer $tddo22
  * @property integer $tddo23
+ * @property integer $tddo24
+ * @property integer $tddo25
+ * @property integer $tddo26
  *
  * The followings are the available model relations:
  * @property Ido[] $idos
- * @property Ddo $tddo24
+ * @property Ddo $tddo240
  * @property I $tddo150
  * @property Tddo $tddo160
  * @property Tddo[] $tddos
@@ -56,7 +59,7 @@ class Tddo extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('tddo1, tddo2, tddo3, tddo10, tddo11, tddo15, tddo16, tddo17, tddo18, tddo20, tddo22, tddo23', 'numerical', 'integerOnly'=>true),
+			array('tddo1, tddo2, tddo3, tddo10, tddo11, tddo15, tddo16, tddo17, tddo18, tddo20, tddo22, tddo23, tddo24, tddo25, tddo26', 'numerical', 'integerOnly'=>true),
 			array('tddo13,tddo21,tddo4, tddo9', 'length', 'max'=>20),
 			//array('tddo21', 'type', 'type' => 'date', 'message' => '{attribute}: is not a date!', 'dateFormat' => 'dd-MM-yyyy H:i:s'),
 			//array('tddo4, tddo9', 'type', 'type' => 'date', 'message' => '{attribute}: is not a date!', 'dateFormat' => 'dd-MM-yyyy'),
@@ -80,7 +83,7 @@ class Tddo extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'idos' => array(self::HAS_MANY, 'Ido', 'ido1'),
-			'tddo24' => array(self::BELONGS_TO, 'Ddo', 'tddo2'),
+			'tddo240' => array(self::BELONGS_TO, 'Ddo', 'tddo2'),
 			'tddo150' => array(self::BELONGS_TO, 'I', 'tddo15'),
 			'tddo160' => array(self::BELONGS_TO, 'Tddo', 'tddo16'),
 			'tddos' => array(self::HAS_MANY, 'Tddo', 'tddo16'),
@@ -119,6 +122,9 @@ class Tddo extends CActiveRecord
 			'tddo21' => tt('Дата создания'),
 			'tddo22' => 'Tddo22',
 			'tddo23' => tt('Год'),
+            'tddo24' => 'Tddo24',
+            'tddo25' => 'Tddo25',
+            'tddo26' => 'Tddo26',
 		);
 	}
 

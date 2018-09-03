@@ -14,7 +14,7 @@ JS
 
 
 <div class="span3 ace-block ace-datepicker-block">
-    <label for="id-date-range-picker-1"><?=tt('Отображаемый диапозон дат:')?></label>
+    <label for="id-date-range-picker-1"><?=tt('Отображаемый диапазон дат:')?></label>
     <div class="input-prepend">
         <span class="add-on">
             <i class="icon-calendar"></i>

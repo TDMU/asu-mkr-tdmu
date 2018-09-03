@@ -258,7 +258,11 @@ HTML;
             $alreadyCheckedDisc = U::model()->getAlreadyChecked($_SESSION['u1_vib_disc'], $uch_god, $semester, $st1);
 
             $controls = '';
-            $controls .= '<h5 class="name-c2">'.$c2.'</h5>';
+            $controls .= '<h5 class="name-c2">'.$c2.' '.tt('для изучения в {sem} семестре {year}/{year1} уч.г.',array(
+                    '{year}' => $uch_god,
+                    '{year1}' => $uch_god+1,
+                    '{sem}' => SH::convertSem5($semester)
+                )).'</h5>';
             foreach ($disciplines as $discipline) {
                 $isChecked = in_array($discipline['d1'], $alreadyCheckedDisc);
                 $value     = $discipline['ucgn1_kod'];

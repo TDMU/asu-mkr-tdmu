@@ -12,7 +12,7 @@ class DocController extends Controller
 
         return array(
             'accessControl',
-            'checkPermission -index, -selfDoc'//не выполянеться для индекса
+            //'checkPermission -index, -selfDoc'//не выполянеться для индекса
         );
     }
 
@@ -21,12 +21,17 @@ class DocController extends Controller
         return array(
             array('allow',
                 'actions' => array(
+                    'selfDoc'
+                ),
+                'expression' => 'Yii::app()->user->isAdmin || Yii::app()->user->isTch',
+            ),
+            array('allow',
+                'actions' => array(
                     'index',
-                    'selfDoc',
                     'view',
                     'file'
                 ),
-                'expression' => 'Yii::app()->user->isAdmin || Yii::app()->user->isTch',
+                'expression' => 'Yii::app()->user->isAdmin || Yii::app()->user->isTch || Yii::app()->user->isStd',
             ),
             array('deny',
                 'users' => array('*'),
@@ -141,14 +146,25 @@ class DocController extends Controller
 
     /**
      * Проверка доступа к документу
-     * @param $id int tdoo1
+     * @param $tddo Tddo
      * @return bool
+     * @throws
      */
-    private function checkAccessToDoc($id){
+    private function checkAccessToDoc($tddo){
+        if($tddo->tddo24 == 1)
+            return false;
+
         if(!Yii::app()->user->isAdmin) {
 
-            if(Yii::app()->user->isStd)
-                return false;
+            if(Yii::app()->user->isStd) {
+                if($tddo->tddo26 != 1)
+                    return false;
+                else
+                    return true;
+            }
+
+            if($tddo->tddo25 == 1)
+                return true;
 
             $sql = <<<SQL
               SELECT COUNT(*) FROM IDO
@@ -156,7 +172,7 @@ class DocController extends Controller
               WHERE PD2=:P1 AND IDO1=:TDDO1
 SQL;
             $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(':TDDO1', $id);
+            $command->bindValue(':TDDO1', $tddo->tddo1);
             $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
             $count = $command->queryScalar();
 
@@ -171,7 +187,7 @@ SQL;
               WHERE INNFP1=:P1 AND IDO1=:TDDO1
 SQL;
             $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(':TDDO1', $id);
+            $command->bindValue(':TDDO1', $tddo->tddo1);
             $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
             $count = $command->queryScalar();
 
@@ -185,7 +201,7 @@ SQL;
     public function actionView($id){
         $model = $this->loadModel($id);
 
-        if(!$this->checkAccessToDoc($id))
+        if(!$this->checkAccessToDoc($model))
             throw new CHttpException(403,'Your don`t have access to this doc');
 
         $this->render('view',array(
@@ -217,7 +233,7 @@ SQL;
 
         $model = $this->loadModel($file['FPDD2']);
 
-        if(!$this->checkAccessToDoc($file['FPDD2']))
+        if(!$this->checkAccessToDoc($model))
             throw new CHttpException(403,'Your don`t have access to this doc');
 
         if(Tddo::model()->isImage($file['FPDD4'])) {
