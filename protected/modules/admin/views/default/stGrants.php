@@ -87,9 +87,9 @@ $this->breadcrumbs=array(
             array('/admin/default/GsuiteInfo/uname/'.$user->u2),
             array(
                 'data'=>array('uname'=>$user->u2),
-                'type'=>'POST',
+                'type'=>'GET',
 //                'update'=>'#gsuiteinfo',
-                'success' => 'js:function(data){alert(data);$("#gsuiteinfo").html(JSON.stringify(JSON.parse(data),null,2));}'
+                'success' => 'js:function(data){alert(data);$("#gsuiteinfo").html(data);}'
             )
         );
 ?>
@@ -97,7 +97,7 @@ $this->breadcrumbs=array(
         echo CHtml::ajaxLink(
             'Get GSuite Info', 
             array('/admin/default/GsuiteInfo/uname/'.$user->u2),
-            array('success' => 'js:function(data){alert(data);$("#gsuiteinfo").html(data);}')
+            array('success' => 'js:function(data){$("#gsuiteinfo").html(data);}')
         );
 ?>    
     </div>
@@ -109,6 +109,6 @@ $this->breadcrumbs=array(
         </button>
     </div>
 <div id="gsuiteinfo">
-No GSuite Info...
+No GoogleSuite Info...
 </div>
 <?php $this->endWidget();
