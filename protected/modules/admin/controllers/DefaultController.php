@@ -1255,6 +1255,8 @@ protected function expandHomeDirectory($path)
     
     public function actionGsuiteInfo($uname)
     {
+        if (empty($uname))
+            throw new CHttpException(404, 'Invalid request. Please generate portal username first.');
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
@@ -1277,7 +1279,17 @@ protected function expandHomeDirectory($path)
         
         if(Yii::app()->request->isAjaxRequest){
             //print_r(json_encode($gusers)); //display multiple users
-            print_r(json_encode($guser));
+            //var_dump($guser);
+            $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
+            print_r('<div><span>ID: '.$guser->id.'</span><br>');
+            print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
+            print_r('<span>PrimaryEmail: '.$guser->primaryEmail.'</span><br>');
+            print_r('<span>Organization: '.$guser->orgUnitPath.'</span><br>');
+            print_r('<span>Notes: '.$guser->notes.'</span><br>');
+            print_r('<span>Suspended: '.$suspendedstr.'</span><br></div>');
+            print_r($guser->externalIds);
+            //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
+            //print_r(json_encode($guser));
             Yii::app()->end();
         }         
     }
