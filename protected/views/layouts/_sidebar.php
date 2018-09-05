@@ -51,7 +51,8 @@
                 U_NOBEL,
                 U_IRPEN,
                 U_FARM,
-                U_KIEV_MVD
+                U_KIEV_MVD,
+                U_UMAN
             ));
         ?>
         <a href="<?= $newMobile ? SH::MOBILE_URL : 'https://play.google.com/store/apps/details?id=scheduleMKP.scheduleMKP'?>" target="_blank">
