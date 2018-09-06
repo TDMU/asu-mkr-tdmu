@@ -255,9 +255,9 @@ class DefaultController extends AdminController
             $password = bin2hex(openssl_random_pseudo_bytes(5));
             $model = new Users;
             $model->u1 = new CDbExpression('GEN_ID(GEN_USERS, 1)');
-            $model->u2 = $username[0];
+            $model->u2 = $username;
             $model->u3 = $password;
-            $model->u4 = $username[1].'@tdmu.edu.ua'; //TDMU-specific
+            $model->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
             //$model->u4 = '';//origin
             $model->u5 = $type;
             $model->u6 = $id;
@@ -348,7 +348,7 @@ class DefaultController extends AdminController
             $tmpMname = substr($tmpMname,0,3);
         }
         $username = $tmpLastName."_".$tmpFname.$tmpMname;
-        return array(str_replace("_","",$username), $username); //TDMU-ASU-specific - no "_" char allowed!
+        return $username; //TDMU-ASU-specific
     }
     
     /*
@@ -369,8 +369,8 @@ class DefaultController extends AdminController
      * TDMU - clean-up string (especially - for names clean-up)
      */
     private function _name_cleanup($str){
-        //if ($str[0]==' '){$str = substr($str, 1);}  //TODO: Remove all leading and trailing spaces 
-        $str = trim($str);
+        //if ($str[0]==' '){$str = substr($str, 1);}  
+        $str = trim($str); //Remove all leading and trailing spaces 
         $str = str_replace(" ","",$str); //remove space inside string - happen for foreign
         $str = str_replace("(","",$str);
         $str = str_replace(")","",$str);
@@ -1063,9 +1063,9 @@ class DefaultController extends AdminController
             if(!empty($_card)) {
                 $username = $this->create_Google_username($_card, $type);
                 $password = bin2hex(openssl_random_pseudo_bytes(5));
-                $user->u2 = $username[0];
+                $user->u2 = $username;
                 $user->u3 = $password;
-                $user->u4 = $username[1].'@tdmu.edu.ua'; //TDMU-specific
+                $user->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
             } else {
                 $user->u2 = '';
                 $user->u3 = '';
