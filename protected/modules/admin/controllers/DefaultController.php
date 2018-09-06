@@ -255,9 +255,9 @@ class DefaultController extends AdminController
             $password = bin2hex(openssl_random_pseudo_bytes(5));
             $model = new Users;
             $model->u1 = new CDbExpression('GEN_ID(GEN_USERS, 1)');
-            $model->u2 = $username;
+            $model->u2 = $username[0];
             $model->u3 = $password;
-            $model->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
+            $model->u4 = $username[1].'@tdmu.edu.ua'; //TDMU-specific
             //$model->u4 = '';//origin
             $model->u5 = $type;
             $model->u6 = $id;
@@ -348,7 +348,7 @@ class DefaultController extends AdminController
             $tmpMname = substr($tmpMname,0,3);
         }
         $username = $tmpLastName."_".$tmpFname.$tmpMname;
-        return $username;
+        return array(str_replace("_","",$username), $username); //TDMU-ASU-specific - no "_" char allowed!
     }
     
     /*
@@ -1051,9 +1051,27 @@ class DefaultController extends AdminController
         if (empty($user)) {
             $user = new Users();
             $user->u1 = new CDbExpression('GEN_ID(GEN_USERS, 1)');
-            $user->u2 = '';
-            $user->u3 = '';
-            $user->u4 = '';
+            
+            //TDMU-specific - prepare user by template
+            unset($username);
+            unset($_card);
+            if($type==0||$type==2){
+                $_card = St::model()->findByPk($id);
+            } elseif($type==1){
+                $_card = P::model()->findByPk($id);
+            }
+            if(!empty($_card)) {
+                $username = $this->create_Google_username($_card, $type);
+                $password = bin2hex(openssl_random_pseudo_bytes(5));
+                $user->u2 = $username[0];
+                $user->u3 = $password;
+                $user->u4 = $username[1].'@tdmu.edu.ua'; //TDMU-specific
+            } else {
+                $user->u2 = '';
+                $user->u3 = '';
+                $user->u4 = '';
+            }
+            //back to original            
             $user->u5 = $type;
             $user->u6 = $id;
             $user->u7 = 0;
