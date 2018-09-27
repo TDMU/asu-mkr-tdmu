@@ -1008,7 +1008,11 @@ protected function expandHomeDirectory($path)
 
         if (isset($_REQUEST['Users'])) {
             $user->attributes = $_REQUEST['Users'];
-            $user->save();
+            $res = $user->save();
+            if ($res && $_REQUEST['Users']['updategoogle']==true) {
+                var_dump($res);
+                $this->GsuiteUpdateUser($user, $type);
+            }
         }
 
         $this->render('stGrants', array(
@@ -1297,7 +1301,7 @@ protected function expandHomeDirectory($path)
         
         if(Yii::app()->request->isAjaxRequest){
             //print_r(json_encode($gusers)); //display multiple users
-            //var_dump($guser);
+            var_dump($guser);
             $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
             print_r('<div><span>ID: '.$guser->id.'</span><br>');
             print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
@@ -1309,6 +1313,13 @@ protected function expandHomeDirectory($path)
             //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
             //print_r(json_encode($guser));
             Yii::app()->end();
-        }         
+        }
+    }
+    
+    public function GsuiteUpdateUser($user, $type)
+    {
+        var_dump($user->attributes);
+        var_dump($type);
+        //TODO: crate / update Google        
     }
 }

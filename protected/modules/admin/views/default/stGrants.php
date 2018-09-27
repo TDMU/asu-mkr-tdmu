@@ -81,6 +81,23 @@ $this->breadcrumbs=array(
     </div>
 
     <div class="control-group">
+        <label for="Users_updategoogle" class="control-label"><?=tt('Update Google')?></label>
+        <div class="controls">
+            <label>
+                <?php
+                echo CHtml::checkBox('Users[updategoogle]', 1,
+                    array(
+                        'class' => 'ace ace-switch',
+                        'uncheckValue' => '0'
+                    )
+                )
+                ?>
+                <span class="lbl"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="control-group">
     <?php
         echo CHtml::ajaxButton(
             'Get GSuite Info',
@@ -99,7 +116,7 @@ $this->breadcrumbs=array(
             array('/admin/default/GsuiteInfo/uname/'.$user->u2),
             array('success' => 'js:function(data){$("#gsuiteinfo").html(data);}')
         );
-?>    
+?>
     </div>
 
     <div class="form-actions">
