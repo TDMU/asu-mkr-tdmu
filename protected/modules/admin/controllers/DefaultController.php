@@ -1282,25 +1282,37 @@ protected function expandHomeDirectory($path)
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
 
-        //get single user
-        $guser = $service->users->get($uname.'@tdmu.edu.ua');
-        
-        if(Yii::app()->request->isAjaxRequest){
-            //print_r(json_encode($gusers)); //display multiple users
-            //var_dump($guser);
-            $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
-            print_r('<div><span>ID: '.$guser->id.'</span><br>');
-            print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
-            print_r('<span>PrimaryEmail: '.$guser->primaryEmail.'</span><br>');
-            print_r('<span>Organization: '.$guser->orgUnitPath.'</span><br>');
-            print_r('<span>Notes: '.$guser->notes.'</span><br>');
-            print_r('<span>Suspended: '.$suspendedstr.'</span><br></div>');
-            print_r($guser->externalIds);
-            //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
-            //print_r(json_encode($guser));
-            Yii::app()->end();
-        } else {
-            return $guser;
+        //get Google user
+        try {
+            $guser = $service->users->get($uname.'@tdmu.edu.ua');
+            
+            if(Yii::app()->request->isAjaxRequest){
+                //print_r(json_encode($gusers)); //display multiple users
+                //var_dump($guser);
+                $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
+                print_r('<div><span>ID: '.$guser->id.'</span><br>');
+                print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
+                print_r('<span>PrimaryEmail: '.$guser->primaryEmail.'</span><br>');
+                print_r('<span>Organization: '.$guser->orgUnitPath.'</span><br>');
+                print_r('<span>Notes: '.$guser->notes.'</span><br>');
+                print_r('<span>Suspended: '.$suspendedstr.'</span><br></div>');
+                print_r($guser->externalIds);
+                //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
+                //print_r(json_encode($guser));
+                Yii::app()->end();
+            } else {
+                return $guser;
+            }
+        }
+        catch (Google_IO_Exception $gioe) {
+            //var_dump("Error in connection: ".$gioe->getMessage());
+            //return "Error in connection: ".$gioe->getMessage();
+            return false;
+        } 
+        catch (Google_Service_Exception $gse) { 
+            //var_dump($gse->getMessage());
+            //return $gse->getMessage();
+            return false;
         }
     }
     
@@ -1314,10 +1326,6 @@ protected function expandHomeDirectory($path)
             $_card = P::model()->findByPk($user->u6);
         }
         //var_dump($_card);
-        //get Google user if exist
-        unset($guser);
-        $guser = $this->actionGsuiteInfo($user->u2);
-        
         //prepare person data values
         $gPrimaryEmail = $user->u4;
         if($type==1){
@@ -1341,11 +1349,18 @@ protected function expandHomeDirectory($path)
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
+        //get Google user if exist
+        unset($guser);
+        $guser = $this->actionGsuiteInfo($user->u2);
 
         if ($guser) {
             //update Google User data
             $guser->primaryEmail = $gPrimaryEmail;
             $guser->suspended = boolval($user->u8);
+            $guser->setHashFunction('MD5');
+            $guser->setPassword(hash('md5',$user->u3));
+            // the JSON object shows us that externalIds is an array, so that's how we set it here
+            //$gUserObject->setExternalIds(array("value"=>28790,"type"=>"custom","customType"=>"EmployeeID"));
             //var_dump($guser);
             try { 
                 $updateUserResult = $service->users->update($gPrimaryEmail, $guser); 
@@ -1375,15 +1390,18 @@ protected function expandHomeDirectory($path)
             //             'suspended' => boolval($user->u8),
             //             'password' => $user->u3));            
             $gUserObject->setName($gNameObject);
-            $gUserObject->setHashFunction("MD5");
+            $gUserObject->setHashFunction('MD5');
             $gUserObject->setPrimaryEmail($gPrimaryEmail);
-            $gUserObject->setPassword(hash("md5",$user->u3));
+            $gUserObject->setPassword(hash('md5',$user->u3));
             $gUserObject->setSuspended(boolval($user->u8));
-            var_dump($gUserObject);
+            $gUserObject->setOrgUnitPath('/dont_sync/projects/tests');
+            // the JSON object shows us that externalIds is an array, so that's how we set it here
+            //$gUserObject->setExternalIds(array("value"=>28790,"type"=>"custom","customType"=>"EmployeeID"));
+            //var_dump($gUserObject);
             //insert a new Google user
-            try { 
-                //$insertUserResult = $service -> users -> insert($gUserObject); 
-                //var_dump($insertUserResult); 
+            try {
+                $insertUserResult = $service -> users -> insert($gUserObject); 
+                var_dump($insertUserResult); 
             } 
             catch (Google_IO_Exception $gioe) {
                 var_dump("Error in connection: ".$gioe->getMessage());
