@@ -1010,7 +1010,7 @@ protected function expandHomeDirectory($path)
             $user->attributes = $_REQUEST['Users'];
             $res = $user->save();
             if ($res && $_REQUEST['Users']['updategoogle']==true) {
-                var_dump($res);
+                //var_dump($res);
                 $this->GsuiteUpdateUser($user, $type);
             }
         }
@@ -1282,26 +1282,13 @@ protected function expandHomeDirectory($path)
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
-        
-        // Print the first 10 users in the domain.
-        $optParams = array(
-            'customer' => 'my_customer',
-            'maxResults' => 10,
-            'orderBy' => 'email',
-        );        
-        $results = $service->users->listUsers($optParams);
-        //var_dump($results->getUsers());
-        $gusers = array();
-        foreach ($results->getUsers() as $user) {
-            $gusers[]= array("uemail"=>$user->getPrimaryEmail(), "ufullname"=>$user->getName()->getFullName());
-        }
 
         //get single user
         $guser = $service->users->get($uname.'@tdmu.edu.ua');
         
         if(Yii::app()->request->isAjaxRequest){
             //print_r(json_encode($gusers)); //display multiple users
-            var_dump($guser);
+            //var_dump($guser);
             $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
             print_r('<div><span>ID: '.$guser->id.'</span><br>');
             print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
