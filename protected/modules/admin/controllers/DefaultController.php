@@ -1010,8 +1010,7 @@ protected function expandHomeDirectory($path)
             $user->attributes = $_REQUEST['Users'];
             $res = $user->save();
             if ($res && $_REQUEST['Users']['updategoogle']==true) {
-                //var_dump($res);
-                $this->GsuiteUpdateUser($user, $type);
+                $this->GSuiteUpdateUser($user, $type);
             }
         }
 
@@ -1300,13 +1299,76 @@ protected function expandHomeDirectory($path)
             //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
             //print_r(json_encode($guser));
             Yii::app()->end();
+        } else {
+            return $guser;
         }
     }
     
-    public function GsuiteUpdateUser($user, $type)
+    public function GSuiteUpdateUser($user, $type)
     {
-        var_dump($user->attributes);
-        var_dump($type);
-        //TODO: crate / update Google        
+        //var_dump($user->attributes);
+        //var_dump($type);
+        unset($_card);
+        if($type==0||$type==2){
+            $_card = St::model()->findByPk($user->u6);
+        } elseif($type==1){
+            $_card = P::model()->findByPk($user->u6);
+        }
+        //var_dump($_card);
+        //TODO: crate / update Google 
+        //get Google user if exist
+        unset($guser);
+        $guser = $this->actionGsuiteInfo($user->u2);
+        
+        //prepare person data values
+        $gPrimaryEmail = $user->u4;
+        if($type==1){
+            $tmpFname = $_card->p4;
+            $tmpMname = $_card->p5;
+            $tmpLastName = $_card->p3;
+        } else {
+            if ($_card->st32 == 804){ //ukrainians
+                $tmpFname = $_card->st3;
+                $tmpMname = $_card->st4;
+                $tmpLastName = $_card->st2;
+            } else {                            //foreign
+                $tmpFname = ($_card->st75!=null?$_card->st75:$_card->st3);
+                $tmpMname = ($_card->st76!=null?$_card->st76:$_card->st4);
+                $tmpLastName = ($_card->st74!=null?$_card->st74:$_card->st2);
+            }
+        }
+
+                //$user->u2 = $username;
+                //$user->u3 = $password;
+                //$user->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
+        // Get the API client and construct the service object.
+        $client = $this->getServiceClient();
+        $service = new Google_Service_Directory($client);
+
+        
+        if ($guser) {
+            //update Google User data
+            $guser->primaryEmail = $gPrimaryEmail;
+            $guser->suspended = boolval($user->u8);
+            //var_dump($guser);
+            $results = $service->users->update($gPrimaryEmail, $guser);
+            var_dump($results);            
+        } else {
+        //construct Google User Object
+            $gNameObject = new Google_Service_Directory_UserName(
+                      array(
+                         'familyName' =>  $tmpLastName,
+                         'givenName'  =>  $tmpFname,
+                         'fullName'   =>  "$tmpFname $tmpLastName"));
+
+            $gUserObject = new Google_Service_Directory_User( 
+                      array( 
+                         'name' => $gNameObject,
+                         'suspended' => boolval($user->u8),
+                         'password' => $user->u3));            
+            //create new Google user
+            var_dump($gPrimaryEmail);
+            var_dump($gUserObject);
+        }
     }
 }
