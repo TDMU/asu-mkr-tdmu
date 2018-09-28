@@ -1307,7 +1307,6 @@ protected function expandHomeDirectory($path)
     public function GSuiteUpdateUser($user, $type)
     {
         //var_dump($user->attributes);
-        //var_dump($type);
         unset($_card);
         if($type==0||$type==2){
             $_card = St::model()->findByPk($user->u6);
@@ -1315,7 +1314,6 @@ protected function expandHomeDirectory($path)
             $_card = P::model()->findByPk($user->u6);
         }
         //var_dump($_card);
-        //TODO: crate / update Google 
         //get Google user if exist
         unset($guser);
         $guser = $this->actionGsuiteInfo($user->u2);
@@ -1338,37 +1336,64 @@ protected function expandHomeDirectory($path)
             }
         }
 
-                //$user->u2 = $username;
                 //$user->u3 = $password;
                 //$user->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
 
-        
         if ($guser) {
             //update Google User data
             $guser->primaryEmail = $gPrimaryEmail;
             $guser->suspended = boolval($user->u8);
             //var_dump($guser);
-            $results = $service->users->update($gPrimaryEmail, $guser);
-            var_dump($results);            
+            try { 
+                $updateUserResult = $service->users->update($gPrimaryEmail, $guser); 
+            } 
+            catch (Google_IO_Exception $gioe) {
+                var_dump("Error in connection: ".$gioe->getMessage());
+                //return "Error in connection: ".$gioe->getMessage();
+            } 
+            catch (Google_Service_Exception $gse) { 
+                var_dump($gse->getMessage());
+                //return $gse->getMessage();
+            }            
+            var_dump($updateUserResult);
+            //return $updateUserResult;
         } else {
-        //construct Google User Object
+            //construct Google User Object
             $gNameObject = new Google_Service_Directory_UserName(
                       array(
                          'familyName' =>  $tmpLastName,
                          'givenName'  =>  $tmpFname,
                          'fullName'   =>  "$tmpFname $tmpLastName"));
 
-            $gUserObject = new Google_Service_Directory_User( 
-                      array( 
-                         'name' => $gNameObject,
-                         'suspended' => boolval($user->u8),
-                         'password' => $user->u3));            
-            //create new Google user
-            var_dump($gPrimaryEmail);
+            $gUserObject = new Google_Service_Directory_User();
+            //$gUserObject = new Google_Service_Directory_User( 
+            //          array( 
+            //             'name' => $gNameObject,
+            //             'suspended' => boolval($user->u8),
+            //             'password' => $user->u3));            
+            $gUserObject->setName($gNameObject);
+            $gUserObject->setHashFunction("MD5");
+            $gUserObject->setPrimaryEmail($gPrimaryEmail);
+            $gUserObject->setPassword(hash("md5",$user->u3));
+            $gUserObject->setSuspended(boolval($user->u8));
             var_dump($gUserObject);
+            //insert a new Google user
+            try { 
+                //$insertUserResult = $service -> users -> insert($gUserObject); 
+                //var_dump($insertUserResult); 
+            } 
+            catch (Google_IO_Exception $gioe) {
+                var_dump("Error in connection: ".$gioe->getMessage());
+                //return "Error in connection: ".$gioe->getMessage();
+            } 
+            catch (Google_Service_Exception $gse) { 
+                var_dump($gse->getMessage());
+                //return $gse->getMessage();
+            }
+                //return $createUserResult;
         }
     }
 }
