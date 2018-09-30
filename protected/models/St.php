@@ -800,6 +800,24 @@ SQL;
 		return $info;
 	}
 
+    public function getStudentFacultyInfo($st1){
+        
+        $sqlSt = '
+            SELECT f1 as faculty_id, f2 as faculty_name
+            FROM f
+               inner join sp on (f.f1 = sp.sp5)
+               inner join sg on (sp.sp1 = sg.sg2)
+               inner join gr on (sg.sg1 = gr.gr2)
+               inner join std on (gr.gr1 = std.std3)
+               inner join st on (std.std2 = st.st1)
+            WHERE  st.st1 = :ST1
+        ';
+        $command = Yii::app()->db->createCommand($sqlSt);
+		$command->bindValue(':ST1', $st1);
+		$info = $command->queryRow();
+        return $info;
+    }
+    
 	/**
 	 * Список студентов по группе дял журнала
 	 * @param $gr1
