@@ -1009,7 +1009,7 @@ protected function expandHomeDirectory($path)
         if (isset($_REQUEST['Users'])) {
             $user->attributes = $_REQUEST['Users'];
             $res = $user->save();
-            if ($res && $_REQUEST['Users']['updategoogle']==true) {
+            if (($res && $_REQUEST['Users']['updategoogle']==true)&&($type == 0||$type == 1)) { //not for parents!
                 $this->GSuiteUpdateUser($user, $type);
             }
         }
@@ -1287,7 +1287,6 @@ protected function expandHomeDirectory($path)
             $guser = $service->users->get($uname.'@tdmu.edu.ua');
             
             if(Yii::app()->request->isAjaxRequest){
-                //print_r(json_encode($gusers)); //display multiple users
                 //var_dump($guser);
                 $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
                 print_r('<div><span>ID: '.$guser->id.'</span><br>');
@@ -1305,21 +1304,19 @@ protected function expandHomeDirectory($path)
             }
         }
         catch (Google_IO_Exception $gioe) {
-            //var_dump("Error in connection: ".$gioe->getMessage());
             //return "Error in connection: ".$gioe->getMessage();
             return false;
-        } 
-        catch (Google_Service_Exception $gse) { 
-            //var_dump($gse->getMessage());
+        }
+        catch (Google_Service_Exception $gse) {
             //return $gse->getMessage();
             return false;
         }
     }
-    
+
     public function GSuiteUpdateUser($user, $type)
     {
-        //var_dump($user->attributes);
-        var_dump($user);
+        //var_dump($user);
+        //get person's model
         unset($_card);
         if($type==0||$type==2){
             $_card = St::model()->findByPk($user->u6);
@@ -1327,13 +1324,21 @@ protected function expandHomeDirectory($path)
             $_card = P::model()->findByPk($user->u6);
         }
         //var_dump($_card);
-        //prepare person data values
+        //prepare person's data values
         $gPrimaryEmail = $user->u4;
-        if($type==1){
+        if($type==1){  //teachers
+            $tmpID = $_card->p1;
             $tmpFname = $_card->p4;
             $tmpMname = $_card->p5;
             $tmpLastName = $_card->p3;
-        } else {
+            $tmpSchoolID = -1;
+            $tmpGrade = -1;
+            $tmpOrgUnitPath = '/dont_sync/Кафедри/Викладачі';
+        } else {        //students
+            $tmpID = $_card->st1;
+            $tmpSchoolID = 0;  //TODO: get it for prod!
+            $tmpOrgUnitPath = '/dont_sync/projects/tests';  //TODO: select for prod!
+            $tmpGrade = (!is_null($_card->st71)?$_card->st71:0);
             if ($_card->st32 == 804){ //ukrainians
                 $tmpFname = $_card->st3;
                 $tmpMname = $_card->st4;
@@ -1356,11 +1361,21 @@ protected function expandHomeDirectory($path)
 
         if ($guser) {
             //update Google User data
-            $guser->primaryEmail = $gPrimaryEmail;
-            $guser->suspended = boolval($user->u8);
+            $gNameObject = new Google_Service_Directory_UserName(
+                      array(
+                         'familyName' =>  $tmpLastName,
+                         'givenName'  =>  $tmpFname,
+                         'fullName'   =>  "$tmpFname $tmpLastName"));
+            $guser->setName($gNameObject);
+            $guser->setPrimaryEmail($gPrimaryEmail);
+            $guser->setSuspended(boolval($user->u8));
             $guser->setPassword($user->password);
+            $guser->setOrgUnitPath($tmpOrgUnitPath);
             // the JSON object shows us that externalIds is an array, so that's how we set it here
-            //$gUserObject->setExternalIds(array("value"=>28790,"type"=>"custom","customType"=>"EmployeeID"));
+            $guser->setExternalIds(array(
+                            array('value'=>$tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
+                            array('value'=>$tmpGrade,'type'=>'custom','customType'=>'grade'),
+                            array('value'=>$tmpID,'type'=>'custom','customType'=>'person_id')));
             //var_dump($guser);
             try { 
                 $updateUserResult = $service->users->update($gPrimaryEmail, $guser); 
@@ -1388,9 +1403,12 @@ protected function expandHomeDirectory($path)
             $gUserObject->setPrimaryEmail($gPrimaryEmail);
             $gUserObject->setPassword($user->password);
             $gUserObject->setSuspended(boolval($user->u8));
-            $gUserObject->setOrgUnitPath('/dont_sync/projects/tests');
+            $gUserObject->setOrgUnitPath($tmpOrgUnitPath);
             // the JSON object shows us that externalIds is an array, so that's how we set it here
-            //$gUserObject->setExternalIds(array("value"=>28790,"type"=>"custom","customType"=>"EmployeeID"));
+            $gUserObject->setExternalIds(array(
+                            array('value'=>$tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
+                            array('value'=>$tmpGrade,'type'=>'custom','customType'=>'grade'),
+                            array('value'=>$tmpID,'type'=>'custom','customType'=>'person_id')));
             //var_dump($gUserObject);
             //insert a new Google user
             try {
