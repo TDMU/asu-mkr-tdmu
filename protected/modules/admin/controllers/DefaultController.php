@@ -1319,6 +1319,7 @@ protected function expandHomeDirectory($path)
     public function GSuiteUpdateUser($user, $type)
     {
         //var_dump($user->attributes);
+        var_dump($user);
         unset($_card);
         if($type==0||$type==2){
             $_card = St::model()->findByPk($user->u6);
@@ -1357,8 +1358,7 @@ protected function expandHomeDirectory($path)
             //update Google User data
             $guser->primaryEmail = $gPrimaryEmail;
             $guser->suspended = boolval($user->u8);
-            $guser->setHashFunction('MD5');
-            $guser->setPassword(hash('md5',$user->u3));
+            $guser->setPassword($user->password);
             // the JSON object shows us that externalIds is an array, so that's how we set it here
             //$gUserObject->setExternalIds(array("value"=>28790,"type"=>"custom","customType"=>"EmployeeID"));
             //var_dump($guser);
@@ -1384,15 +1384,9 @@ protected function expandHomeDirectory($path)
                          'fullName'   =>  "$tmpFname $tmpLastName"));
 
             $gUserObject = new Google_Service_Directory_User();
-            //$gUserObject = new Google_Service_Directory_User( 
-            //          array( 
-            //             'name' => $gNameObject,
-            //             'suspended' => boolval($user->u8),
-            //             'password' => $user->u3));            
             $gUserObject->setName($gNameObject);
-            $gUserObject->setHashFunction('MD5');
             $gUserObject->setPrimaryEmail($gPrimaryEmail);
-            $gUserObject->setPassword(hash('md5',$user->u3));
+            $gUserObject->setPassword($user->password);
             $gUserObject->setSuspended(boolval($user->u8));
             $gUserObject->setOrgUnitPath('/dont_sync/projects/tests');
             // the JSON object shows us that externalIds is an array, so that's how we set it here
