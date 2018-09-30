@@ -1313,6 +1313,7 @@ protected function expandHomeDirectory($path)
         }
     }
 
+    //insert or update Google Directory User Account
     public function GSuiteUpdateUser($user, $type)
     {
         //var_dump($user);
@@ -1336,8 +1337,11 @@ protected function expandHomeDirectory($path)
             $tmpOrgUnitPath = '/dont_sync/Кафедри/Викладачі';
         } else {        //students
             $tmpID = $_card->st1;
-            $tmpSchoolID = 0;  //TODO: get it for prod!
-            $tmpOrgUnitPath = '/dont_sync/projects/tests';  //TODO: select for prod!
+            $tmpFaculty = $this->getStudentFaculty2Directory($_card->st1); //get faculty
+            //var_dump($tmpFaculty);
+            $tmpSchoolID = $tmpFaculty['school_id'];
+            //$tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
+            $tmpOrgUnitPath = '/dont_sync/projects/tests';  //TODO: test only!
             $tmpGrade = (!is_null($_card->st71)?$_card->st71:0);
             if ($_card->st32 == 804){ //ukrainians
                 $tmpFname = $_card->st3;
@@ -1350,8 +1354,6 @@ protected function expandHomeDirectory($path)
             }
         }
 
-                //$user->u3 = $password;
-                //$user->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
@@ -1425,5 +1427,19 @@ protected function expandHomeDirectory($path)
             }
                 //return $createUserResult;
         }
+    }
+    
+    //convert ASU MKR faculty ID into TSMU Contingent ID and set TSMU Google OrgUnit Name
+    private function getStudentFaculty2Directory($st1){
+        $tmpFacultyInfo = St::model()->getStudentFacultyInfo($st1); //get faculty
+        switch ($tmpFacultyInfo['faculty_id']) {
+            case '2': $google_org = array('school_id'=>'43', 'google_org_unit_path'=>'/Students of Medical Faculty'); break;
+            case '3': $google_org = array('school_id'=>'14', 'google_org_unit_path'=>'/Students of Faculty of Pharmacy'); break;
+            case '4': $google_org = array('school_id'=>'13', 'google_org_unit_path'=>'/Students of Faculty of Dentistry'); break;
+            case '5': $google_org = array('school_id'=>'12', 'google_org_unit_path'=>'/Students of Faculty Foreign Students'); break;
+            case '8': $google_org = array('school_id'=>'44', 'google_org_unit_path'=>'/Students of Nursing School'); break;
+            default: $google_org = array('school_id'=>'0', 'google_org_unit_path'=>'/dont_sync/projects/tests'); break;
+        } 
+        return $google_org;
     }
 }
