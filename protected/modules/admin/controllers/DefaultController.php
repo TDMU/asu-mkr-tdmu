@@ -1009,8 +1009,16 @@ protected function expandHomeDirectory($path)
         if (isset($_REQUEST['Users'])) {
             $user->attributes = $_REQUEST['Users'];
             $res = $user->save();
-            if (($res && $_REQUEST['Users']['updategoogle']==true)&&($type == 0||$type == 1)) { //not for parents!
-                $this->GSuiteUpdateUser($user, $type);
+            if ($res) {
+                Yii::app()->user->setFlash('success', "User's data has been saved!");
+                if (($_REQUEST['Users']['updategoogle']==true)&&($type == 0||$type == 1)) { //not for parents!
+                    $gResults = $this->GSuiteUpdateUser($user, $type);
+                    if ($gResults[0] !== true) {
+                        $user->addError('updategoogle', $gResults[1]);
+                    } else {
+                        Yii::app()->user->setFlash('success', "Google Directory User's account has been updated/created!");
+                    }
+                }
             }
         }
 
@@ -1337,7 +1345,7 @@ protected function expandHomeDirectory($path)
             $tmpOrgUnitPath = '/dont_sync/Кафедри/Викладачі';
         } else {        //students
             $tmpID = $_card->st1;
-            $tmpFaculty = $this->getStudentFaculty2Directory($_card->st1); //get faculty
+            $tmpFaculty = $this->getStudentFaculty2Directory($_card->st1); //COMPABILITY: get old faculty ID/name
             //var_dump($tmpFaculty);
             $tmpSchoolID = $tmpFaculty['school_id'];
             //$tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
@@ -1357,76 +1365,53 @@ protected function expandHomeDirectory($path)
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
+        
+        //construct Google User Object
+        $gNameObject = new Google_Service_Directory_UserName(
+                      array(
+                         'familyName' =>  $tmpLastName,
+                         'givenName'  =>  $tmpFname,
+                         'fullName'   =>  "$tmpFname $tmpLastName"));
+                         
         //get Google user if exist
-        unset($guser);
-        $guser = $this->actionGsuiteInfo($user->u2);
-
-        if ($guser) {
-            //update Google User data
-            $gNameObject = new Google_Service_Directory_UserName(
-                      array(
-                         'familyName' =>  $tmpLastName,
-                         'givenName'  =>  $tmpFname,
-                         'fullName'   =>  "$tmpFname $tmpLastName"));
-            $guser->setName($gNameObject);
-            $guser->setPrimaryEmail($gPrimaryEmail);
-            $guser->setSuspended(boolval($user->u8));
-            $guser->setPassword($user->password);
-            $guser->setOrgUnitPath($tmpOrgUnitPath);
-            // the JSON object shows us that externalIds is an array, so that's how we set it here
-            $guser->setExternalIds(array(
-                            array('value'=>$tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
-                            array('value'=>$tmpGrade,'type'=>'custom','customType'=>'grade'),
-                            array('value'=>$tmpID,'type'=>'custom','customType'=>'person_id')));
-            //var_dump($guser);
-            try { 
-                $updateUserResult = $service->users->update($gPrimaryEmail, $guser); 
-            } 
-            catch (Google_IO_Exception $gioe) {
-                var_dump("Error in connection: ".$gioe->getMessage());
-                //return "Error in connection: ".$gioe->getMessage();
-            } 
-            catch (Google_Service_Exception $gse) { 
-                var_dump($gse->getMessage());
-                //return $gse->getMessage();
-            }            
-            var_dump($updateUserResult);
-            //return $updateUserResult;
-        } else {
-            //construct Google User Object
-            $gNameObject = new Google_Service_Directory_UserName(
-                      array(
-                         'familyName' =>  $tmpLastName,
-                         'givenName'  =>  $tmpFname,
-                         'fullName'   =>  "$tmpFname $tmpLastName"));
-
+        unset($gUser);
+        $gUser = $this->actionGsuiteInfo($user->u2);
+        
+        //create new Google user if NOT exist or point to existing
+        if (!$gUser) {
             $gUserObject = new Google_Service_Directory_User();
-            $gUserObject->setName($gNameObject);
-            $gUserObject->setPrimaryEmail($gPrimaryEmail);
-            $gUserObject->setPassword($user->password);
-            $gUserObject->setSuspended(boolval($user->u8));
-            $gUserObject->setOrgUnitPath($tmpOrgUnitPath);
-            // the JSON object shows us that externalIds is an array, so that's how we set it here
-            $gUserObject->setExternalIds(array(
+        } else {
+            $gUserObject = $gUser;
+        }
+        //var_dump($gUser);
+        
+        //set Google User data
+        $gUserObject->setName($gNameObject);
+        $gUserObject->setPrimaryEmail($gPrimaryEmail);
+        $gUserObject->setSuspended(boolval($user->u8));
+        $gUserObject->setPassword($user->password);
+        $gUserObject->setOrgUnitPath($tmpOrgUnitPath);
+        // the JSON object shows us that externalIds is an array, so that's how we set it here
+        $gUserObject->setExternalIds(array(
                             array('value'=>$tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
                             array('value'=>$tmpGrade,'type'=>'custom','customType'=>'grade'),
                             array('value'=>$tmpID,'type'=>'custom','customType'=>'person_id')));
-            //var_dump($gUserObject);
-            //insert a new Google user
-            try {
-                $insertUserResult = $service -> users -> insert($gUserObject); 
-                var_dump($insertUserResult); 
-            } 
-            catch (Google_IO_Exception $gioe) {
-                var_dump("Error in connection: ".$gioe->getMessage());
-                //return "Error in connection: ".$gioe->getMessage();
-            } 
-            catch (Google_Service_Exception $gse) { 
-                var_dump($gse->getMessage());
-                //return $gse->getMessage();
+        //var_dump($gUserObject);
+        try {
+            if ($gUser) {
+                $updateGUserResult = $service->users->update($gPrimaryEmail, $gUserObject);
+            } else {
+                $updateGUserResult = $service->users->insert($gUserObject);
             }
-                //return $createUserResult;
-        }
+        } 
+        catch (Google_IO_Exception $gioe) {
+            return array(false, "Error in connection to Google: ".(string)$gioe->getMessage());
+        } 
+        catch (Google_Service_Exception $gse) {
+            return array(false, "Error on Google user account update/create: ".(string)$gse->getMessage());
+        }            
+        //var_dump($updateGUserResult);
+        return array(true, $updateGUserResult);
     }
     
     //convert ASU MKR faculty ID into TSMU Contingent ID and set TSMU Google OrgUnit Name
