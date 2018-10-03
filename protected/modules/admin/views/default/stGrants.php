@@ -23,6 +23,16 @@ $this->breadcrumbs=array(
     ));
     echo $form->errorSummary($user);
 ?>
+<?php
+    $flashMessages = Yii::app()->user->getFlashes();
+    if ($flashMessages) {
+        echo '<ul class="flashes">';
+        foreach($flashMessages as $key => $message) {
+            echo '<li><div class="flash-' . $key . '">' . $message . "</div></li>\n";
+        }
+        echo '</ul>';
+    }
+?>
     <div class="control-group">
         <label for="Users_u2" class="control-label"><?=tt('Логин')?></label>
         <div class="controls">
@@ -81,7 +91,7 @@ $this->breadcrumbs=array(
     </div>
 
     <div class="control-group">
-        <label for="Users_updategoogle" class="control-label"><?=tt('Update Google')?></label>
+        <label for="Users_updategoogle" class="control-label"><?=tt('Update Google Directory')?></label>
         <div class="controls">
             <label>
                 <?php
@@ -98,6 +108,21 @@ $this->breadcrumbs=array(
     </div>
 
     <div class="control-group">
+
+    <?php 
+    //   echo CHtml::ajaxLink(
+    //       'Get GSuite Info', 
+    //       array('/admin/default/GsuiteInfo/uname/'.$user->u2),
+    //       array('success' => 'js:function(data){$("#gsuiteinfo").html(data);}')
+    //   );
+    ?>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-info">
+            <i class="icon-ok bigger-110"></i>
+            <?=tt('Сохранить')?>
+        </button>
     <?php
         echo CHtml::ajaxButton(
             'Get GSuite Info',
@@ -106,26 +131,23 @@ $this->breadcrumbs=array(
                 'data'=>array('uname'=>$user->u2),
                 'type'=>'GET',
 //                'update'=>'#gsuiteinfo',
-                'success' => 'js:function(data){alert(data);$("#gsuiteinfo").html(data);}'
-            )
+                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}'
+            ), 
+            array('class'=>'btn btn-info')
         );
-?>
-<?php 
-        echo CHtml::ajaxLink(
-            'Get GSuite Info', 
-            array('/admin/default/GsuiteInfo/uname/'.$user->u2),
-            array('success' => 'js:function(data){$("#gsuiteinfo").html(data);}')
-        );
-?>
-    </div>
-
-    <div class="form-actions">
-        <button type="submit" class="btn btn-info">
-            <i class="icon-ok bigger-110"></i>
-            <?=tt('Сохранить')?>
-        </button>
+?>        
     </div>
 <div id="gsuiteinfo">
-No GoogleSuite Info...
+No GoogleSuite Directory Info...
 </div>
+<script>
+$(document).ready(function(){
+
+   // $('.gsuite').click(function(){
+       alert('gsuite');
+     //  return false;
+    //});
+    
+});
+</script>
 <?php $this->endWidget();
