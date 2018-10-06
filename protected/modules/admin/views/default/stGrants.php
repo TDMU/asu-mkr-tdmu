@@ -135,7 +135,20 @@ $this->breadcrumbs=array(
             ), 
             array('class'=>'btn btn-info')
         );
-?>        
+?>
+    <?php
+        echo CHtml::ajaxButton(
+            'Delete GSuite User',
+            array('/admin/default/GsuiteDeleteUser/uname/'.$user->u2),
+            array(
+                'data'=>array('uname'=>$user->u2),
+                'type'=>'GET',
+//                'update'=>'#gsuiteinfo',
+                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}'
+            ), 
+            array('class'=>'btn btn-info')
+        );
+?>
     </div>
 <div id="gsuiteinfo">
 No GoogleSuite Directory Info...

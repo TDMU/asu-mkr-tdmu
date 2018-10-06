@@ -1293,8 +1293,20 @@ protected function expandHomeDirectory($path)
         //get Google user
         try {
             $guser = $service->users->get($uname.'@tdmu.edu.ua');
-            
-            if(Yii::app()->request->isAjaxRequest){
+        }
+        catch (Google_IO_Exception $gioe) {
+            //return "Error in connection: ".$gioe->getMessage();
+            throw new CHttpException(500, 'Error in connection to Google: '.(string)$gioe->getMessage());
+            //return false;
+        }
+        catch (Google_Service_Exception $gse) {
+            //return $gse->getMessage();
+            //throw new CHttpException(403, 'Error to retreive Google user account data: '.(string)$gse->getMessage());
+            return false;
+        }
+        
+        //succesfully - return Google Directory user's info: 
+        if(Yii::app()->request->isAjaxRequest){
                 //var_dump($guser);
                 $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
                 print_r('<div><span>ID: '.$guser->id.'</span><br>');
@@ -1307,17 +1319,39 @@ protected function expandHomeDirectory($path)
                 //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
                 //print_r(json_encode($guser));
                 Yii::app()->end();
-            } else {
-                return $guser;
-            }
+        } else {
+            return $guser;
+        }
+    }
+    
+    public function actionGsuiteDeleteUser($uname)
+    {
+        if (empty($uname))
+            throw new CHttpException(404, 'Invalid request. Please generate portal username first.');
+        // Get the API client and construct the service object.
+        $client = $this->getServiceClient();
+        $service = new Google_Service_Directory($client);
+        //delete Google user
+        try {
+            $guser = $service->users->delete($uname.'@tdmu.edu.ua');
         }
         catch (Google_IO_Exception $gioe) {
             //return "Error in connection: ".$gioe->getMessage();
-            return false;
+            throw new CHttpException(500, 'Error in connection to Google: '.(string)$gioe->getMessage());
+            return false; //TODO: remove?
         }
         catch (Google_Service_Exception $gse) {
             //return $gse->getMessage();
-            return false;
+            throw new CHttpException(403, 'Error during Google user account deletion: '.(string)$gse->getMessage());
+            return false; //TODO: remove?
+        }
+        
+        //deleting was success
+        if(Yii::app()->request->isAjaxRequest){
+            print_r('<div><span>Account: '.$uname.'@tdmu.edu.ua'.'has been deleted!</span></div>');
+            Yii::app()->end();
+        } else {
+            return $guser;
         }
     }
 

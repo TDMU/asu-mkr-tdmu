@@ -50,7 +50,8 @@ class AdminController extends Controller
                     'st165',
                     'security',
                     'connector',
-                    'gsuiteInfo'
+                    'gsuiteInfo',
+                    'gsuiteDeleteUser'
                 ),
                 'expression' => 'Yii::app()->user->isAdmin',
             ),
