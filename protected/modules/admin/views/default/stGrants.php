@@ -28,7 +28,8 @@ $this->breadcrumbs=array(
     if ($flashMessages) {
         echo '<ul class="flashes">';
         foreach($flashMessages as $key => $message) {
-            echo '<li><div class="flash-' . $key . '">' . $message . "</div></li>\n";
+            //echo '<li><div class="flash-' . $key . '">' . $message . "</div></li>\n";
+            echo '<li><div class="' . $key . '">' . $message . "</div></li>\n";
         }
         echo '</ul>';
     }
@@ -91,7 +92,7 @@ $this->breadcrumbs=array(
     </div>
 
     <div class="control-group">
-        <label for="Users_updategoogle" class="control-label"><?=tt('Update Google Directory')?></label>
+        <label for="Users_updategoogle" class="control-label"><?=tt('Update Google Directory on save?')?></label>
         <div class="controls">
             <label>
                 <?php
@@ -130,8 +131,8 @@ $this->breadcrumbs=array(
             array(
                 'data'=>array('uname'=>$user->u2),
                 'type'=>'GET',
-//                'update'=>'#gsuiteinfo',
-                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}'
+                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}',
+                'error' => 'js:function(response){$("#gsuiteinfo").html(response.responseText);}'
             ), 
             array('class'=>'btn btn-info')
         );
@@ -143,24 +144,18 @@ $this->breadcrumbs=array(
             array(
                 'data'=>array('uname'=>$user->u2),
                 'type'=>'GET',
-//                'update'=>'#gsuiteinfo',
-                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}'
+                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}',
+                'error' => 'js:function(response){$("#gsuiteinfo").html(response.responseText);}'
             ), 
             array('class'=>'btn btn-info')
         );
 ?>
     </div>
 <div id="gsuiteinfo">
-No GoogleSuite Directory Info...
 </div>
 <script>
 $(document).ready(function(){
-
-   // $('.gsuite').click(function(){
-       alert('gsuite');
-     //  return false;
-    //});
-    
+    $("#gsuiteinfo").html('GoogleSuite Directory Info has not loaded. Press "Get GSuite Info" to get user\'s info...');
 });
 </script>
 <?php $this->endWidget();

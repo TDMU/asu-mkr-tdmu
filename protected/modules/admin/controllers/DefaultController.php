@@ -1297,28 +1297,31 @@ protected function expandHomeDirectory($path)
         catch (Google_IO_Exception $gioe) {
             //return "Error in connection: ".$gioe->getMessage();
             throw new CHttpException(500, 'Error in connection to Google: '.(string)$gioe->getMessage());
-            //return false;
         }
         catch (Google_Service_Exception $gse) {
             //return $gse->getMessage();
-            //throw new CHttpException(403, 'Error to retreive Google user account data: '.(string)$gse->getMessage());
-            return false;
+            if(Yii::app()->request->isAjaxRequest){
+                throw new CHttpException(403, 'Error to retreive Google user account data: '.(string)$gse->getMessage());
+                Yii::app()->end();
+            } else {
+                return false;
+            }
         }
         
         //succesfully - return Google Directory user's info: 
         if(Yii::app()->request->isAjaxRequest){
-                //var_dump($guser);
-                $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
-                print_r('<div><span>ID: '.$guser->id.'</span><br>');
-                print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
-                print_r('<span>PrimaryEmail: '.$guser->primaryEmail.'</span><br>');
-                print_r('<span>Organization: '.$guser->orgUnitPath.'</span><br>');
-                print_r('<span>Notes: '.$guser->notes.'</span><br>');
-                print_r('<span>Suspended: '.$suspendedstr.'</span><br></div>');
-                print_r($guser->externalIds);
-                //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
-                //print_r(json_encode($guser));
-                Yii::app()->end();
+            //var_dump($guser);
+            $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
+            print_r('<div><span>ID: '.$guser->id.'</span><br>');
+            print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
+            print_r('<span>PrimaryEmail: '.$guser->primaryEmail.'</span><br>');
+            print_r('<span>Organization: '.$guser->orgUnitPath.'</span><br>');
+            print_r('<span>Notes: '.$guser->notes.'</span><br>');
+            print_r('<span>Suspended: '.$suspendedstr.'</span><br></div>');
+            print_r($guser->externalIds);
+            //print_r('<div>External IDs: '.implode(" ",$guser->externalIds).'</div>');
+            //print_r(json_encode($guser));
+            Yii::app()->end();
         } else {
             return $guser;
         }
@@ -1326,24 +1329,30 @@ protected function expandHomeDirectory($path)
     
     public function actionGsuiteDeleteUser($uname)
     {
-        if (empty($uname))
+        if (empty($uname)) {
             throw new CHttpException(404, 'Invalid request. Please generate portal username first.');
+        }
+        
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
         $service = new Google_Service_Directory($client);
-        //delete Google user
+
+        //delete Google user account
         try {
-            $guser = $service->users->delete($uname.'@tdmu.edu.ua');
+            //get Google user if exist
+            unset($gUser);
+            $gUser = $service->users->get($uname.'@tdmu.edu.ua');
+            if ($gUser->suspended == true) {
+                $gUser = $service->users->delete($uname.'@tdmu.edu.ua');
+            } else {
+                throw new CHttpException(403, 'Error: Suspend user account before deletion!');
+            }
         }
         catch (Google_IO_Exception $gioe) {
-            //return "Error in connection: ".$gioe->getMessage();
-            throw new CHttpException(500, 'Error in connection to Google: '.(string)$gioe->getMessage());
-            return false; //TODO: remove?
+            throw new CHttpException(500, 'Error on connection to Google: '.(string)$gioe->getMessage());
         }
         catch (Google_Service_Exception $gse) {
-            //return $gse->getMessage();
             throw new CHttpException(403, 'Error during Google user account deletion: '.(string)$gse->getMessage());
-            return false; //TODO: remove?
         }
         
         //deleting was success
@@ -1351,7 +1360,7 @@ protected function expandHomeDirectory($path)
             print_r('<div><span>Account: '.$uname.'@tdmu.edu.ua'.'has been deleted!</span></div>');
             Yii::app()->end();
         } else {
-            return $guser;
+            return $gUser;
         }
     }
 
