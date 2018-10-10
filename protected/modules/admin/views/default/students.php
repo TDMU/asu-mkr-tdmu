@@ -9,8 +9,7 @@ $this->pageHeader=tt('Студенты');
 $this->breadcrumbs=array(
     tt('Админ. панель'),
 );
-//Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite2.js');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite.js');
 ?>
 
 <?php
@@ -114,15 +113,15 @@ $this->widget('bootstrap.widgets.TbGridView', array(
                     ),
                 ),
                 'gsuite' => array(
-                    'label'=>'<i class="icon-share bigger-120"></i>',
+                    'label'=>'<i class="icon-info-sign bigger-120"></i>',
                     'imageUrl'=>false,
                     'url'=>'Yii::app()->createAbsoluteUrl("/admin/default/GsuiteInfo", array("uname" => !empty($data->account)? $data->account->u2: "-1"))',
                     'options' => array(
                         'class' => 'btn btn-mini btn-primary',
                         //'class' => 'btn btn-mini btn-primary gsuite',
-                        'title'=>tt('GSuite info'),
+                        'title'=>tt('GoogleSuite User info'),
                     ),
-                    'click'=>"function( e ){ e.preventDefault(); g22Click((this).href); return false;}",
+                    'click'=>"function( e ){ e.preventDefault(); getGoogleInfoClick((this).href); return false;}",
                     'visible'=>'!empty($data->account)'
                 ),
                 'enter' => array(
@@ -156,3 +155,23 @@ Yii::app()->clientScript->registerScript('initPageSize',"
 	        $.fn.yiiGridView.update('students',{ data:{ pageSize: $(this).val() }})
 	    });",CClientScript::POS_READY);
 ?>
+
+  <div class="modal fade" id="gSuiteInfoModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">GoogleSuite Directory User Info</h4>
+        </div>
+        <div class="modal-body" id="gsuiteinfo">
+          <p>No Google user data...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
