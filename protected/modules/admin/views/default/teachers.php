@@ -7,7 +7,9 @@
  */
 
     Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/teachers.js', CClientScript::POS_HEAD);
-
+    
+    Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/admin/gsuite.js');
+    
     $this->pageHeader=tt('Преподаватели');
     $this->breadcrumbs=array(
         tt('Админ. панель'),
@@ -102,7 +104,7 @@ HTML;
             ),
             array(
                 'class'=>'CButtonColumn',
-                'template'=>'{grants} {enter} {delete}',
+                'template'=>'{grants} {gsuite} {enter} {delete}',
                 //'header' => tt('Права доступа'),
                 'header'=>CHtml::dropDownList(
                         'pageSize',
@@ -120,6 +122,18 @@ HTML;
                             'class' => 'btn btn-mini btn-success',
                             'title'=>tt('Редактировать'),
                         ),
+                    ),
+                    'gsuite' => array(
+                        'label'=>'<i class="icon-info-sign bigger-120"></i>',
+                        'imageUrl'=>false,
+                        'url'=>'Yii::app()->createAbsoluteUrl("/admin/default/GsuiteInfo", array("uname" => !empty($data->account)? $data->account->u2: "-1"))',
+                        'options' => array(
+                            'class' => 'btn btn-mini btn-primary',
+                            //'class' => 'btn btn-mini btn-primary gsuite',
+                            'title'=>tt('GoogleSuite User info'),
+                        ),
+                        'click'=>"function( e ){ e.preventDefault(); getGoogleInfoClick((this).href); return false;}",
+                        'visible'=>'!empty($data->account)'
                     ),
                     'enter' => array(
                         'label'=>'<i class="icon-share bigger-120"></i>',
@@ -150,4 +164,23 @@ Yii::app()->clientScript->registerScript('initPageSize',"
 	   $(document).on('change','.change-pageSize', function() {
 	        $.fn.yiiGridView.update('teachers',{ data:{ pageSize: $(this).val(), chairId: $('#chairs').val() }})
 	    });",CClientScript::POS_READY);
-
+?>
+  <div class="modal fade" id="gSuiteInfoModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">GoogleSuite Directory User Info</h4>
+        </div>
+        <div class="modal-body" id="gsuiteinfo">
+          <p>No Google user data...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
