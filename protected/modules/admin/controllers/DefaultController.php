@@ -1049,9 +1049,22 @@ protected function expandHomeDirectory($path)
             $user->attributes = $_REQUEST['Users'];
 
             $user->u7 = isset($_REQUEST['role']) ? (int)$_REQUEST['role'] : 0;
-
-            if($user->save())
-                $this->redirect(array('teachers'));
+            
+            //if($user->save())
+            //    $this->redirect(array('teachers')); //original
+            $res = $user->save();
+            if($res) {
+                Yii::app()->user->setFlash('success', "User's data has been saved!");
+                if (($_REQUEST['Users']['updategoogle']==true)&&($type == 0||$type == 1)) { //not for parents!
+                    $gResults = $this->GSuiteUpdateUser($user, $type);
+                    if ($gResults[0] !== true) {
+                        $user->addError('updategoogle', $gResults[1]);
+                    } else {
+                        Yii::app()->user->setFlash('success', "Google Directory User's account has been updated/created!");
+                    }
+                }
+                //$this->redirect(array('teachers')); //TDMU - stay on teache's page
+            }
         }
 
         $this->render('pGrants', array(

@@ -24,6 +24,17 @@ $this->breadcrumbs=array(
     ));
     echo $form->errorSummary($user);
 ?>
+<?php
+    $flashMessages = Yii::app()->user->getFlashes();
+    if ($flashMessages) {
+        echo '<ul class="flashes">';
+        foreach($flashMessages as $key => $message) {
+            //echo '<li><div class="flash-' . $key . '">' . $message . "</div></li>\n";
+            echo '<li><div class="' . $key . '">' . $message . "</div></li>\n";
+        }
+        echo '</ul>';
+    }
+?>
     <div class="control-group">
         <label for="Users_u7" class="control-label"><?=tt('Администратор')?></label>
         <div class="controls">
@@ -198,12 +209,62 @@ $this->breadcrumbs=array(
             </div>
         <?php endif;
     ?>
-
+    
+    <div class="control-group">
+        <label for="Users_updategoogle" class="control-label"><?=tt('Update Google Directory on save?')?></label>
+        <div class="controls">
+            <label>
+                <?php
+                echo CHtml::checkBox('Users[updategoogle]', 1,
+                    array(
+                        'class' => 'ace ace-switch',
+                        'uncheckValue' => '0'
+                    )
+                )
+                ?>
+                <span class="lbl"></span>
+            </label>
+        </div>
+    </div>
+    
     <div class="form-actions">
         <button type="submit" class="btn btn-info">
             <i class="icon-ok bigger-110"></i>
             <?=tt('Сохранить')?>
         </button>
+    <?php
+        echo CHtml::ajaxButton(
+            'Get GSuite Info',
+            array('/admin/default/GsuiteInfo/uname/'.$user->u2),
+            array(
+                'data'=>array('uname'=>$user->u2),
+                'type'=>'GET',
+                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}',
+                'error' => 'js:function(response){$("#gsuiteinfo").html(response.responseText);}'
+            ), 
+            array('class'=>'btn btn-info')
+        );
+    ?>
+    <?php
+        echo CHtml::ajaxButton(
+            'Delete GSuite User',
+            array('/admin/default/GsuiteDeleteUser/uname/'.$user->u2),
+            array(
+                'data'=>array('uname'=>$user->u2),
+                'type'=>'GET',
+                'success' => 'js:function(data){$("#gsuiteinfo").html(data);}',
+                'error' => 'js:function(response){$("#gsuiteinfo").html(response.responseText);}'
+            ), 
+            array('class'=>'btn btn-info')
+        );
+    ?>    
     </div>
-
+    
+<div id="gsuiteinfo">
+</div>
+<script>
+$(document).ready(function(){
+    $("#gsuiteinfo").html('GoogleSuite Directory Info has not loaded. Press "Get GSuite Info" to get user\'s info...');
+});
+</script>
 <?php $this->endWidget();
