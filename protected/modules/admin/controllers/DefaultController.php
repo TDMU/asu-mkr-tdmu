@@ -1013,6 +1013,10 @@ protected function expandHomeDirectory($path)
         if (empty($id))
             throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
+        if (isset($_POST['cancel'])) {
+            $this->redirect(array('students'));
+        }
+
         $type = 0; // student
         $user = $this->loadUsersModel($type, $id);
 
@@ -1047,6 +1051,11 @@ protected function expandHomeDirectory($path)
 
         $model = $this->loadGrantsModel($id);
 		$model->scenario = 'admin-teachers';
+        
+        if (isset($_POST['cancel'])) {
+            $this->redirect(array('teachers'));
+        }
+        
         if (isset($_REQUEST['Grants'])) {
             $model->attributes = $_REQUEST['Grants'];
             $model->save();

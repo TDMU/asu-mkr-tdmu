@@ -108,22 +108,14 @@ $this->breadcrumbs=array(
         </div>
     </div>
 
-    <div class="control-group">
-
-    <?php 
-    //   echo CHtml::ajaxLink(
-    //       'Get GSuite Info', 
-    //       array('/admin/default/GsuiteInfo/uname/'.$user->u2),
-    //       array('success' => 'js:function(data){$("#gsuiteinfo").html(data);}')
-    //   );
-    ?>
-    </div>
-
     <div class="form-actions">
         <button type="submit" class="btn btn-info">
             <i class="icon-ok bigger-110"></i>
             <?=tt('Сохранить')?>
         </button>
+    <?php
+        echo CHtml::submitButton(Yii::t('Yii', 'Cancel'), array('name'=>'cancel', 'class'=>'btn btn-info'));
+    ?>
     <?php
         echo CHtml::ajaxButton(
             'Get GSuite Info',

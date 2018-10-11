@@ -233,6 +233,9 @@ $this->breadcrumbs=array(
             <?=tt('Сохранить')?>
         </button>
     <?php
+        echo CHtml::submitButton(Yii::t('Yii', 'Cancel'), array('name'=>'cancel', 'class'=>'btn btn-info'));
+    ?>
+    <?php
         echo CHtml::ajaxButton(
             'Get GSuite Info',
             array('/admin/default/GsuiteInfo/uname/'.$user->u2),
