@@ -395,6 +395,7 @@ protected function expandHomeDirectory($path)
             $tmpMname = substr($tmpMname,0,3);
         }
         $username = $tmpLastName."_".$tmpFname.$tmpMname;
+        $username = str_replace(" ","",$username); //finally: remove all possible ocasional spaces
         return $username; //TDMU-ASU-specific
     }
     
