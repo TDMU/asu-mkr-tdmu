@@ -155,9 +155,23 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/a
                 'action'=>array('generateUserExcel')
             )); ?>
             <?=$form->hiddenField($model,'users')?>
-            <input type="hidden" name="createGogle" value="0">
+            <div class="control-group">
+                <label for="GenerateUserForm_createGoogle" class="control-label"><?=tt('Create Google accounts on save?')?></label>
+                <div class="controls">
+                    <label>
+                        <?php
+                        echo CHtml::checkBox('GenerateUserForm[createGoogle]', $model->createGoogle,
+                            array(
+                                'class' => 'ace ace-switch',
+                                'uncheckValue' => '0'
+                            )
+                        )
+                        ?>
+                        <span class="lbl"></span>
+                    </label>
+                </div>
+            </div>            
             <input type="submit" href="#" class="btn btn-primary btn-generate-user" value="<?=tt('Сгенерировать')?>"/>
-            <input type="button" href="#" class="btn btn-primary btn-generate-user" value="Згенерувати(+Google)"/>
             <?php $this->endWidget(); ?>
         </li>
     </ul>

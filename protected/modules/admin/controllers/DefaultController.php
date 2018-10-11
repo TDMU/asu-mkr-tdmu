@@ -81,7 +81,8 @@ protected function getServiceClient()
 {
     $client = new Google_Client();
     //prepare service account credentials
-    $client_secret_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'phpdirectoryapi-719704fe21c9.json';
+    //$client_secret_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'phpdirectoryapi-719704fe21c9.json';
+    $client_secret_file = YiiBase::getPathOfAlias('application.config').DIRECTORY_SEPARATOR.'phpdirectoryapi-serviceaccount.json';    
     putenv('GOOGLE_APPLICATION_CREDENTIALS='.$client_secret_file);
     if (file_exists($client_secret_file)) {
         // set the location manually
@@ -191,6 +192,9 @@ protected function expandHomeDirectory($path)
     {
         $model = new GenerateUserForm();
         $model->unsetAttributes();  // clear any default values
+        
+        $model->createGoogle=1;     //TDMU - forced - always "ON"
+        
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
             unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
@@ -209,20 +213,13 @@ protected function expandHomeDirectory($path)
         $model->unsetAttributes();  // clear any default values
         if(isset($_POST['GenerateUserForm']))
             $model->attributes=$_POST['GenerateUserForm'];
-        
-        if(isset($_POST['createGogle'])) {
-            $createGogle = $_POST['createGogle'];
-        }
-        if ($createGogle) {
-            var_dump($createGogle);die(); //deal with google API
-        }
-        //var_dump($model->users);
 
         if(empty($model->users))
             throw new CHttpException(400,'Invalid request. Empty params.');
 
         $users = explode(',',$model->users);
-
+        $createGogle = (boolean)$model->createGoogle; //TDMU-specific
+        
         Yii::import('ext.phpexcel.XPHPExcel');
         $objPHPExcel= XPHPExcel::createPHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
@@ -248,13 +245,17 @@ protected function expandHomeDirectory($path)
         $sheet->getColumnDimension('D')->setWidth(18);
         $sheet->getColumnDimension('E')->setWidth(18);
         $sheet->getColumnDimension('F')->setWidth(18);
+        
+        if ($createGogle) { //TDMU-specific
+            $sheet->setCellValueByColumnAndRow(6,1,tt('Google account created'));
+            $sheet->getColumnDimension('G')->setWidth(28);
+        }
 
         $i = 2;
 
         foreach($users as $user){
             if(empty($user))
                 continue;
-
 
             list($id,$type) = explode('-',$user);
 
@@ -304,6 +305,7 @@ protected function expandHomeDirectory($path)
             $model->u1 = new CDbExpression('GEN_ID(GEN_USERS, 1)');
             $model->u2 = $username;
             $model->u3 = $password;
+            $model->password = $password; //for GSuiteUpdateUser compability
             $model->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
             //$model->u4 = '';//origin
             $model->u5 = $type;
@@ -315,6 +317,16 @@ protected function expandHomeDirectory($path)
                 $sheet->setCellValueByColumnAndRow(3,$i,$id);
                 $sheet->setCellValueByColumnAndRow(4,$i,$username);
                 $sheet->setCellValueByColumnAndRow(5,$i,$password);
+                //creating a Google Directory useer account
+                if (($createGogle==true)&&($type == 0||$type == 1)) { //not for parents!
+                    unset($gResults);
+                    $gResults = $this->GSuiteUpdateUser($model, $type);
+                    if ($gResults[0] !== true) {  //error
+                        $sheet->setCellValueByColumnAndRow(6,$i,$gResults[1]);
+                    } else {  //success
+                        $sheet->setCellValueByColumnAndRow(6,$i,$gResults[1]->creationTime);
+                    }
+                }
             }else{
                 //ошибка сохранения
                 $sheet->mergeCellsByColumnAndRow(0, $i, 4, $i)->setCellValueByColumnAndRow(0, $i,'Ошибка сохранения '.$typeName.' '.$name.' '.$bDate);
@@ -1381,7 +1393,6 @@ protected function expandHomeDirectory($path)
     //insert or update Google Directory User Account
     public function GSuiteUpdateUser($user, $type)
     {
-        //var_dump($user);
         //get person's model
         unset($_card);
         if($type==0||$type==2){
@@ -1389,7 +1400,7 @@ protected function expandHomeDirectory($path)
         } elseif($type==1){
             $_card = P::model()->findByPk($user->u6);
         }
-        //var_dump($_card);
+
         //prepare person's data values
         $gPrimaryEmail = $user->u4;
         if($type==1){  //teachers
@@ -1433,15 +1444,14 @@ protected function expandHomeDirectory($path)
         //get Google user if exist
         unset($gUser);
         $gUser = $this->actionGsuiteInfo($user->u2);
-        
+
         //create new Google user if NOT exist or point to existing
         if (!$gUser) {
             $gUserObject = new Google_Service_Directory_User();
         } else {
             $gUserObject = $gUser;
         }
-        //var_dump($gUser);
-        
+
         //set Google User data
         $gUserObject->setName($gNameObject);
         $gUserObject->setPrimaryEmail($gPrimaryEmail);
@@ -1453,7 +1463,6 @@ protected function expandHomeDirectory($path)
                             array('value'=>$tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
                             array('value'=>$tmpGrade,'type'=>'custom','customType'=>'grade'),
                             array('value'=>$tmpID,'type'=>'custom','customType'=>'person_id')));
-        //var_dump($gUserObject);
         try {
             if ($gUser) {
                 $updateGUserResult = $service->users->update($gPrimaryEmail, $gUserObject);
@@ -1466,8 +1475,7 @@ protected function expandHomeDirectory($path)
         } 
         catch (Google_Service_Exception $gse) {
             return array(false, "Error on Google user account update/create: ".(string)$gse->getMessage());
-        }            
-        //var_dump($updateGUserResult);
+        }
         return array(true, $updateGUserResult);
     }
     

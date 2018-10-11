@@ -23,11 +23,13 @@ class GenerateUserForm extends CFormModel
     public $chair;
 
     public $chairName;
+    
+    public $createGoogle;
 
     public function rules()
     {
         return array(
-			array('type, faculty, course, speciality, chair', 'numerical', 'integerOnly'=>true),
+			array('type, faculty, course, speciality, chair, createGoogle', 'numerical', 'integerOnly'=>true),
 			array('lastName,firstName,secondName, users, chairName', 'type', 'type'=>'string'),
             array('bDate', 'type', 'type'=>'date'),
 		);
