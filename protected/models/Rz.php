@@ -113,7 +113,7 @@ class Rz extends CActiveRecord
 
         $res = array();
         foreach($rows as $row) {
-            $key = $row['rz1'];
+            $key = $row['rz6'];
             $res[$key] = $row;
         }
 

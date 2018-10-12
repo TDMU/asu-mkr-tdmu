@@ -24,3 +24,4 @@ define('U_FARM',  12);
 define('U_IRPEN',  24);
 define('U_KIEV_MVD',  23);
 define('U_UMAN',  37);
+define('U_RGIIS',  21);
