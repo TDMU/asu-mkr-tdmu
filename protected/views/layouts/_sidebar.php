@@ -52,7 +52,8 @@
                 U_IRPEN,
                 U_FARM,
                 U_KIEV_MVD,
-                U_UMAN
+                U_UMAN,
+                U_RGIIS
             ));
         ?>
         <a href="<?= $newMobile ? SH::MOBILE_URL : 'https://play.google.com/store/apps/details?id=scheduleMKP.scheduleMKP'?>" target="_blank">

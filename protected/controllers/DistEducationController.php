@@ -28,7 +28,8 @@ class DistEducationController extends Controller
                     'subscriptionStudent',
                     'subscriptionDisp',
                     'signUpNewDistEducation',
-                    'uploadMarks'
+                    'uploadMarks',
+                    'subscriptionsList'
                 ),
                 'expression' => 'Yii::app()->user->isTch',
             ),
@@ -544,6 +545,38 @@ class DistEducationController extends Controller
 
 
         $this->render('subscription', array(
+            'model' => $model
+        ));
+    }
+
+    /**
+     * метод для отображения записаных студентов
+     */
+    public function actionSubscriptionsList(){
+
+        $model = new DistEducationFilterForm(Yii::app()->user);
+        $model->unsetAttributes();
+
+        if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+            unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
+        }
+
+        if(isset($_REQUEST['DistEducationFilterForm'])){
+            $model->attributes = $_REQUEST['DistEducationFilterForm'];
+
+            if(!$model->validate()){
+                throw new CHttpException(400, tt('Неверные параметры'));
+            }
+        }
+
+        if($model->isAdminDistEducation){
+            $chairId = Yii::app()->request->getParam('chairId', null);
+
+            $model->setChairId($chairId);
+        }
+
+        $this->render('subscriptionsList', array(
             'model' => $model
         ));
     }

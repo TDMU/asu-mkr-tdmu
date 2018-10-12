@@ -294,7 +294,7 @@ TEXT;
 
     private function cellShortTextFor($day, $type)
     {
-        $maxLength = 13;
+        $maxLength = 18;
 
         $d3    = $day['d3'];
         $tip   = $day['tip'];
@@ -347,24 +347,30 @@ TEXT;
 <div style="background:{$color}">
     <span>{$rowDisc}</span><br>
     {$gr3}<br>
-    {$rowClass}
+    {$rowClass}<br>
+    &nbsp
 </div>
 HTML;
         elseif($type == 0) // group
+        {
+            $groupName = $day['gr13'] == 1 && $day['tip']!='Лк' ? $gr3 : '&nbsp';
             $pattern = <<<HTML
 <div style="background:{$color}">
     <span>{$rowDisc}{$tem_name}</span><br>
     {$rowClass}<br>
-    {$fio}
+    {$fio}<br>
+    {$groupName}
     <span class="hidden">{$hiddenParams}</span>
 </div>
 HTML;
+        }
         elseif($type == 2) // student
             $pattern = <<<HTML
 <div style="background:{$color}">
     <span>{$rowDisc}{$tem_name}</span><br>
     {$rowClass}<br>
-    {$fio}
+    {$fio}<br>
+    &nbsp
 </div>
 HTML;
         elseif($type == 3) // classroom
@@ -372,7 +378,8 @@ HTML;
 <div style="background:{$color}">
     <span>{$rowDisc}</span><br>
     {$gr3}<br>
-    {$fio}
+    {$fio}<br>
+    &nbsp
 </div>
 HTML;
 

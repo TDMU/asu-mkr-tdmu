@@ -191,6 +191,10 @@
                             'name'=>'Запись',
                             'authOnly' => $teacherStr
                         ),
+                        'subscriptionsList' => array(
+                            'name'=>'Итоги записи',
+                            'authOnly' => $teacherStr
+                        ),
                     ),
                 ),
                 array(

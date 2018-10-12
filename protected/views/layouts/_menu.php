@@ -485,6 +485,12 @@ $this->widget('zii.widgets.CMenu', array(
                     'active'  => $_c=='distEducation' && $_a=='subscription',
                     'visible' => _ch('distEducation', 'subscription')&& ($isTch||$isAdmin)
                 ),
+                array(
+                    'label'   => $_l2.tt('Итоги записи'),
+                    'url'     => _u('/distEducation/subscriptionsList'),
+                    'active'  => $_c=='distEducation' && $_a=='subscriptionsList',
+                    'visible' => _ch('distEducation', 'subscriptionsList')&& ($isTch||$isAdmin)
+                ),
             ),getDopItem('distEducation',0)),
             'visible' => _ch('distEducation', 'main')&& ($isTch||$isAdmin) && (PortalSettings::model()->getSettingFor(PortalSettings::ENABLE_DIST_EDUCATION)==1)
         ),

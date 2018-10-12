@@ -549,22 +549,22 @@ table.timeTable td{
 }
 
 .mh-50{
-    min-height: 50px;
+    min-height: 65px;
 }
 .mh-100{
-    min-height: 100px;
+    min-height: 130px;
 }
 .mh-150{
-    min-height: 150px;
+    min-height: 195px;
 }
 .mh-200{
-    min-height: 200px;
+    min-height: 260px;
 }
 .mh-250{
-     min-height: 250px;
+     min-height: 325px;
  }
 .mh-300{
-    min-height: 300px;
+    min-height: 390px;
 }
 .mh-350{
     min-height: 350px;
