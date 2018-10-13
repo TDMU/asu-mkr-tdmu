@@ -1425,8 +1425,8 @@ protected function expandHomeDirectory($path)
             $tmpFaculty = $this->getStudentFaculty2Directory($_card->st1); //COMPABILITY: get old faculty ID/name
             //var_dump($tmpFaculty);
             $tmpSchoolID = $tmpFaculty['school_id'];
-            //$tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
-            $tmpOrgUnitPath = '/dont_sync/projects/tests';  //TODO: test only!
+            $tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
+            //$tmpOrgUnitPath = '/dont_sync/projects/tests';  //test only!
             $tmpGrade = (!is_null($_card->st71)?$_card->st71:0);
             if ($_card->st32 == 804){ //ukrainians
                 $tmpFname = $_card->st3;
