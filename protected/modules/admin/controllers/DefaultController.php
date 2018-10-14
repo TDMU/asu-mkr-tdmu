@@ -1317,9 +1317,9 @@ protected function expandHomeDirectory($path)
         ));
     }
     
-    public function actionGsuiteInfo($uname)
+    public function actionGsuiteInfo($uemail)
     {
-        if (empty($uname))
+        if (empty($uemail))
             throw new CHttpException(404, 'Invalid request. Please generate portal username first.');
         // Get the API client and construct the service object.
         $client = $this->getServiceClient();
@@ -1327,14 +1327,12 @@ protected function expandHomeDirectory($path)
 
         //get Google user
         try {
-            $guser = $service->users->get($uname.'@tdmu.edu.ua');
+            $guser = $service->users->get($uemail);
         }
         catch (Google_IO_Exception $gioe) {
-            //return "Error in connection: ".$gioe->getMessage();
             throw new CHttpException(500, 'Error in connection to Google: '.(string)$gioe->getMessage());
         }
         catch (Google_Service_Exception $gse) {
-            //return $gse->getMessage();
             if(Yii::app()->request->isAjaxRequest){
                 throw new CHttpException(403, 'Error to retreive Google user account data: '.(string)$gse->getMessage());
                 Yii::app()->end();
@@ -1362,9 +1360,9 @@ protected function expandHomeDirectory($path)
         }
     }
     
-    public function actionGsuiteDeleteUser($uname)
+    public function actionGsuiteDeleteUser($uemail)
     {
-        if (empty($uname)) {
+        if (empty($uemail)) {
             throw new CHttpException(404, 'Invalid request. Please generate portal username first.');
         }
         
@@ -1376,9 +1374,10 @@ protected function expandHomeDirectory($path)
         try {
             //get Google user if exist
             unset($gUser);
-            $gUser = $service->users->get($uname.'@tdmu.edu.ua');
+            $gUser = $service->users->get($uemail);
+            //$gUser = $service->users->get($uname.'@tdmu.edu.ua');
             if ($gUser->suspended == true) {
-                $gUser = $service->users->delete($uname.'@tdmu.edu.ua');
+                $gUser = $service->users->delete($uemail);
             } else {
                 throw new CHttpException(403, 'Error: Suspend user account before deletion!');
             }
@@ -1392,7 +1391,7 @@ protected function expandHomeDirectory($path)
         
         //deleting was success
         if(Yii::app()->request->isAjaxRequest){
-            print_r('<div><span>Account: '.$uname.'@tdmu.edu.ua'.'has been deleted!</span></div>');
+            print_r('<div><span>Account: '.$uemail.'has been deleted!</span></div>');
             Yii::app()->end();
         } else {
             return $gUser;
@@ -1423,7 +1422,6 @@ protected function expandHomeDirectory($path)
         } else {        //students
             $tmpID = $_card->st1;
             $tmpFaculty = $this->getStudentFaculty2Directory($_card->st1); //COMPABILITY: get old faculty ID/name
-            //var_dump($tmpFaculty);
             $tmpSchoolID = $tmpFaculty['school_id'];
             $tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
             //$tmpOrgUnitPath = '/dont_sync/projects/tests';  //test only!
@@ -1452,7 +1450,7 @@ protected function expandHomeDirectory($path)
                          
         //get Google user if exist
         unset($gUser);
-        $gUser = $this->actionGsuiteInfo($user->u2);
+        $gUser = $this->actionGsuiteInfo($user->u4);
 
         //create new Google user if NOT exist or point to existing
         if (!$gUser) {

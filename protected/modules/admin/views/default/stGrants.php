@@ -119,9 +119,9 @@ $this->breadcrumbs=array(
     <?php
         echo CHtml::ajaxButton(
             'Get GSuite Info',
-            array('/admin/default/GsuiteInfo/uname/'.$user->u2),
+            array('/admin/default/GsuiteInfo/uemail/'.$user->u4),
             array(
-                'data'=>array('uname'=>$user->u2),
+                'data'=>array('uemail'=>$user->u4),
                 'type'=>'GET',
                 'success' => 'js:function(data){$("#gsuiteinfo").html(data);}',
                 'error' => 'js:function(response){$("#gsuiteinfo").html(response.responseText);}'
@@ -132,9 +132,9 @@ $this->breadcrumbs=array(
     <?php
         echo CHtml::ajaxButton(
             'Delete GSuite User',
-            array('/admin/default/GsuiteDeleteUser/uname/'.$user->u2),
+            array('/admin/default/GsuiteDeleteUser/uemail/'.$user->u4),
             array(
-                'data'=>array('uname'=>$user->u2),
+                'data'=>array('uemail'=>$user->u4),
                 'type'=>'GET',
                 'success' => 'js:function(data){$("#gsuiteinfo").html(data);}',
                 'error' => 'js:function(response){$("#gsuiteinfo").html(response.responseText);}'

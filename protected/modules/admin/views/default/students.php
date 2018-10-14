@@ -115,7 +115,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
                 'gsuite' => array(
                     'label'=>'<i class="icon-info-sign bigger-120"></i>',
                     'imageUrl'=>false,
-                    'url'=>'Yii::app()->createAbsoluteUrl("/admin/default/GsuiteInfo", array("uname" => !empty($data->account)? $data->account->u2: "-1"))',
+                    'url'=>'Yii::app()->createAbsoluteUrl("/admin/default/GsuiteInfo", array("uemail" => !empty($data->account)? $data->account->u4: "-1"))',
                     'options' => array(
                         'class' => 'btn btn-mini btn-primary',
                         //'class' => 'btn btn-mini btn-primary gsuite',
