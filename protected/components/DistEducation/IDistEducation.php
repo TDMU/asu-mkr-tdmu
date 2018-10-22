@@ -8,7 +8,7 @@
 
 /**
  * Interface IDistEducation
- * Коннектор для дистанционого обучения
+ * Коннектор для дистанционного обучения
  */
 interface IDistEducation
 {
@@ -19,7 +19,7 @@ interface IDistEducation
     public function getHost();
 
     /**
-     * Регистрация в системе дистанционого обучения
+     * Регистрация в системе дистанционного обучения
      * @param Users $user
      * @return mixed
      */
@@ -47,7 +47,7 @@ interface IDistEducation
     public function getCourse($id);
 
     /**
-     * Авторизация в системе дистанционого обучения
+     * Авторизация в системе дистанционного обучения
      * @param $user Users
      * @return mixed
      */

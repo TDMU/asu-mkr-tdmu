@@ -3616,11 +3616,11 @@ SQL;
             $sheet->setCellValue('D7', tt('Количество прошедших занятий'));
             $sheet->setCellValue('E7', tt('Количество прошедших часов'));
             $sheet->setCellValue('F7', tt('Количество пропусков'));
-            $sheet->setCellValue('G7', tt('Количество пропущеных часов'));
+            $sheet->setCellValue('G7', tt('Количество пропущенных часов'));
             $sheet->setCellValue('H7', tt('Количество уваж. пропусков'));
-            $sheet->setCellValue('I7', tt('Количество пропущеных часов по уваж. причине'));
+            $sheet->setCellValue('I7', tt('Количество пропущенных часов по уваж. причине'));
             $sheet->setCellValue('J7', tt('Количество неуваж. пропусков'));
-            $sheet->setCellValue('K7', tt('Количество пропущеных часов по неуваж. причине'));
+            $sheet->setCellValue('K7', tt('Количество пропущенных часов по неуваж. причине'));
 
             $groupName = '';
             if($model->scenario == AttendanceStatisticForm::SCENARIO_GROUP){

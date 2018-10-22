@@ -411,7 +411,7 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
                 </div>
 
                 <div class="control-group">
-                    <span class="lbl"> <?=tt('Для преподователей')?>:</span>
+                    <span class="lbl"> <?=tt('Для преподавателей')?>:</span>
                     <?php $this->widget('application.extensions.elFinderTinyMce.TinyMce',
                         array(
                             'name'=>'settings[93]',

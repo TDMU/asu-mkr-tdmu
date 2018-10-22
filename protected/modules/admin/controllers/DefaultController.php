@@ -475,9 +475,9 @@ class DefaultController extends AdminController
             {
                 $str = base64_encode(serialize($config));
                 if(file_put_contents($file, $str))
-                    Yii::app()->user->setFlash('config',tt("Настройки почты сохранены!"));
+                    Yii::app()->user->setFlash('success',tt("Настройки почты сохранены!"));
                 else
-                    Yii::app()->user->setFlash('config_error',tt("Ошибка! Настройки почты не сохранены!"));
+                    Yii::app()->user->setFlash('error',tt("Ошибка! Настройки почты не сохранены!"));
 
             }
         }
@@ -1178,8 +1178,12 @@ class DefaultController extends AdminController
         $webroot = Yii::getPathOfAlias('application');
         $file = $webroot . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'menu.txt';
 
-        if (isset($_REQUEST['menu']))
-            file_put_contents($file, $_REQUEST['menu']);
+        if (isset($_REQUEST['menu'])) {
+            if(file_put_contents($file, $_REQUEST['menu']))
+                Yii::app()->user->setFlash('success',tt('Настройки меню сохранены!'));
+            else
+                Yii::app()->user->setFlash('error',tt('Ошибка! Настройки меню не сохранены!'));
+        }
 
         $settings = file_get_contents($file);
 

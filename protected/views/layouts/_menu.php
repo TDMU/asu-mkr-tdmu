@@ -324,7 +324,7 @@ $this->widget('zii.widgets.CMenu', array(
                     'active' => $_a=='security' && $_m=='admin'
                 ),
                 array(
-                    'label'  => $_l2.tt('Дистанционое образование'),
+                    'label'  => $_l2.tt('Дистанционное образование'),
                     'url'    => _u('/admin/distEducation/settings'),
                     'active' => $_c=='distEducation' && $_m=='admin'
                 ),
@@ -582,7 +582,7 @@ $this->widget('zii.widgets.CMenu', array(
                     'active'  => $_c=='journal' && $_a=='attendanceStatistic'
                 ),
                 array(
-                    'label'   => $_l2.tt('Статистика посещаемости (н.)'),
+                    'label'   => $_l2.tt('Статистика посещаемости'),
                     'url'     => _u('/journal/newAttendanceStatistic'),
                     'visible' => _ch('journal', 'newAttendanceStatistic'),
                     'active'  => $_c=='journal' && $_a=='newAttendanceStatistic'
@@ -630,7 +630,7 @@ $this->widget('zii.widgets.CMenu', array(
             'visible' => _ch('progress', 'main')
         ),
         array(
-            'label' => _l('Док.-оборот', 'folder-open'),
+            'label' => _l('Документооборот', 'folder-open'),
             'url' => '#',
             'linkOptions'=> $_l,
             'itemOptions'=>_i('doc'),

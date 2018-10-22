@@ -8,7 +8,7 @@
 
 $this->pageHeader=tt('Документооборот');
 $this->breadcrumbs=array(
-    tt('Док.-оборот'),
+    tt('Документооборот'),
 );
 
 Yii::app()->clientScript->registerPackage('autosize');

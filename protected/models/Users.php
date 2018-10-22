@@ -64,7 +64,7 @@ class Users extends CActiveRecord
             array('u2, u4', 'checkIfUnique'),
             //array('u2', 'length', 'min'=>5, 'max'=>30),
             // Логин должен соответствовать шаблону
-            array('u2', 'match', 'pattern'=>'/^[a-zA-Z][a-zA-Z0-9-_.]{7,30}$/','message'=>tt('В login могут быть только латинские символы и цифры, а так же символы "." и "_" ,  длиной от 8 до 30 символов. Также логин должен начинаться с латинской буквы')),
+            array('u2', 'match', 'pattern'=>'/^[a-zA-Z][a-zA-Z0-9-_.]{7,30}$/','message'=>tt('В login могут быть только латинские символы и цифры, а так же символы "." и "_",  длиной от 8 до 30 символов. Также логин должен начинаться с латинской буквы')),
             //array('u4', 'application.validators.EmailValidator', 'validateDomen'=> true, 'universityCode' => SH::getUniversityCod()),
             array('u2, u3, u4, password', 'required', 'on'=>'admin-create,admin-update'),
 			array('u2,u4 ,u3, password', 'safe', 'on'=>'change-password'),
@@ -298,7 +298,7 @@ SQL;
 
 	public function getTypes()
 	{
-		return array(0=>tt('Студент'),1=>tt('Преподователь'),2=>tt('Родитель'));
+		return array(0=>tt('Студент'),1=>tt('Преподаватель'),2=>tt('Родитель'));
 	}
 
 	public function getType()
@@ -499,7 +499,7 @@ HTML;
         }
 
         if(!empty($message))
-            Yii::app()->user->setState('info_message', $message);
+            Yii::app()->user->setFlash('info', $message);
 
         $universityCode = SH::getUniversityCod();
 

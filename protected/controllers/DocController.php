@@ -216,7 +216,7 @@ SQL;
         try{
             $dbh->active = true;
         }catch(Exception $error) {
-            throw new Exception("Ошибка подключения к uрафической базе, с ошибкой: " . $error->getMessage());
+            throw new Exception("Ошибка подключения к графической базе, с ошибкой: " . $error->getMessage());
         }
 
         $sql = <<<SQL

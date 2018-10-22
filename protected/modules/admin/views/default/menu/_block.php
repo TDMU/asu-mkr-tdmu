@@ -37,7 +37,7 @@ function checkbox($controller, $action, $type)
             $label = tt('Доступен студентам');
             break;
         case MENU_ELEMENT_AUTH_TEACHER:
-            $label = tt('Доступен преподователям');
+            $label = tt('Доступен преподавателям');
             break;
         case MENU_ELEMENT_AUTH_PARENT:
             $label = tt('Доступен родителям');

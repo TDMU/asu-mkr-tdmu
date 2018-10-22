@@ -118,7 +118,7 @@ SQL;
         return $result;
     }
 
-    private static function getNameByUs4AndUs6($sql){
+    /*private static function getNameByUs4AndUs6($sql){
         $command = Yii::app()->db->createCommand($sql);
         $val = $command->queryScalar();
 
@@ -126,7 +126,7 @@ SQL;
             return "-";
 
         return $val;
-    }
+    }*/
 
     /*public static function convertUS4ByUS6($us4,$us6)
     {
@@ -598,9 +598,14 @@ class SH extends ShortCodes
         $string = Yii::app()->db->connectionString;
         $parts  = explode('=', $string);
 
-        $host     = trim($parts[1].'D');
+        if(!isset($parts[1]))
+            return null;
 
-        $newString = str_replace($parts[1],$host,$string);
+        $path = explode(';',$parts[1]);
+
+        $host = trim($path[0]).'D';
+
+        $newString = str_replace($path[0],$host,$string);
         //var_dump($newString);
         $login    = Yii::app()->db->username;
         $password = Yii::app()->db->password;

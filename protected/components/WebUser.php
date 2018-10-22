@@ -4,7 +4,7 @@
  * Class WebUser
  * @property bool $isStd  Являеться ли студентом
  * @property bool $isAdmin  Являеться ли администратором
- * @property bool $isTch  Являеться ли преподователем
+ * @property bool $isTch  Являеться ли преподавателем
  * @property bool $isPrnt  Являеться ли родителем
  * @property bool $isBlock Заблокирован ли
  * @property P|St $dbModel  модель персоні

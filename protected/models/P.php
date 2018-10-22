@@ -475,7 +475,7 @@ SQL;
 			INNER JOIN PD ON (P1=PD2)
 			INNER JOIN K ON (PD4=K1)
 			INNER JOIN KS ON (K10=KS1)
-		WHERE pd2>0 and pd3='0' and pd28 in (0,2,5,9) and pd13 is null and p3 CONTAINING :name
+		WHERE pd2>0 and pd3='0' and pd28 in (0,2,5,9) and pd13 is null and p3 CONTAINING :name and k20=0
 		GROUP BY p1,p3,p4,p5,k1,k2,k3,ks1,ks3
         ORDER BY p3 collate UNICODE,p4,p5,k2
 SQL;
@@ -486,7 +486,7 @@ SQL;
     }
 
 	/**
-	 * для прямой ссылки в расписании преподователя
+	 * для прямой ссылки в расписании преподавателя
 	 * @param $p1 int
 	 * @return array
 	 */
@@ -499,7 +499,7 @@ SQL;
         SELECT first 1 p1,k1,K10 as ks1, K7 as f1 FROM p
 			INNER JOIN PD ON (P1=PD2)
 			INNER JOIN K ON (PD4=K1)
-		WHERE pd2>0 and pd3='0' and pd28 in (0,2,5,9) and pd13 is null and p1=:P1
+		WHERE pd2>0 and pd3='0' and pd28 in (0,2,5,9) and pd13 is null and p1=:P1 and k20=0
 SQL;
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':P1', $p1);
@@ -584,7 +584,8 @@ SQL;
             FROM P
                 INNER JOIN PD ON (P1=PD2)
                 INNER JOIN DOL ON (PD45 = DOL1)
-            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}')
+                INNER JOIN K on (PD4=K1)
+            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}') and k20=0
             group by P1,P3,P4,P5,pd7,DOL2,PD1, p76, p77, p78, dol13
             ORDER BY P3 collate UNICODE, pd7 desc
 SQL;
@@ -611,7 +612,8 @@ SQL;
             FROM P
                 INNER JOIN PD ON (P1=PD2)
                 INNER JOIN DOL ON (PD45 = DOL1)
-            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}')
+                INNER JOIN K on (PD4=K1)
+            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}') and k20=0
             group by P1,P3,P4,P5,pd6,dol2
             ORDER BY P3 collate UNICODE
 SQL;
@@ -649,7 +651,8 @@ SQL;
             SELECT P1,P3,P4,P5
             FROM P
                 INNER JOIN PD ON (P1=PD2)
-            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}')
+                INNER JOIN K on (PD4=K1)
+            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}') and k20=0
             group by P1,P3,P4,P5
             ORDER BY P3 collate UNICODE
 SQL;
@@ -746,6 +749,7 @@ SQL;
 				INNER JOIN K ON (PD4 = K1)
 				where PD2>0  and (PD28 in (0,2,5,9)) and PD11<=:DATE1
 				and (PD13 is null or PD13>:DATE2)
+				and k20=0
 				and
 				(
 					P3 CONTAINING :QUERY1
@@ -800,7 +804,8 @@ SQL;
             FROM P
                 INNER JOIN PD ON (P1=PD2)
                 INNER JOIN DOL ON (PD45 = DOL1)
-            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}')
+                INNER JOIN k on (pd4=k1)
+            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}') and k20=0
             ORDER BY P3 collate UNICODE
 SQL;
 
@@ -864,46 +869,31 @@ SQL;
         $permition = $command->queryRow();
 		return $permition['p120'];
 	}
-	
-	public static function getPerm()
-	{
-		switch ($i) {
-			case 0:
-				break;
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-		}
-	}
         
-        public function getArrayPd($p1)
-        {
-            $sql = <<<SQL
-                SELECT pd1,pd6,pd7,pd5 FROM pd WHERE pd2=:p1 AND pd13 is null AND pd28 in (0,2,5,9) ORDER by pd7
+    public function getArrayPd($p1)
+    {
+        $sql = <<<SQL
+            SELECT pd1,pd6,pd7,pd5 FROM pd WHERE pd2=:p1 AND pd13 is null AND pd28 in (0,2,5,9) ORDER by pd7
 SQL;
-            $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(':p1', $p1);
-            $teachers = $command->queryAll();
-            $types=array(
-			0=>tt('штатный'),
-			1=>tt('внешн. совмест. '),
-			2=>tt('внутр. совмест.'),
-			3=>tt('почасовик внутр.'),
-			4=>tt('совмещение'),
-			5=>tt('почасовик внешн.'),
-			6=>tt('специалист'),
-		);
-            foreach ($teachers as $key => $teacher) {
-                $type=$types[$teacher['pd7']];
-                $teachers[$key]['title'] = $type.' '.(float)$teacher['pd6'];
-            }
-            return $teachers;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':p1', $p1);
+        $teachers = $command->queryAll();
+        $types=array(
+        0=>tt('штатный'),
+        1=>tt('внешн. совмест. '),
+        2=>tt('внутр. совмест.'),
+        3=>tt('почасовик внутр.'),
+        4=>tt('совмещение'),
+        5=>tt('почасовик внешн.'),
+        6=>tt('специалист'),
+    );
+        foreach ($teachers as $key => $teacher) {
+            $type=$types[$teacher['pd7']];
+            $teachers[$key]['title'] = $type.' '.(float)$teacher['pd6'];
         }
+        return $teachers;
+    }
+
 	//$type = 0 -факультет 1 - кафедра
 	public function isJournalAdmin($id,$type,$stegnd9)
 	{
@@ -939,7 +929,7 @@ SQL;
             SELECT k.* FROM P 
               INNER JOIN PD ON (P1=PD2)
               INNER JOIN K ON (PD4 = k1)
-            WHERE pd3=0 and pd28 in (0,2,5,9) and pd11<='{$today}' and (pd13 is null or pd13>'{$today}') AND p1=:P1
+            WHERE pd3=0 and pd28 in (0,2,5,9) and pd11<='{$today}' and (pd13 is null or pd13>'{$today}') AND p1=:P1 and k20=0
 SQL
             , array(
                 ':P1' => $this->p1
@@ -947,7 +937,7 @@ SQL
         );
     }
     /*
-     * Проверка заблокирован ли преподователь
+     * Проверка заблокирован ли преподаватель
      * @return bool
      */
 	public function checkBlocked()

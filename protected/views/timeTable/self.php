@@ -8,7 +8,7 @@ $title='';
 if($rasp==1)
     $title=tt('Расписание студента');
 elseif($rasp==2)
-    $title=tt('Расписание преподователя');
+    $title=tt('Расписание преподавателя');
 
 $this->pageHeader=$title.': '.tt('Личное');
 $this->breadcrumbs=array(

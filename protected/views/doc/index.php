@@ -14,7 +14,7 @@
  */
 $this->pageHeader=tt('Документооборот');
 $this->breadcrumbs=array(
-    tt('Док.-оборот'),
+    tt('Документооборот'),
 );
 
 $this->renderPartial(

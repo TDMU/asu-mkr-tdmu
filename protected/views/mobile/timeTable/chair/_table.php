@@ -39,12 +39,12 @@ JS;
     Yii::app()->clientScript->registerScript('lesson-datepicker',$js,CClientScript::POS_END);
 
     if(empty($teachers)):
-        echo '<div class="alert alert-danger" role="alert"><h3>'.Yii::t('main','Преподователи не найдены!').'</h3></div>';
+        echo '<div class="alert alert-danger" role="alert"><h3>'.Yii::t('main','Преподаватели не найдены!').'</h3></div>';
     else:
         $pattern = <<<HTML
             <td>%s</td>
 HTML;
-        $columnName = tt('Преподователь');
+        $columnName = tt('Преподаватель');
 
         $th = $tr = '';
             $table = <<<HTML

@@ -26,6 +26,8 @@ class TimeTableForm extends CFormModel
 
     const r11Color = '#EFBCEF';
 
+    private  $_universityId = 0;
+
 	/**
 	 * Declares the validation rules.
 	 */
@@ -59,6 +61,8 @@ class TimeTableForm extends CFormModel
     public function __construct($scenario='')
     {
         $this->r11 = PortalSettings::model()->getSettingFor(108);
+
+        $this->_universityId = SH::getUniversityCod();
 
         parent::__construct($scenario='');
     }
@@ -388,13 +392,9 @@ HTML;
 
     public function getTem($r1,$r2)
     {
-        $arr=array(32,38,40,43,44,45);
-        $sql=<<<SQL
-            select b15 from b where b1=0
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $id=$command->queryRow();
-        if(!empty($id['b15'])&&in_array($id['b15'], $arr))
+        $arr=array(U_ZSMU, U_NMU, U_XNMU,43,44,45);
+
+        if(!empty($this->_universityId)&&in_array($this->_universityId, $arr))
         {
             $sql ='SELECT * FROM TEMA_NAME(:r1, :r2)';
             $command = Yii::app()->db->createCommand($sql);
@@ -687,7 +687,7 @@ HTML;
     }
 
     /**
-     * загрузка пареметров преподователя для прямой ссылки
+     * загрузка пареметров преподавателя для прямой ссылки
      * @param $p1 int
      */
     public function loadByP1($p1){

@@ -8,7 +8,7 @@
 
 /**
  * Class DistEducation
- * Класс для дистанционого обучения
+ * Класс для дистанционного обучения
  * @property string $host
  * @property string $apiKey
  */
@@ -83,7 +83,7 @@ abstract class DistEducation implements IDistEducation
 
         $transaction = Yii::app()->db->beginTransaction();
         try {
-            //Сохраняем приязку студента к акунту дистанционого образлвания
+            //Сохраняем приязку студента к акунту дистанционного образлвания
             $stDist = Stdist::model()->findByPk($user->u6);
             if($stDist==null) {
                 $stDist = new Stdist();
@@ -145,7 +145,7 @@ abstract class DistEducation implements IDistEducation
     }
 
     /**
-     * Регистрация в системе дистанционого обучения
+     * Регистрация в системе дистанционного обучения
      * @param $user Users
      * @return array
      */
@@ -156,7 +156,7 @@ abstract class DistEducation implements IDistEducation
             return array(false, tt('Пользователь пустой'));
         }
         if($this->validateEmail($user->u4)){
-            return array(false, tt('Уже есть пользователь в дистанционом образовании с таким email!'));
+            return array(false, tt('Уже есть пользователь в дистанционном образовании с таким email!'));
         }
         $params = $this->getParamsForSignUp($user);
 
@@ -207,7 +207,7 @@ abstract class DistEducation implements IDistEducation
     }
 
     /**
-     * Регистрация в системе дистанционого обучения
+     * Регистрация в системе дистанционного обучения
      * @param $user Users
      * @param $params array
      * @return array
@@ -235,7 +235,7 @@ abstract class DistEducation implements IDistEducation
     }
 
     /**
-     * Авторизация в системе дистанционого обучения
+     * Авторизация в системе дистанционного обучения
      * @param $user Users Логин
      * @return bool
      */
@@ -506,7 +506,7 @@ SQL
         $vedomost = null;
 
         try {
-            $vedomost = new DistVedomost($uo1, $gr1);
+            $vedomost = new DistVedomost($uo1, $gr1, $vvmp->vvmp6);
 
             $vedomost = $this->_getMarks($vedomost);
         }catch (Exception $error){

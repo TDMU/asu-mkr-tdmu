@@ -56,7 +56,6 @@ class OtherController extends Controller
                     'studentCard', //проверка идет в самом методе
                     'studentCardExcel',
                     'showRetake', //проверка идет в самом методе
-                    'orderAbiturient'
                 ),
             ),
             array('allow',
@@ -70,42 +69,6 @@ class OtherController extends Controller
                 'users' => array('*'),
             ),
         );
-    }
-
-    public function actionOrderAbiturient()
-    {
-        $model = new Abtmpi('search');
-        $model->unsetAttributes();
-
-        $this->layout = 'clear1';
-
-        if (isset($_POST['Abtmpi']))
-        {
-            $model->attributes = $_POST['Abtmpi'];
-            //throw  new Exception(1);
-            Yii::app()->user->setState('SearchParamsAbtmpi', $_POST['Abtmpi']);
-
-            //var_dump($_REQUEST['Abtmpi']);
-            //var_dump(Yii::app()->user->getState('SearchParamsAbtmpi'));
-        }
-        else
-        {
-            $searchParams = Yii::app()->user->getState('SearchParamsAbtmpi');
-            if ( isset($searchParams) )
-            {
-                $model->attributes = $searchParams;
-            }
-        }
-        //var_dump($model);
-
-        if(empty($model->abtmpi7))
-            $model->abtmpi7 = date('d.m.Y');
-
-        $model->abtmpi10 = date('Y');
-
-        $this->render('ochered',array(
-            'model'=>$model,
-        ));
     }
 
     public function actionShowRetake()
@@ -327,7 +290,7 @@ class OtherController extends Controller
                 $sheet->setCellValue('J2', tt('"2"'));
 
                 $sheet->mergeCells('K1:K2');
-                $sheet->setCellValue('K1', tt('% задолжености'));
+                $sheet->setCellValue('K1', tt('% задолженности'));
 
                 $sheet->getColumnDimension('B')->setWidth(20);
                 $sheet->getColumnDimension('C')->setWidth(40);
@@ -678,12 +641,14 @@ SQL;
                 $_SESSION['func'] = 'PROCEDURA_CIKL_PO_BLOKAM';
 
                 $res = true;
+                $msg = '';
             }catch (Exception $error){
                 $res = false;
+                $msg = $error->getMessage();
             }
         }
 
-        Yii::app()->end(CJSON::encode(array('res' => $res)));
+        Yii::app()->end(CJSON::encode(array('res' => $res, 'msg' => $msg)));
     }
 
     public function actionCancelSubscription()
@@ -1630,7 +1595,7 @@ HTML;
 
                 list($status, $message) =  $this->mailsend($teacher->u4, 'Antiplagiat results '.$studentName, $message);
                 if(!$status)
-                    Yii::app()->user->setFlash('error', tt('Ошибка отправки email для преподователя. Текст ошибки: ').$message);
+                    Yii::app()->user->setFlash('error', tt('Ошибка отправки email для преподавателя. Текст ошибки: ').$message);
             }
         }
 

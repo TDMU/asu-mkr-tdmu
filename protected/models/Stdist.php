@@ -6,8 +6,8 @@
  *
  * The followings are the available columns in table 'stdist':
  * @property integer $stdist1 st1
- * @property string $stdist2 email учетки дистанционого образования
- * @property int $stdist3 id учетки дистанционого образования (moodle)
+ * @property string $stdist2 email учетки дистанционного образования
+ * @property int $stdist3 id учетки дистанционного образования (moodle)
  *
  * The followings are the available model relations:
  * @property St $stdist10

@@ -22,6 +22,7 @@
  * @property string $k16
  * @property string $k17
  * @property string $k18
+ * @property string $k20
  */
 class K extends CActiveRecord
 {
@@ -42,14 +43,14 @@ class K extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('k1', 'required'),
-			array('k1, k7, k8, k10, k12, k14', 'numerical', 'integerOnly'=>true),
+			array('k1, k7, k8, k10, k12, k14, k20', 'numerical', 'integerOnly'=>true),
 			array('k2', 'length', 'max'=>200),
 			array('k3, k4, k5, k15, k16, k17, k18', 'length', 'max'=>600),
 			array('k11', 'length', 'max'=>4),
 			array('k9, k13', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('k1, k2, k3, k4, k5, k7, k8, k9, k10, k11, k12, k13, k14, k15, k16, k17, k18', 'safe', 'on'=>'search'),
+			array('k1, k2, k3, k4, k5, k7, k8, k9, k10, k11, k12, k13, k14, k15, k16, k17, k18, k20', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -88,6 +89,7 @@ class K extends CActiveRecord
 			'k16' => 'K16',
 			'k17' => 'K17',
 			'k18' => 'K18',
+            'k20' => 'K20',
 		);
 	}
 
@@ -127,6 +129,7 @@ class K extends CActiveRecord
 		$criteria->compare('k16',$this->k16,true);
 		$criteria->compare('k17',$this->k17,true);
 		$criteria->compare('k18',$this->k18,true);
+        $criteria->compare('k20',$this->k20);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -175,7 +178,7 @@ class K extends CActiveRecord
             SELECT k1,k2,k3
             FROM f
               INNER JOIN k on (f.f1 = k.k7)
-            WHERE f1>0 and f12<>0 and f17<>2 and (f19 is null or f19>'{$today}') and
+            WHERE f1>0 and f12<>0 and f17<>2 and (f19 is null or f19>'{$today}') and k20=0 and
                   k11<>0 and k1>0 and (k9 is null or k9>'{$today}')
             ORDER BY k8,f15,f3 collate UNICODE, k3 collate UNICODE
 SQL;
@@ -190,7 +193,7 @@ SQL;
             SELECT K1,K2,K3,K15,K16,K17,K10, K18
 				FROM F
 				inner join k on (f.f1 = k.k7)
-			WHERE f12='1' and f17='0' and k11='1' and k10=:FILIAL and (k9 is null) and K1>0
+			WHERE f12='1' and f17='0' and k11='1' and k10=:FILIAL and (k9 is null) and K1>0 and k20=0
 			ORDER BY K3 collate UNICODE
 SQL;
 
@@ -249,7 +252,7 @@ SQL;
             SELECT K1,K2,K3,K15,K16,K17,K10, K18
                 FROM F
                 inner join k on (f.f1 = k.k7)
-            WHERE f12='1' and k11<>'2' and (k9 is null) and K1>0
+            WHERE f12='1' and k11<>'2' and (k9 is null) and K1>0 and k20=0
             and
 				(
 					K2 CONTAINING :QUERY1 OR
