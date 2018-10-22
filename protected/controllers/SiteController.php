@@ -21,7 +21,6 @@ class SiteController extends Controller
             array('allow',
                 'actions'=>array(
                     'logout',
-                    'getMobileKey',
                     'changePassword',
                     'resendCheckEmail'
                 ),
@@ -144,7 +143,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Регитсрация в дистанционом образовании
+     * Регитсрация в дистанционном образовании
      * Вопрос есть уже акаунт или нет
      */
     public function actionLoginDistEducation(){
@@ -189,12 +188,12 @@ class SiteController extends Controller
             $this->redirect('index');
         }else{
             if( Yii::app()->user->id != $model->ue2)
-                throw new CHttpException(400, 'Некоректный пользователь.');
+                throw new CHttpException(400, 'Некорректный пользователь.');
 
             //если есть запись, проверяем не пустоя ли токен, если да то почта уже подтверждена, если нет :
             if(!empty($model->ue3)) {
 
-                Yii::app()->user->setFlash('error', '<strong>' . tt('Внимание!') . '</strong> ' . tt('Для продолжения нужно подтвредить почту, письмо было выслано на вашу почту! <a href="{link}">Переотправить</a>', array(
+                Yii::app()->user->setFlash('error', '<strong>' . tt('Внимание!') . '</strong> ' . tt('Для продолжения нужно подтвредить почту, письмо было выслано на вашу почту! <a href="{link}">Отправить снова</a>', array(
                         '{link}' => Yii::app()->createAbsoluteUrl('site/resendCheckEmail', array('_token' => $model->ue3))
                     )));
                 $this->redirect('index');
@@ -228,7 +227,7 @@ HTML
         //отправка письма на почту с токеном
 
         if ($status) {
-            Yii::app()->user->setFlash('success', tt('Вам на почту было отправлено письмо для подтвреждения! <a href="{link}">Переотправить</a>',
+            Yii::app()->user->setFlash('success', tt('Вам на почту было отправлено письмо для подтверждения! <a href="{link}">Отправить снова</a>',
                 array(
                     '{link}' => Yii::app()->createAbsoluteUrl('site/resendCheckEmail', array('_token' => $model->ue3))
                 )));
@@ -300,10 +299,10 @@ HTML
             else {
                 $model->ue3 = '';
                 if(!$model->save()){
-                    Yii::app()->user->setFlash('error', '<strong>'.tt('Внимание!').'</strong> '. tt('Ошибка, сохранения подтверждения почты!'));
+                    Yii::app()->user->setFlash('error', '<strong>'.tt('Внимание!').'</strong> '. tt('Ошибка сохранения подтверждения почты!'));
 
                 }else{
-                    Yii::app()->user->setFlash('success', '<strong>'.tt('Внимание!').'</strong> '. tt('Почта подтвреждена!'));
+                    Yii::app()->user->setFlash('success', '<strong>'.tt('Внимание!').'</strong> '. tt('Почта подтверждена!'));
                 }
 
                 $this->redirect('index');
@@ -312,7 +311,7 @@ HTML
     }
 
     /**
-     * Регитсрация в дистанционом образовании
+     * Регитсрация в дистанционном образовании
      * Вопрос есть уже акаунт или нет
      */
     public function actionSignUpDistEducation(){
@@ -325,7 +324,7 @@ HTML
     }
 
     /**
-     * Регитсрация в дистанционом образовании
+     * Регитсрация в дистанционном образовании
      * Вопрос есть уже акаунт или нет
      */
     public function actionSignUpOldDistEducation(){
@@ -377,7 +376,7 @@ HTML
     }
 
     /**
-     * Регитсрация в дистанционом образовании
+     * Регитсрация в дистанционном образовании
      */
     public function actionSignUpNewDistEducation(){
         $connector = SH::getDistEducationConnector(
@@ -601,7 +600,7 @@ HTML
 					if(UniversityCommon::SendZapApiRequest(UniversityCommon::CHANGE_PASSWORD_TYPE, $message)){
 						//Yii::app()->user->setState('info_message', $message);
 					}else{
-						Yii::app()->user->setState('info_message', tt('Ошибка отправки сообщения на поодержку!'));
+						Yii::app()->user->setState('error', tt('Ошибка отправки сообщения на поодержку!'));
 					}
 				}
 				Yii::app()->end('ok');
@@ -667,7 +666,7 @@ HTML
 					if(UniversityCommon::SendZapApiRequest(UniversityCommon::REGISTER_TYPE, $message)){
 						//Yii::app()->user->setState('info_message', $message);
 					}else{
-						Yii::app()->user->setState('info_message', tt('Ошибка отправки сообщения на поодержку!'));
+						Yii::app()->user->setState('error', tt('Ошибка отправки сообщения на поодержку!'));
 					}
 				}
 				Yii::app()->end('registered');
@@ -722,7 +721,7 @@ HTML
 					if(UniversityCommon::SendZapApiRequest(UniversityCommon::REGISTER_TYPE, $message)){
 						//Yii::app()->user->setState('info_message', $message);
 					}else{
-						Yii::app()->user->setState('info_message', tt('Ошибка отправки сообщения на поодержку!'));
+						Yii::app()->user->setState('error', tt('Ошибка отправки сообщения на поодержку!'));
 					}
 				}
 				return $this->redirect('index');
@@ -781,10 +780,10 @@ HTML;
 					list($status, $message) = $this->mailsend($model->email, tt('Забыл пароль'), $message);
 
 					if ($status) {
-						Yii::app()->user->setFlash('user', $message);
+						Yii::app()->user->setFlash('success', $message);
 						Yii::app()->end('send');
 					} else {
-						Yii::app()->user->setFlash('user_error', $message);
+						Yii::app()->user->setFlash('error', $message);
 						throw new CHttpException(500, $message);
 					}
 				}else
@@ -814,7 +813,7 @@ HTML;
 			$model->attributes = $_POST['ResetPasswordForm'];
 
 			if ($model->validate() && $model->resetPassword()) {
-				Yii::app()->user->setFlash('user', tt('Новый пароль сохранен!'));
+				Yii::app()->user->setFlash('success', tt('Новый пароль сохранен!'));
 
 				return $this->redirect('index');
 			}
@@ -869,21 +868,4 @@ HTML;
 
 		$this->render('iframe',array('model'=>$model));
 	}
-
-	public function actionGetMobileKey(){
-        $ps128 = PortalSettings::model()->getSettingFor(PortalSettings::MOBILE_APP_NEED_AUTH);
-        if($ps128!=1)
-            throw new CHttpException(403, 'Invalid request. Please do not repeat this request again.');
-
-        if(Yii::app()->user->isGuest)
-            throw new CHttpException(403, 'Invalid request. Please do not repeat this request again.');
-
-        if(Yii::app()->user->model->generateMobileKey()){
-            Yii::app()->user->setFlash('info', 'Код для мобильного приложения: <i>'.Yii::app()->user->model->u13.'</i>');
-        }else{
-            Yii::app()->user->setFlash('error', 'Ошибка генерации ключа для мобильного приложения');
-        }
-
-        $this->redirect('index');
-    }
 }

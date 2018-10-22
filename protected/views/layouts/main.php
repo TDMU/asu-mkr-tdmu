@@ -34,7 +34,7 @@
 
     <title>
         <?php echo CHtml::encode(
-            !empty($title)? $title :$this->pageTitle
+            !empty($title)? $title :$this->pageHeader
         ); ?>
     </title>
 
@@ -145,32 +145,7 @@
 		});
 	</script>
 
-    <?php
-    $message = $class = '';
-    if(Yii::app()->user->hasFlash('user')):?>
-            <?php
-                $message = Yii::app()->user->getFlash('user');
-                $class = 'success';
-            ?>
-    <?php endif; ?>
-
-    <?php if(Yii::app()->user->hasFlash('user_error')):?>
-            <?php
-                $message = Yii::app()->user->getFlash('user_error');
-                $class = 'error';
-            ?>
-    <?php endif; ?>
-    <?php
-        if(!empty($message)&&!empty($class)){
-            Yii::app()->clientScript->registerPackage('gritter');
-            $js = <<<JS
-                addGritter('','{$message}','{$class}')
-JS;
-            Yii::app()->clientScript->registerScript('flash',$js,CClientScript::POS_END);
-        }
-    ?>
-
-    <?php if(Yii::app()->user->hasState('info_message')):?>
+    <?php /*if(Yii::app()->user->hasState('info_message')):?>
     <?php
         $message = Yii::app()->user->getState('info_message');
         Yii::app()->user->setState('info_message',null);
@@ -210,7 +185,7 @@ JS;
                 $('#modalInfo').modal('show');
             });
         </script>
-    <?php endif; ?>
+    <?php endif;*/ ?>
 
     <?php
     /*Запорожье авторизация на поддержке*/

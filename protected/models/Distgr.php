@@ -3,7 +3,7 @@
 /**
  * This is the model class for table "distgr".
  *
- * Группы в дистанционом образвании
+ * Группы в дистанционном образвании
  *
  * The followings are the available columns in table 'distgr':
  * @property integer $distgr1

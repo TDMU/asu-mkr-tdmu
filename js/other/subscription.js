@@ -44,7 +44,7 @@ $(document).ready(function(){
 
         $.getJSON(url2, {'disciplines' : values}, function(data){
             if (! data.res)
-                alert(msg1)
+                alert(msg1 + data.msg);
             else
                 window.location.reload();
         });

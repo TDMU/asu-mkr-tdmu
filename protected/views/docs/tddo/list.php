@@ -24,7 +24,7 @@
 
 $this->pageHeader=tt('Документооборот');
 $this->breadcrumbs=array(
-    tt('Док.-оборот'),
+    tt('Документооборот'),
 );
 Yii::app()->clientScript->registerPackage('autosize');
 Yii::app()->clientScript->registerPackage('jquery.ui');

@@ -21,6 +21,7 @@ class DistVedomost
     private $_gr1;
     private $_courseId;
     private $_groupId;
+    private $_module;
 
     private $_marks;
 
@@ -64,18 +65,28 @@ class DistVedomost
     }
 
     /**
+     * @see courseId
+     * @return int
+     */
+    public function getModuleNumber(){
+        return $this->_module;
+    }
+
+    /**
      * DistVedomost constructor.
      * @param $uo1 int
      * @param $gr1 int
+     * @param $module int
      * @throws Exception
      */
-    public function __construct($uo1, $gr1)
+    public function __construct($uo1, $gr1, $module = 0)
     {
         if(empty($uo1) || empty($gr1))
             throw new Exception('Ошибка создания, пустые обязательные параметры');
 
         $this->_uo1 = $uo1;
         $this->_gr1 = $gr1;
+        $this->_module = $module;
 
         $distDisp = DispDist::model()->findByPk($uo1);
         if($distDisp == null)

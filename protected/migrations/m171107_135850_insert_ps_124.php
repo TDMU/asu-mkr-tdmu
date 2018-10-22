@@ -5,7 +5,7 @@ class m171107_135850_insert_ps_124 extends CDbMigration
 	public function safeUp()
 	{
         /**
-         * ApiKey для дистанционого образования Запорожье
+         * ApiKey для дистанционного образования Запорожье
          */
         $sql = <<<SQL
             insert into PORTAL_SETTINGS(PS1, PS2) values(124, '');

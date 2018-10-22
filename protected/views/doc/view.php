@@ -11,7 +11,7 @@
  * */
     $this->pageHeader=tt('Документооборот: №').$model->tddo3;
     $this->breadcrumbs=array(
-        tt('Док.-оборот: №').$model->tddo3,
+        tt('Документооборот: №').$model->tddo3,
     );
 ?>
     <div class="row-fluid" >

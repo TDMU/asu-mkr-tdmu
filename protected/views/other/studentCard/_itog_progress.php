@@ -122,7 +122,7 @@ foreach($disciplines as $discipline)
 }
 
 
-$_infoText = tt('Практические занятий');
+$_infoText = tt('Практические занятия');
 
 echo sprintf($table, $_infoText,'PZ',$th,$tr);
 

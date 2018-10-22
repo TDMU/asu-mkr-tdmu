@@ -80,7 +80,7 @@ class MoodleDistEducation extends DistEducation
     }
 
     /**
-     * Авторизация в ситием дистанционого обучения
+     * Авторизация в ситием дистанционного обучения
      * @param Users $user
      * @return bool
      */

@@ -14,7 +14,7 @@ Yii::app()->clientScript->registerPackage('datepicker');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/journal/attendanceStatisticPrint.js', CClientScript::POS_HEAD);
 
 if($type_statistic!=0)
-    throw new Exception(tt("Печать статистики только для настройки 'Статистикаи по электроному журналу'"));
+    throw new Exception(tt("Печать статистики только для настройки 'Статистика по электроному журналу'"));
 
 $this->renderPartial('attendanceStatistic/_print', array(
     'model' => $model,

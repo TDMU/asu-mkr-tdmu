@@ -51,7 +51,7 @@ class GenerateUserForm extends CFormModel
     }
 
     public static function getTypes(){
-        return array(1=>tt('Студент'),2=>tt('Преподователь'),3=>tt('Родитель'));
+        return array(1=>tt('Студент'),2=>tt('Преподаватель'),3=>tt('Родитель'));
     }
 
     public static function getType($type){

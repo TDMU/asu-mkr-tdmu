@@ -153,7 +153,7 @@ class Controller extends CController
                         break;
                     case Users::P1:
                         if (! SH::checkServiceFor(MENU_ELEMENT_AUTH_TEACHER, Yii::app()->controller->id, $action->id, true))
-                            throw new CHttpException(403, tt('Сервис недоступен для преподователей!'));
+                            throw new CHttpException(403, tt('Сервис недоступен для преподавателей!'));
                         break;
                     case Users::PRNT:
                         if (! SH::checkServiceFor(MENU_ELEMENT_AUTH_PARENT, Yii::app()->controller->id, $action->id, true))

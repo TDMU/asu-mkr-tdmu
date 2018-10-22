@@ -226,19 +226,19 @@ SQL;
 
         for ($sem5=0; $sem5<=1; $sem5++) {
 
-            $prak = $this->getPrakFor($pd1, $year, $sem5);
+            $prak = (int)$this->getPrakFor($pd1, $year, $sem5);
             $data[$sem5]['Prak']['sum'] = $prak;
 
-            $dipl = $this->getDiplFor($pd1, $year, $sem5);
+            $dipl = (int)$this->getDiplFor($pd1, $year, $sem5);
             $data[$sem5]['Dipl']['sum'] = $dipl;
 
-            $gek = $this->getGekFor($pd1, $year, $sem5);
+            $gek = (int)$this->getGekFor($pd1, $year, $sem5);
             $data[$sem5]['Gek']['sum'] = $gek;
 
-            $asp = $this->getAspFor($pd1, $year, $sem5);
+            $asp = (int)$this->getAspFor($pd1, $year, $sem5);
             $data[$sem5]['Asp']['sum'] = $asp;
 
-            $dop = $this->getDopFor($pd1, $year, $sem5);
+            $dop = (int)$this->getDopFor($pd1, $year, $sem5);
             $data[$sem5]['Dop']['sum'] = $dop;
 
             $data[$sem5][0]['sum'] += $prak+$dipl+$gek+$asp+$dop;

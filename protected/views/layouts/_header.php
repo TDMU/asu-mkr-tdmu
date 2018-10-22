@@ -105,21 +105,6 @@
                         <?php else: ?>
 
                             <?php
-                            $ps128 = PortalSettings::model()->getSettingFor(PortalSettings::MOBILE_APP_NEED_AUTH);
-                            if($ps128==1){
-                                ?>
-                                <li>
-                                    <a href="<?= Yii::app()->createUrl('site/getMobileKey') ?>"
-                                       id="mobile-key">
-                                        <i class="icon-barcode"></i>
-                                        <?= tt('Генерация кода для моб. приложения') ?>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            ?>
-
-                            <?php
                                 if(Yii::app()->user->isStd){
                                     $ps122 = PortalSettings::model()->getSettingFor(PortalSettings::ENABLE_DIST_EDUCATION);
                                     if($ps122==1){

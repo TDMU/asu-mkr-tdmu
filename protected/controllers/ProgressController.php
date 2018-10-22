@@ -116,7 +116,7 @@ class ProgressController extends Controller
         $model->semEnd = Yii::app()->request->getParam('semEnd', null);
         $model->stType = Yii::app()->request->getParam('stType', null);
         $model->ratingType = Yii::app()->request->getParam('ratingType', null);
-        $model->course = Yii::app()->request->getParam('ratingType', null);
+        $model->course = Yii::app()->request->getParam('course', null);
 
         if (empty($model->course) || empty($model->semEnd) || empty($model->semStart) || empty($model->group))
             throw new CHttpException(400, 'Invalid params. Please do not repeat this request again.');
@@ -199,7 +199,7 @@ class ProgressController extends Controller
 
         // Redirect output to a clientâ€™s web browser (Excel5)
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="ACY_'.date('Y-m-d H-i').'.xls"');
+        header('Content-Disposition: attachment;filename="ACY_RATING_'.date('Y-m-d H-i').'.xls"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');

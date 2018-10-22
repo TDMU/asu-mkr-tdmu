@@ -7,9 +7,9 @@
 
 /** @var $model AttendanceStatisticForm */
 
-$this->pageHeader=tt('Статистика посещаемости (н.)');
+$this->pageHeader=tt('Статистика посещаемости');
 $this->breadcrumbs=array(
-    tt('Статистика посещаемости (н.)'),
+    tt('Статистика посещаемости'),
 );
 
 Yii::app()->clientScript->registerPackage('dataTables');

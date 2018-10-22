@@ -313,7 +313,7 @@ class EdxDistEducation extends DistEducation implements IEdxDistEducation
 
             return array(true, '');
         }catch (Exception $error){
-            return array(false, 'Не удалось записать на курс:'/*.$error->getMessage()*/);
+            return array(false, 'Не удалось записать на курс:' .$error->getMessage());
         }
     }
 
@@ -328,7 +328,7 @@ class EdxDistEducation extends DistEducation implements IEdxDistEducation
 
         $stDist = Stdist::model()->findByPk($st->u6);
         if($stDist==null) {
-            return array(false, 'DistEducation:'.tt('Студент не зарегестрирован в дистанционом обучении'));
+            return array(false, 'DistEducation:'.tt('Студент не зарегистрирован в дистанционном обучении'));
         }
 
         $uo1List = Uo::model()->getListByUcgns1($ucgns1);
@@ -421,7 +421,7 @@ class EdxDistEducation extends DistEducation implements IEdxDistEducation
             $stDist = Stdist::model()->findByPk($student->st1);
             if($stDist==null) {
                 $globalResult = false;
-                $log .= $student->getShortName(). ' Ошибка записи: Студент не зарегестрирован в дистанционом обучении';
+                $log .= $student->getShortName(). ' Ошибка записи: Студент не зарегистрирован в дистанционном обучении';
                 continue;
             }
 
@@ -466,7 +466,7 @@ class EdxDistEducation extends DistEducation implements IEdxDistEducation
             $stDist = Stdist::model()->findByPk($student->st1);
             if($stDist==null) {
                 $globalResult = false;
-                $log .= $student->getShortName(). ' Ошибка записи: Студент не зарегестрирован в дистанционом обучении';
+                $log .= $student->getShortName(). ' Ошибка записи: Студент не зарегистрирован в дистанционном обучении';
                 continue;
             }
 

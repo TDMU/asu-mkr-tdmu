@@ -9,7 +9,7 @@ class m160922_085109_insert_ps92_ps93_p94 extends CDbMigration
 			insert into PORTAL_SETTINGS(PS1, PS2) values(92, '');
 SQL;
 		$this->execute($sql);
-		/*Сообщение после авторизации для преподователей*/
+		/*Сообщение после авторизации для преподавателей*/
 		$sql = <<<SQL
 			insert into PORTAL_SETTINGS(PS1, PS2) values(93, '');
 SQL;

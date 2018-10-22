@@ -28,6 +28,7 @@ abstract class SingUpOldDistEducationForm extends CFormModel implements ISingUpO
         return array(
             // name, email, subject and body are required
             array('email', 'required'),
+
             array('email', 'filter', 'filter'=> 'trim'),
             // email has to be a valid email address
             array('email', 'email'),
@@ -52,8 +53,8 @@ abstract class SingUpOldDistEducationForm extends CFormModel implements ISingUpO
             if($connector == null)
                 $this->addError($attribute, tt('Ошибка создания конектора' ));
             else{
-                if(!$connector->validateEmail($this->$attribute))
-                    $this->addError($attribute, tt('Некоректный Email или ошибка проверки' ));
+                if(!$connector->validateEmail(trim($this->$attribute)))
+                    $this->addError($attribute, tt('Некорректный Email или ошибка проверки' ));
             }
         }
     }
@@ -66,7 +67,7 @@ abstract class SingUpOldDistEducationForm extends CFormModel implements ISingUpO
     public function attributeLabels()
     {
         return array(
-            'email'=>tt('Email (существующей учетной записи дистанционого образования)'),
+            'email'=>tt('Email (существующей учетной записи дистанционного образования)'),
             'verifyCode'=>'Verification Code',
         );
     }

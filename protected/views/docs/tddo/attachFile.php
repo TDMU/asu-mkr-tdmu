@@ -11,7 +11,7 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/d
 $docType=$model->tddo2;
 $this->pageHeader=tt('Прикрепить файл к документу #').$model->tddo7;
 $this->breadcrumbs=array(
-    tt('Док.-оборот') => Yii::app()->createUrl('docs/tddo', array('docType' => $docType)),
+    tt('Документооборот') => Yii::app()->createUrl('docs/tddo', array('docType' => $docType)),
     tt('Прикрепить файл')
 );
 

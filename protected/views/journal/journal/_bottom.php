@@ -241,7 +241,7 @@ JS
 
     <div id="dialog-confirm-fin-block" class="hide" title="Empty the recycle bin?">
         <div class="alert alert-info bigger-110">
-            <?=tt('Проставление отметки о извещении студента о задолжености по оплате!')?>
+            <?=tt('Проставление отметки о извещении студента о задолженности по оплате!')?>
         </div>
 
         <div class="space-6"></div>

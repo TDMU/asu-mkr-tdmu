@@ -131,7 +131,7 @@ class DistEducationController extends Controller
         Yii::app()->end(CJSON::encode($res));
     }
     /**
-     * Регитсрация в дистанционом образовании студента
+     * Регитсрация в дистанционном образовании студента
      */
     public function actionSignUpNewDistEducation(){
         if (! Yii::app()->request->isAjaxRequest)
@@ -176,7 +176,7 @@ class DistEducationController extends Controller
         }else{
             $stDist = Stdist::model()->findByPk($st->st1);
             if($stDist==null) {
-                throw new CHttpException(400, tt('Пользователь не зарегистророван в дист. образовании'));
+                throw new CHttpException(400, tt('Пользователь не зарегистрирован в дист. образовании'));
             }else{
                 $html = '';
                 $success = true;
@@ -713,7 +713,7 @@ class DistEducationController extends Controller
         $subscription = Yii::app()->request->getParam('subscription', null);
 
         if($subscription==null)
-            throw new CHttpException(400, tt('Неверный параметры'));
+            throw new CHttpException(400, tt('Неверные параметры'));
 
         $model->setChairId($chairId);
 
@@ -785,7 +785,7 @@ class DistEducationController extends Controller
         $subscription = Yii::app()->request->getParam('subscription', null);
 
         if($subscription==null)
-            throw new CHttpException(400, tt('Неверный параметры'));
+            throw new CHttpException(400, tt('Неверные параметры'));
 
         $model->setChairId($chairId);
 
@@ -869,7 +869,7 @@ class DistEducationController extends Controller
         $subscription = Yii::app()->request->getParam('subscription', null);
 
         if($subscription==null)
-            throw new CHttpException(400, tt('Неверный параметры'));
+            throw new CHttpException(400, tt('Неверные параметры'));
 
         $model->setChairId($chairId);
 
