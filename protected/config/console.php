@@ -7,12 +7,13 @@ return array(
 	'name'     => $mainConfig['name'],
 	'import'   => $mainConfig['import'],
 	
-	'preload' => array('log'),
+	'preload' => array('log', 'shortcodes'),
 
 	'components' => array(
 		'cache' => $mainConfig['components']['cache'],
 		'db'    => $mainConfig['components']['db'],
 		'log'   => $mainConfig['components']['log'],
+        'shortcodes'   => $mainConfig['components']['shortcodes'],
 	),
 	
 	'commandMap' => array(

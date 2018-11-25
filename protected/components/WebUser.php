@@ -5,6 +5,7 @@
  * @property bool $isStd  Являеться ли студентом
  * @property bool $isAdmin  Являеться ли администратором
  * @property bool $isTch  Являеться ли преподавателем
+ * @property bool $isDoctor  Являеться ли доктором
  * @property bool $isPrnt  Являеться ли родителем
  * @property bool $isBlock Заблокирован ли
  * @property P|St $dbModel  модель персоні
@@ -42,6 +43,11 @@ class WebUser extends CWebUser
         return 'Guest';
     }
 
+    public function getIsDoctor()
+    {
+        return !$this->isGuest && $this->model->isDoctor;
+    }
+
     public function getIsTch()
     {
         //if ($this->isAdmin)
@@ -64,7 +70,7 @@ class WebUser extends CWebUser
     {
         $model = null;
 
-        if ($this->isTch)
+        if ($this->isTch || $this->isDoctor)
             $model = P::model()->findByPk($this->model->u6);
         elseif ($this->isStd)
             $model = St::model()->findByPk($this->model->u6);

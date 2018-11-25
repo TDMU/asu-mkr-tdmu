@@ -1,4 +1,14 @@
 <?php
+/**
+ * @var $this JournalController
+ */
+/**
+ * @param $total_1
+ * @param $count_dates
+ * @param $ps44
+ * @return float|int|string
+ */
+
 function getTotal1($total_1,$count_dates,$ps44){
     $value = '';
     switch($ps44){
@@ -71,12 +81,12 @@ function generate3Th2($key)
     return '<th></th>';
 }
 
-function generateTotal1Header()
+function generateTotal1Header($universityCode)
 {
     $pattern = <<<HTML
         <th colspan="2" class="blue">%s</th>
 HTML;
-    $name = tt('Итого');
+    $name = $universityCode == U_FARM ? tt('Поточный рейтинг') : tt('Итого');
 
     return sprintf($pattern, $name);
 }
@@ -123,7 +133,7 @@ $total_2 =array();
 $ps83 = PortalSettings::model()->getSettingFor(83);
 $ps85 = PortalSettings::model()->getSettingFor(85);
 if($ps83==0) {
-    $th  .= generateTotal1Header();
+    $th  .= generateTotal1Header($this->universityCode);
     $ps9 = PortalSettings::model()->getSettingFor(9);
     if($ps9 == 1){
         $th2.='<th colspan="2">'. tt('Мин: ') .$minBalForAllLessons. ' | '. tt('Мах: ') .$maxBalForAllLessons.'</th>';
@@ -137,7 +147,7 @@ foreach($elgd as $key)
     $th2.='<th></th>';
 }
 if($ps85==0) {
-    $th .= '<th>' . tt('Всего') . '</th>';
+    $th .= '<th>' . ($this->universityCode == U_FARM ? tt('Рейтинг по модулю') : tt('Всего')) . '</th>';
     $th2 .= '<th></th>';
 }
 
@@ -210,7 +220,8 @@ foreach ($students as $st) {
                     }
                     $bal = '';
                     $bal = $mark->stusvst4 . ' /' . $mark->stusvst5 . ' /' . $bal_;
-                    $tr .= '<td data-stus="' . $mark['stusvst1'] .'-' . $mark['stusvst3'] .'" data-total=2>' . $bal . '</td>';
+                    $class = ($mark->stusvst6 < 3 &&  $mark->stusvst6 != -1) ? 'error' : '';
+                    $tr .= '<td class="'.$class.'" data-stus="' . $mark['stusvst1'] .'-' . $mark['stusvst3'] .'" data-total=2>' . $bal . '</td>';
                 } else {
                     $tr .= '<td data-total=2></td>'; // total 2
                 }

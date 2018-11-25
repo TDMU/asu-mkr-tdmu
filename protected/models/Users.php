@@ -21,6 +21,7 @@
  * @property bool isStudent
  * @property bool isAdmin
  * @property bool isTeacher
+ * @property bool isDoctor
  * @property bool isBlock
  * @property bool isParent
  * @property string name
@@ -31,6 +32,7 @@ class Users extends CActiveRecord
     const ST1  = 0;
     const P1   = 1;
     const PRNT = 2;
+    const DOCTOR = 3;
 
     const FOTO_ST1  = 1;
     const FOTO_P1   = 0;
@@ -106,6 +108,7 @@ class Users extends CActiveRecord
 			'u7' => 'U7',
 			'u8' => tt('Заблокирован'),
 			'u9' => 'U9',
+            'name' => 'Имя пользователя'
 		);
 	}
 
@@ -175,12 +178,12 @@ class Users extends CActiveRecord
      */
     public function getIsTeacher()
     {
-        return (int)$this->u5 === 1;
+        return (int)$this->u5 === self::P1;
     }
 
 	public function getIsParent()
 	{
-		return (int)$this->u5 === 2;
+		return (int)$this->u5 === self::PRNT;
 	}
 
     /**
@@ -189,7 +192,16 @@ class Users extends CActiveRecord
      */
     public function getIsStudent()
     {
-        return (int)$this->u5 === 0;
+        return (int)$this->u5 === self::ST1;
+    }
+
+    /**
+     * Returns true if this user is doctor.
+     * @return boolean
+     */
+    public function getIsDoctor()
+    {
+        return (int)$this->u5 === self::DOCTOR;
     }
 
     public function getName()
@@ -199,7 +211,7 @@ class Users extends CActiveRecord
         if ($this->getIsStudent() || $this->getIsParent()) { // student or parent
             $model = St::model()->findByPk($id);
             $name  = $model->getShortName();
-        } elseif ($this->getIsTeacher()) {                // teacher
+        } elseif ($this->getIsTeacher() || $this->getIsDoctor()) {                // teacher or doctor
             $model = P::model()->findByPk($id);
             $name  = $model->getShortName();
         } elseif (empty($this->u5) && empty($this->u6))
@@ -298,7 +310,7 @@ SQL;
 
 	public function getTypes()
 	{
-		return array(0=>tt('Студент'),1=>tt('Преподаватель'),2=>tt('Родитель'));
+		return array(0=>tt('Студент'),1=>tt('Преподаватель'),2=>tt('Родитель'), self::DOCTOR=>tt('Врач'));
 	}
 
 	public function getType()
@@ -316,9 +328,9 @@ SQL;
 
 	public function getAdminType()
 	{
-		$arr=self::model()->getTypes();
-		if(isset( $arr[$this->u5]))
-			return $arr[$this->u5];
+		$arr=self::model()->getAdminTypes();
+		if(isset( $arr[$this->u7]))
+			return $arr[$this->u7];
 		else
 			return '-';
 	}
@@ -487,13 +499,13 @@ HTML;
 
 
         switch($this->u5){
-            case 0:
+            case self::ST1:
                 $message = PortalSettings::model()->findByPk(92)->ps2;
                 break;
-            case 1:
+            case self::P1:
                 $message = PortalSettings::model()->findByPk(93)->ps2;
                 break;
-            case 2:
+            case self::PRNT:
                 $message = PortalSettings::model()->findByPk(94)->ps2;
                 break;
         }

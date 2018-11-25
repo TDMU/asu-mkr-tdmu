@@ -22,13 +22,17 @@
                             'action' => Yii::app()->createUrl("site/registration")
                         ));
 
-                        $template = '<div class="radio span4">{input}{labelTitle}</div>';
-
+                        $types = $model->getTypes();
+                        $templateType = '<div class="radio span3">{input}{labelTitle}</div>';
+                        if($this->universityCode != U_XNMU) {
+                            unset($types[Users::DOCTOR]);
+                            $templateType = '<div class="radio span4">{input}{labelTitle}</div>';
+                        }
                         ?>
                             <fieldset>
                                 <div class="row-fluid">
-                                        <?=$form->radioButtonList($model, 'type', $model->getTypes(),array('template'=>$template,'separator'=>''))?>
-                                        <?=$form->error($model, 'type')?>
+                                    <?=$form->radioButtonList($model, 'type', $types,array('template'=>$templateType,'separator'=>''))?>
+                                    <?=$form->error($model, 'type')?>
                                 </div>
 
                                 <label>

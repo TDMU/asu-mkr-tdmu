@@ -24,6 +24,7 @@
         $teacherStr = tt('Преподаватель');
         $studentStr = tt('Студент');
         $parentStr = tt('Преподаватель');
+        $doctorStr = tt('Доктор');
 
         $this->renderPartial('menu/_block', array(
             'settings' => $settings,
@@ -229,6 +230,13 @@
                             'name'=>'Обучение (кур.)',
                             'authOnly' => $teacherStr
                         )
+                    ),
+                ),
+                array(
+                    'name'       => 'Опрос',
+                    'controller' => 'quiz',
+                    'items' => array(
+                        'controller' => 'index',
                     ),
                 ),
                 array(

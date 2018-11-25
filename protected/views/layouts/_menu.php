@@ -160,6 +160,10 @@ function _ch($controller, $action)
                     if (! SH::checkServiceFor(MENU_ELEMENT_AUTH_PARENT, $controller, $action))
                         return false;
                     break;
+                case Users::DOCTOR:
+                    if (! SH::checkServiceFor(MENU_ELEMENT_AUTH_DOCTOR, $controller, $action))
+                        return false;
+                    break;
             }
         }
 
@@ -178,6 +182,7 @@ $_l2 = '<i class="icon-double-angle-right"></i>';
 
 $isStd   = Yii::app()->user->isStd;
 $isTch   = Yii::app()->user->isTch;
+$isDoctor   = Yii::app()->user->isDoctor;
 $isAdmin = Yii::app()->user->isAdmin;
 $isPrnt = Yii::app()->user->isPrnt;
 
@@ -207,6 +212,12 @@ $this->widget('zii.widgets.CMenu', array(
                     'label'  => $_l2.tt('Преподаватели'),
                     'url'    => _u('/admin/default/teachers'),
                     'active' => $_a=='teachers' || $_a=='PGrants'
+                ),
+                array(
+                    'label'  => $_l2.tt('Врачи'),
+                    'url'    => _u('/admin/default/doctors'),
+                    'active' => $_a=='doctors' || $_a=='dGrants',
+                    'visible' => $this->universityCode == U_XNMU
                 ),
                 array(
                     'label'  => $_l2.tt('Студенты'),
@@ -744,11 +755,32 @@ $this->widget('zii.widgets.CMenu', array(
             'visible' => _ch('payment', 'main') && ($isStd || $isTch)
         ),
         array(
+            'label' => _l('Опрос', 'ok-sign'),
+            'url' => '#',
+            'linkOptions'=> $_l,
+            'itemOptions'=>_i('quiz'),
+            'items' =>array_merge( array(
+                array(
+                    'label'   => $_l2.tt('Опрос'),
+                    'url'     => _u('/quiz/index'),
+                    'visible' => _ch('quiz', 'index') && ($isTch || $isDoctor),
+                    'active'  => $_c=='quiz' && $_a=='index '
+                ),
+            ),getDopItem('quiz',0)),
+            'visible' => _ch('quiz', 'main'),
+        ),
+        array(
             'label' => _l('Другое', 'globe'),
             'url' => '#',
             'linkOptions'=> $_l,
             'itemOptions'=>_i('other'),
             'items' =>array_merge( array(
+                array(
+                    'label'   => $_l2.tt('Опрос'),
+                    'url'     => _u('/quiz/index'),
+                    'visible' => _ch('quiz', 'index') && ($isTch || $isDoctor),
+                    'active'  => $_c=='quiz' && $_a=='index '
+                ),
                 array(
                     'label'   => $_l2.tt('Телефонный справочник'),
                     'url'     => _u('/other/phones'),

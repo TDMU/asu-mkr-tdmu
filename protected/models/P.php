@@ -174,6 +174,7 @@ class P extends CActiveRecord implements IPerson
 		// class name for the relations automatically generated below.
 		return array(
             'account' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u5=1'),
+            'accountDoctor' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u5=3'),
             'pd' => array(self::HAS_MANY, 'Pd', 'pd2'),
             'grants' => array(self::HAS_ONE, 'Grants', 'grants2'),
 		);
@@ -538,6 +539,7 @@ SQL;
             //$criteria->addSearchCondition('p9', date_format(date_create_from_format('d-m-Y', $this->p9), 'Y-m-d H:i:s'));
 
         $criteria->addSearchCondition('account.u2', Yii::app()->request->getParam('login'));
+        $criteria->addCondition('account.u5 = 1');
         $criteria->addSearchCondition('account.u3', Yii::app()->request->getParam('password'));
         $criteria->addSearchCondition('account.u4', Yii::app()->request->getParam('email'));
         $criteria->addSearchCondition('account.u7', Yii::app()->request->getParam('status'));
@@ -562,6 +564,71 @@ SQL;
                     'account.u3',
                     'account.u4',
                     'account.u7',
+                ),
+            )
+        ));
+    }
+
+    /**
+     * Провайдер данных для получения и фильтрации списка врачей
+     * @return CActiveDataProvider
+     */
+    public function getDoctors()
+    {
+        $criteria=new CDbCriteria;
+
+        $criteria->select = 'p3, p4, p5,p9,p13';
+
+        $with = array(
+            'accountDoctor' => array(
+                'select' => 'u2, u3, u4, u7, u5'
+            )
+        );
+        if (! empty($chairId)) {
+            $with['pd'] = array(
+                'select' => false,
+                'together' => true
+            );
+            $today = date('d.m.Y 00:00');
+            $criteria->compare('pd4', $chairId);
+            $criteria->addCondition("PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}')");
+        }
+
+        $criteria->addCondition("p3 <> ''");
+        $criteria->addCondition("p3 CONTAINING '".$this->p3."'");
+        $criteria->addCondition("p4 CONTAINING '".$this->p4."'");
+        $criteria->addCondition("p5 CONTAINING '".$this->p5."'");
+        $criteria->addSearchCondition('p13', $this->p13);
+        if(!empty($this->p9))
+            $criteria->addCondition("p9 CONTAINING '".date_format(date_create_from_format('d-m-Y', trim($this->p9)), 'Y-m-d')."'");
+        //$criteria->addSearchCondition('p9', date_format(date_create_from_format('d-m-Y', $this->p9), 'Y-m-d H:i:s'));
+
+        $criteria->addSearchCondition('accountDoctor.u2', Yii::app()->request->getParam('login'));
+        $criteria->addCondition('accountDoctor.u5 = 3');
+        $criteria->addSearchCondition('accountDoctor.u3', Yii::app()->request->getParam('password'));
+        $criteria->addSearchCondition('accountDoctor.u4', Yii::app()->request->getParam('email'));
+        $criteria->addSearchCondition('accountDoctor.u7', Yii::app()->request->getParam('status'));
+
+        $criteria->with = $with;
+
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+            'pagination'=>array(
+                'pageSize'=> Yii::app()->user->getState('pageSize',10),
+                'currentPage'=> Yii::app()->user->getState('CurrentPageD',null),
+            ),
+            'sort' => array(
+                'defaultOrder' => 'p3 collate UNICODE',
+                'attributes' => array(
+                    'p3',
+                    'p4',
+                    'p5',
+                    'p9',
+                    'p13',
+                    'accountDoctor.u2',
+                    'accountDoctor.u3',
+                    'accountDoctor.u4',
+                    'accountDoctor.u7',
                 ),
             )
         ));

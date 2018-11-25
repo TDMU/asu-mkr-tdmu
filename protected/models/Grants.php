@@ -12,6 +12,7 @@
  * @property integer $grants6
  * @property integer $grants7
  * @property integer $grants8
+ * @property integer $grants9
  *
  * The followings are the available model relations:
  * @property P $p
@@ -25,6 +26,7 @@ class Grants extends CActiveRecord
     const DIST_EDUCATION_ADMIN = 'grant6';
     const STUDENT_INFO = 'grant7';
     const WORKLOAD = 'grant8';
+    const QUIZ = 'grant9';
 	/**
 	 * @return string the associated database table name
 	 */
@@ -42,10 +44,11 @@ class Grants extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('grants7', 'required', 'on' => 'admin-teachers'),
-			array('grants1, grants2, grants3, grants4, grants5, grants6, grants7, grants8', 'numerical', 'integerOnly'=>true),
+			array('grants1, grants2, grants3, grants4, grants5, grants6, grants7, grants8, grants9', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('grants1, grants2, grants3', 'safe', 'on'=>'search'),
+            array('grants8, grants7, grants6, grants3, grants4, grants5', 'safe', 'on' => 'admin-doctors'),
 		);
 	}
 
@@ -75,6 +78,7 @@ class Grants extends CActiveRecord
 			'grants6' => tt('Дист. Образование админ'),
 			'grants7' => tt('Данные студента'),
             'grants8' => tt('Нагрузка'),
+            'grants9' => tt('Опрос'),
 		);
 	}
 
@@ -100,6 +104,11 @@ class Grants extends CActiveRecord
 		$criteria->compare('grants2',$this->grants2);
 		$criteria->compare('grants3',$this->grants3);
 		$criteria->compare('grants4',$this->grants4);
+        $criteria->compare('grants5',$this->grants5);
+        $criteria->compare('grants6',$this->grants6);
+        $criteria->compare('grants7',$this->grants7);
+        $criteria->compare('grants8',$this->grants8);
+        $criteria->compare('grants9',$this->grants9);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -137,6 +146,9 @@ class Grants extends CActiveRecord
                 break;
             case self::WORKLOAD:
                 $grants = $this->grants8;
+                break;
+            case self::QUIZ:
+                $grants = $this->grants9;
                 break;
             default:
                 $grants = null;

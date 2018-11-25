@@ -5,6 +5,7 @@ class RegistrationForm extends CFormModel
 	const TYPE_STUDENT = 0;
     const TYPE_TEACHER = 1;
     const TYPE_PARENT = 2;
+    const TYPE_DOCTOR = 3;
 
     public $identityCode;
 	public $email;
@@ -26,7 +27,7 @@ class RegistrationForm extends CFormModel
 		return array(
 			array('identityCode, email, username, password, password2,type', 'required'),
             array('type', 'default', 'value'=>self::TYPE_TEACHER, 'setOnEmpty'=>TRUE),
-            array('type', 'in', 'range' => array(self::TYPE_STUDENT, self::TYPE_TEACHER, self::TYPE_PARENT)),
+            array('type', 'in', 'range' => array(self::TYPE_STUDENT, self::TYPE_TEACHER, self::TYPE_PARENT, self::TYPE_DOCTOR)),
             array('identityCode', 'checkExistence'),
             array('email', 'email'),
             array('email', 'unique', 'className'=>'Users', 'attributeName'=>'u4'),
@@ -90,10 +91,10 @@ SQL
 
         if (! $this->hasErrors($attribute)) {
 
-            $isTeacher = $this->type==self::TYPE_TEACHER;
+            $isTeacher = $this->type==self::TYPE_TEACHER || $this->type==self::TYPE_DOCTOR;
             //$this->_u5 = $st ? 0 : 1;
             //$this->_u6 = $st ? $st[0]->st1 : $p[0]->p1;
-            $this->_u5 = $isTeacher ? 1 : $this->type;
+            $this->_u5 = $this->type;
             $this->_u6 = $isTeacher ? $p[0]->p1 : $st[0]->st1;
 
             $this->_fio = $isTeacher ? $p[0]->p3.' '.$p[0]->p4.' '.$p[0]->p5 : $st[0]->st2.' '.$st[0]->st3.' '.$st[0]->st4;
@@ -135,7 +136,8 @@ SQL
         return array(
             self::TYPE_TEACHER => tt('Сотрудник'),
             self::TYPE_STUDENT => tt('Студент'),
-            self::TYPE_PARENT => tt('Родитель')
+            self::TYPE_PARENT => tt('Родитель'),
+            self::TYPE_DOCTOR=> tt('Врач')
         );
     }
 }

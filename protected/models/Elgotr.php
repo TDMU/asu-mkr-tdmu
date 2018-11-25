@@ -36,12 +36,26 @@ class Elgotr extends CActiveRecord
 			array('elgotr0', 'required'),
 			array('elgotr1, elgotr4', 'numerical', 'integerOnly'=>true),
 			array('elgotr2', 'numerical'),
+            //array('elgotr3', 'validateDate'),
 			array('elgotr3, elgotr5', 'length', 'max'=>30),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('elgotr0, elgotr1, elgotr2, elgotr3, elgotr4, elgotr5', 'safe', 'on'=>'search'),
 		);
 	}
+
+    /**
+     *
+     */
+    /*public function validateDate($attribute,$params)
+    {
+        if(!$this->hasErrors()) {
+                $date = DateTime::createFromFormat('d.m.y', $elgotr3);
+                if($date>new DateTime()){
+                    $this->addError('elgotr3', tt('Ошибка! Дата не валидная!'));
+                }
+        }
+    }*/
 
 	/**
 	 * @return array relational rules.

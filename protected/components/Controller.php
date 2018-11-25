@@ -159,6 +159,10 @@ class Controller extends CController
                         if (! SH::checkServiceFor(MENU_ELEMENT_AUTH_PARENT, Yii::app()->controller->id, $action->id, true))
                             throw new CHttpException(403, tt('Сервис недоступен для родителей!'));
                         break;
+                    case Users::DOCTOR:
+                        if (! SH::checkServiceFor(MENU_ELEMENT_AUTH_DOCTOR, Yii::app()->controller->id, $action->id, true))
+                            throw new CHttpException(403, tt('Сервис недоступен для врачей!'));
+                        break;
                 }
             }
 

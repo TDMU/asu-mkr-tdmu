@@ -1058,6 +1058,26 @@ SQL;
         return $students;
     }
 
+    /**
+     * @param $gr1
+     * @return array
+     */
+    public function getOpprezByGroup($gr1)
+    {
+        $students = $this->getListGroup($gr1);
+
+        foreach ($students as $key => $student){
+            $students[$key]['oprrez'] = Oprrez::model()->findBySql(<<<SQL
+              SELECT * FROM oprrez WHERE oprrez2=:ST1 ORDER BY oprrez4 DESC
+SQL
+            , array(
+                ':ST1' => $student['st1']
+            ));
+        }
+
+        return $students;
+    }
+
 	public function getListVirtualGroup($gr1)
 	{
 

@@ -42,6 +42,9 @@ function checkbox($controller, $action, $type)
         case MENU_ELEMENT_AUTH_PARENT:
             $label = tt('Доступен родителям');
             break;
+        case MENU_ELEMENT_AUTH_DOCTOR:
+            $label = tt('Доступен врачам');
+            break;
         default:
             $label = '';
             break;
@@ -122,6 +125,8 @@ foreach ($blocks as $block) :
                                         echo checkbox($controller, $action, MENU_ELEMENT_AUTH_STUDENT);
                                         echo checkbox($controller, $action, MENU_ELEMENT_AUTH_TEACHER);
                                         echo checkbox($controller, $action, MENU_ELEMENT_AUTH_PARENT);
+                                        if($this->universityCode == U_XNMU)
+                                            echo checkbox($controller, $action, MENU_ELEMENT_AUTH_DOCTOR);
                                         echo '</div>';
                                     echo '</div>';
 

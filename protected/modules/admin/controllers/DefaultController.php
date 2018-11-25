@@ -794,6 +794,55 @@ protected function expandHomeDirectory($path)
         ));
 	}
 
+    /**
+     * Рендер списка врачей
+     * @throws CHttpException
+     */
+    public function actionDoctors()
+    {
+        if($this->universityCode!=U_XNMU)
+            throw new CHttpException(403, 'Access denied');
+
+        $model = new P;
+        $model->unsetAttributes();
+        if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+            unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
+        }
+
+        if (isset($_REQUEST['P']))
+        {
+            $model->attributes = $_REQUEST['P'];
+            Yii::app()->user->setState('SearchParamsPAdmin', $_REQUEST['P']);
+        }
+        else
+        {
+            $searchParams = Yii::app()->user->getState('SearchParamsPAdmin');
+            if ( isset($searchParams) )
+            {
+                $model->attributes = $searchParams;
+            }
+        }
+
+        if (isset($_REQUEST['D_page']))
+        {
+            Yii::app()->user->setState('CurrentPageD',$_REQUEST['D_page']-1);
+        } else
+        {
+            if (Yii::app()->user->hasState('D_page'))
+            {
+                $_REQUEST['D_page'] = Yii::app()->user->getState('CurrentPageD')+1;
+            }
+        }
+
+        $this->render('doctors', array(
+            'model' => $model,
+        ));
+    }
+
+    /**
+     * Список администраторов
+     */
     public function actionAdmin()
     {
         $model = new Users();
@@ -1091,6 +1140,39 @@ protected function expandHomeDirectory($path)
         }
 
         $this->render('pGrants', array(
+            'model' => $model,
+            'user'  => $user
+        ));
+    }
+
+    public function actionDGrants($id)
+    {
+        if (empty($id))
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $model = $this->loadGrantsModel($id);
+        $model->scenario = 'admin-doctor';
+        if (isset($_REQUEST['Grants'])) {
+            $model->attributes = $_REQUEST['Grants'];
+            $model->save();
+        }
+
+        $type = 3; // doctors
+        $user = $this->loadUsersModel($type, $id);
+
+        $user->scenario='admin-update';
+        $user->password=$user->u3;
+
+        if (isset($_REQUEST['Users'])) {
+            $user->attributes = $_REQUEST['Users'];
+
+            $user->u7 = isset($_REQUEST['role']) ? (int)$_REQUEST['role'] : 0;
+
+            if($user->save())
+                $this->redirect(array('doctors'));
+        }
+
+        $this->render('dGrants', array(
             'model' => $model,
             'user'  => $user
         ));

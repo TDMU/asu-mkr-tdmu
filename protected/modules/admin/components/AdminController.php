@@ -15,6 +15,7 @@ class AdminController extends Controller
             array('allow',
                 'actions' => array(
                     'teachers',
+                    'doctors',
                     'admin',
                     'adminCreate',
                     'adminUpdate',
@@ -22,6 +23,7 @@ class AdminController extends Controller
                     'students',
                     'parents',
                     'stGrants',
+                    'dGrants',
                     'pGrants',
                     'timeTable',
                     'prntGrants',

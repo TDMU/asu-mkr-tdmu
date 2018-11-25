@@ -151,6 +151,7 @@ class Pm extends CActiveRecord
                'workLoad'=>tt('Нагрузка'),
                'payment'=>tt('Оплата'),
                'other'=>tt('Другое'),
+               'quiz'=>tt('Опрос'),
            );
             $pmg=CHtml::listData(Pmg::model()->findAll(),'pmg1','pmg2');
             return $arr+$pmg;

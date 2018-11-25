@@ -717,4 +717,52 @@ class MoodleDistEducation extends DistEducation
             }
         //}
     }
+
+    /**
+     * @param Users $user
+     * @param array $params
+     * @return array|void
+     */
+    protected function saveSignUpOld($user, $params){
+
+        if(!isset($params['id']) || $params['id'] == 0)
+        {
+            if(!isset($params['email']))
+                return array(false, 'Не задан email');
+
+            $params['id'] = $this->getIdByEmail($params['email']);
+        }
+
+        return parent::saveSignUpOld($user, $params);
+    }
+
+    /**
+     * Получить id учетки по email
+     * @param string $email
+     * @return int
+     * @throws
+     */
+    public function getIdByEmail($email)
+    {
+        $body = $this->_sendQuery('core_user_get_users','GET', array(
+            'criteria'=>array(
+                '0'=>array(
+                    'key'=>'email',
+                    'value'=>$email
+                )
+            )
+        ));
+
+        $array = json_decode($body);
+
+        if(!isset($array->users))
+            return -1;
+        else {
+            if(count($array->users)!=1){
+                return -1;
+            }else{
+                return $array->users[0]->id;
+            }
+        }
+    }
 }
