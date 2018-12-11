@@ -43,6 +43,13 @@ $this->pageHeader=$this->pageTitle;
                                 if($model->scenario != 'step-1'){
                                     if($model->scenario == 'step-2'){?>
                                         <label>
+
+                                            <?=$form->checkBox($model, 'emptySerial', array('placeholder' => $model->getAttributeLabel('emptySerial')))?>
+                                            <?=$form->labelEx($model,'emptySerial', array(
+                                                    'style'=>'display:inline'
+                                            )); ?>
+                                        </label>
+                                        <label>
                                             <span class="block input-icon input-icon-right">
                                                 <?=$form->textField($model, 'serial', array('class' => 'span12', 'placeholder' => $model->getAttributeLabel('serial')))?>
                                                 <?=$form->error($model, 'serial')?>

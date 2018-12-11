@@ -39,11 +39,13 @@ $html .= CHtml::dropDownList('docType', $model->tddo2, $docTypes,$options);
 $html .= '</div>';
 
 $previousYear = date('Y', strtotime('-1 year'));
+$previousYear2 = date('Y', strtotime('-2 year'));
 $currentYear  = date('Y');
 
 $years = array(
-    $previousYear => $previousYear,
     $currentYear  => $currentYear,
+    $previousYear => $previousYear,
+    $previousYear2 => $previousYear2
 );
 
 $html .= '<div class="span2 ace-select">';

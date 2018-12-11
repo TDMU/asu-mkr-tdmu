@@ -9,6 +9,8 @@ class RegistrationInternationalForm extends CFormModel
 	public $password;
 	public $password2;
 
+
+	public $emptySerial;
     //public $verifyCode;
 
     private $_u5;
@@ -19,10 +21,12 @@ class RegistrationInternationalForm extends CFormModel
 	{
 		return array(
             array('number', 'required'),
-            array('serial', 'required','on'=>'step-2'),
+            //array('serial', 'required','on'=>'step-2'),
 			array('serial, email, username, password, password2, number', 'required','on'=>'step-3'),
             //array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(),'on'=>'step-3'),
-            array('serial', 'checkSerial'),
+            array('serial', 'length', 'max'=>10),
+            array('email', 'filter', 'filter'=>'trim'),
+            array('serial, emptySerial', 'checkSerial'),
             array('number', 'checkNumber'),
             array('email', 'email'),
             array('email', 'unique', 'className'=>'Users', 'attributeName'=>'u4'),
@@ -51,6 +55,7 @@ class RegistrationInternationalForm extends CFormModel
             'username' => tt('Логин (регистрозависимый)'),
             'password' => tt('Пароль'),
             'password2' => tt('Повторите пароль'),
+            'emptySerial' => tt('Паспорт без серии'),
 		);
 	}
 
@@ -107,7 +112,7 @@ class RegistrationInternationalForm extends CFormModel
             'condition' => 'ST18 = :NUMBER AND  ST17 =:SERIAL and st63 > 0',
             'params' => array(
                 ':NUMBER'=>$this->number,
-                ':SERIAL'=>$this->serial
+                ':SERIAL'=>!empty($this->emptySerial)? '' :$this->serial
             ),
             'order'=>'st1 DESC'
         )));

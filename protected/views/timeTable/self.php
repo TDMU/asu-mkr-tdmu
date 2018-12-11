@@ -62,7 +62,7 @@ HTML;
 			'timeTable'  => $timeTable,
 			'minMax'     => $minMax,
 			'rz'         => $rz,
-			'maxLessons' => array(),
+            'maxLessons' => $maxLessons,
             'action' =>'selfExcel'
 		));
 	else
@@ -70,6 +70,6 @@ HTML;
 			'model'      => $model,
 			'timeTable'  => $timeTable,
 			'minMax'     => $minMax,
-			'maxLessons' => array(),
+            'maxLessons' => $maxLessons,
 			'rz'         => $rz,
 		));

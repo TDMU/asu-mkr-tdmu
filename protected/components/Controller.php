@@ -124,7 +124,7 @@ class Controller extends CController
             if (!Yii::app()->user->isGuest && !Yii::app()->user->isBlock) {
                 //var_dump(1);
                 if (Yii::app()->user->dbModel->checkBlocked()) {
-                    Yii::app()->user->model->saveAttributes(array('u8' => 1));
+                    //Yii::app()->user->model->saveAttributes(array('u8' => 1));
                     throw new CHttpException(403, tt('Доступ закрыт! Учетная запись заблокирована!'));
                 }
             }

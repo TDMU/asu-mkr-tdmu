@@ -539,7 +539,7 @@ SQL;
             //$criteria->addSearchCondition('p9', date_format(date_create_from_format('d-m-Y', $this->p9), 'Y-m-d H:i:s'));
 
         $criteria->addSearchCondition('account.u2', Yii::app()->request->getParam('login'));
-        $criteria->addCondition('account.u5 = 1');
+        //$criteria->addCondition('account.u5 = 1');
         $criteria->addSearchCondition('account.u3', Yii::app()->request->getParam('password'));
         $criteria->addSearchCondition('account.u4', Yii::app()->request->getParam('email'));
         $criteria->addSearchCondition('account.u7', Yii::app()->request->getParam('status'));
@@ -604,7 +604,7 @@ SQL;
         //$criteria->addSearchCondition('p9', date_format(date_create_from_format('d-m-Y', $this->p9), 'Y-m-d H:i:s'));
 
         $criteria->addSearchCondition('accountDoctor.u2', Yii::app()->request->getParam('login'));
-        $criteria->addCondition('accountDoctor.u5 = 3');
+        //$criteria->addCondition('accountDoctor.u5 = 3');
         $criteria->addSearchCondition('accountDoctor.u3', Yii::app()->request->getParam('password'));
         $criteria->addSearchCondition('accountDoctor.u4', Yii::app()->request->getParam('email'));
         $criteria->addSearchCondition('accountDoctor.u7', Yii::app()->request->getParam('status'));

@@ -29,6 +29,7 @@ class RegistrationForm extends CFormModel
             array('type', 'default', 'value'=>self::TYPE_TEACHER, 'setOnEmpty'=>TRUE),
             array('type', 'in', 'range' => array(self::TYPE_STUDENT, self::TYPE_TEACHER, self::TYPE_PARENT, self::TYPE_DOCTOR)),
             array('identityCode', 'checkExistence'),
+            array('email', 'filter', 'filter'=>'trim'),
             array('email', 'email'),
             array('email', 'unique', 'className'=>'Users', 'attributeName'=>'u4'),
             array('username', 'unique', 'className'=>'Users', 'attributeName'=>'u2'),

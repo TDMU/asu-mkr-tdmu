@@ -74,13 +74,13 @@ class TimeTableController extends Controller
         $model->date1 = Yii::app()->session['date1'];
         $model->date2 = Yii::app()->session['date2'];
         $type=Yii::app()->user->getState('timeTable',Yii::app()->params['timeTable']);
-        $timeTable = $minMax = array();
+        $timeTable = $minMax = $maxLessons= array();
         $rasp=0;
         if(Yii::app()->user->isStd)
         {
             $model->student=Yii::app()->user->dbModel->st1;
             if($type==0)
-                list($minMax, $timeTable) = $model->generateStudentTimeTable();
+                list($minMax, $timeTable, $maxLessons) = $model->generateStudentTimeTable();
             else
                 $timeTable=Gr::getTimeTable($model->student, $model->date1, $model->date2, 1);
             $rasp=1;
@@ -89,7 +89,7 @@ class TimeTableController extends Controller
         {
             $model->teacher=Yii::app()->user->dbModel->p1;
             if($type==0)
-                list($minMax, $timeTable) = $model->generateTeacherTimeTable();
+                list($minMax, $timeTable, $maxLessons) = $model->generateTeacherTimeTable();
             else
                 $timeTable=Gr::getTimeTable($model->teacher, $model->date1, $model->date2, 2);
             $rasp=2;
@@ -101,6 +101,7 @@ class TimeTableController extends Controller
             'model'      => $model,
             'timeTable'  => $timeTable,
             'minMax'     => $minMax,
+            'maxLessons' => $maxLessons,
             'rasp'=>$rasp,
             'rz'         => Rz::model()->getRzArray($model->filial),
             'type'=>$type
