@@ -334,7 +334,7 @@ SQL;
             select first 1 sem1
             from sem
                inner join us on (sem.sem1 = us.us3)
-            where us2=:UO1
+            where us2=:UO1 and us4 in (1,2,3,4,5,6) and us6>0
             order by sem7 DESC
 SQL;
 

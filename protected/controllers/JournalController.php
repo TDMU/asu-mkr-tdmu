@@ -1646,7 +1646,7 @@ SQL;
                             $ps67 = PortalSettings::model()->findByPk(67)->ps2;
 
                             $check = 1;
-                            if ($elgp2 < 4)
+                            if ($elgp2 <= 4)
                                 $check = 2;
 
                             if ($elgzst->elgzst3 > 0 && $ps67 == 1) {
@@ -2317,7 +2317,7 @@ SQL;
         else {
             $check=1;
 
-            if($type<4)
+            if($type<=4)
                 $check=2;
 
             $attr = array(
