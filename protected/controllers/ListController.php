@@ -19,7 +19,7 @@ class ListController extends Controller
                 'expression' => 'Yii::app()->user->isAdmin || Yii::app()->user->isTch',
             ),*/
             array('allow',
-                'actions' => array('stream','group','chair','searchStudent','virtualGroup','virtualGroupExcel','groupExcel', 'streamExcel')
+                'actions' => array('stream','group','chair', 'students2moodle', 'searchStudent','virtualGroup','virtualGroupExcel','groupExcel', 'streamExcel')
             ),
             array('deny',
                 'users' => array('*'),
@@ -39,7 +39,20 @@ class ListController extends Controller
             'model' => $model,
         ));
     }
-	
+
+    public function actionStudents2Moodle()
+    {
+        $model = new FilterForm();
+        $model->scenario = 'list-students2moodle';
+
+        if (isset($_REQUEST['FilterForm']))
+            $model->attributes=$_REQUEST['FilterForm'];
+
+        $this->render('students2moodle', array(
+            'model' => $model,
+        ));
+    }
+
     public function actionGroup()
     {
         $model = new TimeTableForm();

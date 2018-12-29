@@ -535,6 +535,12 @@ $this->widget('zii.widgets.CMenu', array(
                     'active'  => $_c=='list' && $_a=='chair',
                     'visible' => _ch('list', 'chair')
                 ),
+                array(
+                    'label'   => $_l2. tt('Students2Moodle'),
+                    'url'     => _u('/list/students2moodle'),
+                    'active'  => $_c=='list' && $_a=='students2moodle',
+                    'visible' => _ch('list', 'students2moodle')
+                ),
             ),getDopItem('list',0)),
             'visible' => _ch('list', 'main')
         ),

@@ -42,3 +42,4 @@ protected/config/mail.inc
 css/user.css
 html/*
 /favicon.ico
+/protected/config/*.json

@@ -72,6 +72,8 @@ class FilterForm extends CFormModel
                 array('filial, faculty, speciality, course, group, category, year', 'required', 'on' => 'employment'),
 				array('filial, faculty, course, discipline, group', 'required', 'on' => 'list-virtual-group'),
                 array('filial, faculty, course, stream', 'required', 'on' => 'list-stream'),
+                array('filial, faculty, speciality, course, stream', 'required', 'on' => 'list-students2moodle'),
+                //array('filial, faculty, course, stream', 'required', 'on' => 'list-students2moodle'),
 				array('group, student', 'required', 'on' => 'payment'),
 			);
 	}

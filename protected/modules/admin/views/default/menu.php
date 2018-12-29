@@ -164,6 +164,7 @@
                         'stream'      => 'Потока',
                         'chair'      => 'Кафедры',
                         'virtualGroup' => 'Группы по выборочным дисциплинам',
+                        'students2moodle' => 'Students2Moodle',
                     ),
                 ),
                 array(
