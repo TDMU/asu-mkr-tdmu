@@ -4,8 +4,8 @@
  * @var FilterForm $model
  */
 	$students=St::model()->getListStream($model->stream);
-	Yii::app()->clientScript->registerScript('list-stream', <<<JS
-        initDataTableOprions('list-stream',{
+	Yii::app()->clientScript->registerScript('list-students2moodle', <<<JS
+        initDataTableOprions('list-students2moodle',{
             aaSorting: [],
             "iDisplayLength": 50,
             "aLengthMenu": [[25, 50, 100, 200, -1], [25, 50, 100,200, "Все"]],
@@ -37,16 +37,16 @@ JS
         'type'=>'primary',
 
         'icon'=>'print',
-        'label'=>tt('Печать'),
+        'label'=>tt('Export as CSV (Moodle, Excel, OpenCalc, GoogleSheets)'),
         'htmlOptions'=>array(
             'class'=>'btn-small',
-            'data-url'=>Yii::app()->createUrl('/list/streamExcel'),
+            'data-url'=>Yii::app()->createUrl('/list/students2MoodleExcel'),
             'id'=>'btn-print-excel',
         )
     ));
 
 ?>
-<table id="list-stream" class="table table-striped table-hover">
+<table id="list-students2moodle" class="table table-striped table-hover">
 <thead>
 	<tr>
 		<th style="width:40px">№</th>

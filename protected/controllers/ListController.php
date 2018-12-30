@@ -19,7 +19,7 @@ class ListController extends Controller
                 'expression' => 'Yii::app()->user->isAdmin || Yii::app()->user->isTch',
             ),*/
             array('allow',
-                'actions' => array('stream','group','chair', 'students2moodle', 'searchStudent','virtualGroup','virtualGroupExcel','groupExcel', 'streamExcel')
+                'actions' => array('stream','group','chair', 'students2moodle', 'searchStudent','virtualGroup','virtualGroupExcel','groupExcel', 'streamExcel', 'students2MoodleExcel')
             ),
             array('deny',
                 'users' => array('*'),
@@ -47,7 +47,7 @@ class ListController extends Controller
 
         if (isset($_REQUEST['FilterForm']))
             $model->attributes=$_REQUEST['FilterForm'];
-
+//var_dump($model);
         $this->render('students2moodle', array(
             'model' => $model,
         ));
@@ -382,6 +382,125 @@ class ListController extends Controller
         header ('Pragma: public'); // HTTP/1.0
 
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
+        Yii::app()->end();
+    }
+
+    /*
+     * печать списка потока
+     * */
+    public function actionStudents2MoodleExcel()
+    {
+        $model = new FilterForm();
+        $model->scenario = 'list-students2moodle';
+
+        if (isset($_REQUEST['FilterForm']))
+            $model->attributes=$_REQUEST['FilterForm'];
+
+        if(empty($model->stream))
+            throw new Exception("Error");
+
+        $students=St::model()->getListStream($model->stream);
+
+        Yii::import('ext.phpexcel.XPHPExcel');
+        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel->getProperties()->setCreator("ACY")
+            ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
+            ->setTitle("Export2Moodle ".date('Y-m-d H-i'))
+            ->setSubject("Export2Moodle ".date('Y-m-d H-i'))
+            ->setDescription("Export2Moodle document, generated using ACY Portal. ".date('Y-m-d H:i:'))
+            ->setKeywords("")
+            ->setCategory("Result file");
+        $objPHPExcel->setActiveSheetIndex(0);
+        $sheet=$objPHPExcel->getActiveSheet();
+
+        list($year, $sem) = SH::getCurrentYearAndSem();
+
+        $streamInfo = Gr::model()->getInfoBySg($model->stream);
+
+        $speciality = isset($streamInfo['pnsp2']) ? $streamInfo['pnsp2'] : '';
+        //$specialityff = isset($model->faculty) ? Sp::model()->getSpecialitiesForFaculty($model->faculty) : '';
+        $specialityff = Sp::model()->findByPk($model->speciality);
+        $faculty = isset($streamInfo['f3']) ? $streamInfo['f3'] : '';
+
+        $rowStart=1;
+
+        $sheet->setCellValue('A'.$rowStart, 'username');
+        $sheet->setCellValue('B'.$rowStart, 'password');
+        $sheet->setCellValue('C'.$rowStart, 'firstname');
+        $sheet->setCellValue('D'.$rowStart, 'lastname');
+        $sheet->setCellValue('E'.$rowStart, 'email');
+        $sheet->setCellValue('F'.$rowStart, 'course1');
+        $sheet->setCellValue('G'.$rowStart, 'group1');
+        $sheet->setCellValue('H'.$rowStart, 'cohort1');
+        $sheet->setCellValue('I'.$rowStart, 'idnumber');
+        $sheet->setCellValue('J'.$rowStart, 'auth');
+        $sheet->setCellValue('K'.$rowStart, 'profile_field_tsmufaculty');
+        $sheet->setCellValue('L'.$rowStart, 'profile_field_tsmuspeciality');
+        $sheet->setCellValue('M'.$rowStart, 'profile_field_tsmusemester');
+        $sheet->setCellValue('N'.$rowStart, 'profile_field_tsmugroup');
+        $sheet->setCellValue('O'.$rowStart, 'profile_field_tsmuasumkrid');
+        $sheet->setCellValue('P'.$rowStart, 'profile_field_tsmucontingentid');
+        $sheet->setCellValue('Q'.$rowStart, 'profile_field_tsmuipnid');
+
+        $i=1;
+        foreach($students as $student):
+
+            $studentff = St::model()->with('account')->findByPk($student['st1']);
+
+            if (isset($studentff->account->u2)) {  //only if asu portal / google account has been created!
+
+                if ($studentff->st32 == 804){ //ukrainians
+                    $fname = $student['st3'].' '.$student['st4'];
+                    $lname = $student['st2'];
+                } else {                            //foreign
+                    $tmpFname = (!empty($student['st75'])?$student['st75']:$student['st3']);
+                    $tmpMname = (!empty($student['st76'])?$student['st76']:$student['st4']);
+                    $fname = $tmpFname.' '.$tmpMname;
+                    $lname = (!empty($student['st74'])?$student['st74']:$student['st2']);
+                }
+
+                $sheet->setCellValueByColumnAndRow(0,$i+ $rowStart, $studentff->account->u2);
+                $sheet->setCellValueByColumnAndRow(1,$i+ $rowStart, bin2hex(openssl_random_pseudo_bytes(5)));
+                $sheet->setCellValueByColumnAndRow(2,$i+ $rowStart, $fname);
+                $sheet->setCellValueByColumnAndRow(3,$i+ $rowStart, $lname);
+                $sheet->setCellValueByColumnAndRow(4,$i+ $rowStart, $studentff->account->u4);
+                $sheet->setCellValueByColumnAndRow(6,$i+ $rowStart, Gr::model()->getGroupName($model->course, $student));
+                $sheet->setCellValueByColumnAndRow(7,$i+ $rowStart, $model->course.' course');
+                $sheet->setCellValueByColumnAndRow(8,$i+ $rowStart, $student['st1']);
+                $sheet->setCellValueByColumnAndRow(9,$i+ $rowStart, 'oauth2');
+                $sheet->setCellValueByColumnAndRow(10,$i+ $rowStart, $faculty);
+                //$sheet->setCellValueByColumnAndRow(11,$i+ $rowStart, $specialityff[$model->speciality]['name']);
+                $sheet->setCellValueByColumnAndRow(11,$i+ $rowStart, $speciality .' ('. $specialityff->sp2 .')');
+                $sheet->setCellValueByColumnAndRow(12,$i+ $rowStart, $studentff->st71);
+                $sheet->setCellValueByColumnAndRow(13,$i+ $rowStart, Gr::model()->getGroupName($model->course, $student));
+                $sheet->setCellValueByColumnAndRow(14,$i+ $rowStart, $student['st1']);
+                $sheet->setCellValueByColumnAndRow(15,$i+ $rowStart, $studentff->st108);
+                //IPNP not provided currently
+
+                $i++;
+            }
+        endforeach;
+
+        $sheet->setTitle(tt('Export2Moodle'));
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Redirect output to a clientâ€™s web browser (Excel5)
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="ACY_Export2Moodle_'.date('Y-m-d H-i').'.csv"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        //$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'CSV')->setDelimiter(";");
         $objWriter->save('php://output');
         Yii::app()->end();
     }
