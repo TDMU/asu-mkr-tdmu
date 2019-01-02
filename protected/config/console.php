@@ -23,6 +23,9 @@ return array(
 		),
         'message' => array(
             'class' => 'application.commands.ttMessageCommand'
+        ),
+        'consoleGetGSuiteUsersInfo' => array(
+            'class' => 'application.commands.ConsoleGetGSuiteUsersInfoCommand'
         )
 	),
 

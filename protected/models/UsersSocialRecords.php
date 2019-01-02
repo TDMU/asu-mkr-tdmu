@@ -34,10 +34,11 @@ class UsersSocialRecords extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, userid, usertype, personid', 'numerical', 'integerOnly'=>true),
+            array('id', 'required'),
+			array('userid, usertype, personid', 'numerical', 'integerOnly'=>true),
 			array('service', 'length', 'max'=>80),
 			array('serviceid', 'length', 'max'=>200),
-			array('created, updated', 'length', 'max'=>8),
+			//array('created, updated', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, userid, usertype, personid, service, serviceid, created, updated', 'safe', 'on'=>'search'),

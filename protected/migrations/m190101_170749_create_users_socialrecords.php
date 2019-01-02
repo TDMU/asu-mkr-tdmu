@@ -14,13 +14,18 @@ class m190101_170749_create_users_socialrecords extends CDbMigration
             SERVICE VAR20 /*social service name*/,
             SERVICEID VARCHAR(50) DEFAULT NULL, 
             CREATED DAT,
-            UPDATED DAT
+            UPDATED DAT_CURRENT_TIMESTAMP 
         );
 SQL;
 		$this->execute($sql);
 
         $sql = <<<SQL
         ALTER TABLE USERS_SOCIALRECORDS ADD CONSTRAINT FK_USERS_SOCIALRECORDS_1 FOREIGN KEY (USERID) REFERENCES USERS (U1) ON DELETE CASCADE ON UPDATE CASCADE;
+SQL;
+        $this->execute($sql);
+        
+        $sql = <<<SQL
+        CREATE SEQUENCE GEN_USOCIALRECORDS;
 SQL;
         $this->execute($sql);
 	}
