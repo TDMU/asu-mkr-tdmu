@@ -26,6 +26,9 @@ return array(
         ),
         'consoleGetGSuiteUsersInfo' => array(
             'class' => 'application.commands.ConsoleGetGSuiteUsersInfoCommand'
+        ),
+        'consoleCreateGSuiteUsers' => array(
+            'class' => 'application.commands.ConsoleCreateGSuiteUsersCommand'
         )
 	),
 
