@@ -737,6 +737,7 @@ SQL;
 
     public function getStudentsForConsoleWithUserdata()
     {
+        //TODO: add socialauth info too
         $sql=<<<SQL
 select 
     f.f1,
