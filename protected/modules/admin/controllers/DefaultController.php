@@ -410,8 +410,22 @@ class DefaultController extends AdminController
             $model=Users::model()->findByPk($id);
             if($model===null)
                 throw new CHttpException(404,'The requested page does not exist.');
+
+            unset($useremail2delete);
+            $useremail2delete = $model->u4;
+
             $model->delete();
 
+            //TDMU - suspend and delete Google user before deletion
+            if (!empty($useremail2delete)) {
+                $suspendres = GSuiteDirectoryModel::GSuiteSuspendUser($useremail2delete);
+                //TODO: only suspend Google User at a time
+                //if ($suspendres[0] == true) {
+                //    GSuiteDirectoryModel::GSuiteDeleteUser($useremail2delete);
+                //}
+            }
+            
+            
             // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
             if(!isset($_GET['ajax']))
                 $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));

@@ -48,6 +48,33 @@ class GSuiteDirectoryModel extends CModel
         }
     }
 
+    static public function GSuiteSuspendUser($uemail)
+    {
+        if (empty($uemail)) {
+            throw new CHttpException(404, 'Invalid request. Please generate portal username first.');
+        }        
+
+        // Get the API client and construct the service object.
+        $client = self::getServiceClient();
+        $service = new Google_Service_Directory($client);
+
+        //delete Google user account
+        try {
+            //get Google user if exist
+            unset($gUser);
+            $gUser = $service->users->get($uemail);
+            $gUser->setSuspended(true);
+            $updateGUserResult = $service->users->update($uemail, $gUser);
+        }
+        catch (Google_IO_Exception $gioe) {
+            return array(false, "Error in connection to Google: ".(string)$gioe->getMessage());
+        } 
+        catch (Google_Service_Exception $gse) {
+            return array(false, "Error on Google user account suspending: ".(string)$gse->getMessage());
+        }
+        return array(true, $updateGUserResult);
+    }
+
     static public function GSuiteDeleteUser($uemail)
     {
         if (empty($uemail)) {
