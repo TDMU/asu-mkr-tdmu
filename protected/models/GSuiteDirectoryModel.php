@@ -4,7 +4,163 @@
 class GSuiteDirectoryModel extends CModel
 {
     private static $_names=array();
+
+    private static $ukrainianToEnglishRules = [
+        'А' => 'A',
+        'Б' => 'B',
+        'В' => 'V',
+        'Г' => 'G',
+        'Ґ' => 'G',
+        'Д' => 'D',
+        'Е' => 'E',
+        'Є' => 'E',
+        'Ж' => 'J',
+        'З' => 'Z',
+        'И' => 'Y',
+        'І' => 'I',
+        'Ї' => 'Yi',
+        'Й' => 'J',
+        'К' => 'K',
+        'Л' => 'L',
+        'М' => 'M',
+        'Н' => 'N',
+        'О' => 'O',
+        'П' => 'P',
+        'Р' => 'R',
+        'С' => 'S',
+        'Т' => 'T',
+        'У' => 'U',
+        'Ф' => 'F',
+        'Х' => 'H',
+        'Ц' => 'Ts',
+        'Ч' => 'Ch',
+        'Ш' => 'Sh',
+        'Щ' => 'Shch',
+        'Ь' => '',
+        'Ю' => 'Yu',
+        'Я' => 'Ya',
+        'а' => 'a',
+        'б' => 'b',
+        'в' => 'v',
+        'г' => 'g',
+        'ґ' => 'g',
+        'д' => 'd',
+        'е' => 'e',
+        'є' => 'e',
+        'ж' => 'j',
+        'з' => 'z',
+        'и' => 'y',
+        'і' => 'i',
+        'ї' => 'yi',
+        'й' => 'j',
+        'к' => 'k',
+        'л' => 'l',
+        'м' => 'm',
+        'н' => 'n',
+        'о' => 'o',
+        'п' => 'p',
+        'р' => 'r',
+        'с' => 's',
+        'т' => 't',
+        'у' => 'u',
+        'ф' => 'f',
+        'х' => 'h',
+        'ц' => 'ts',
+        'ч' => 'ch',
+        'ш' => 'sh',
+        'щ' => 'shch',
+        'ь'  => '',
+        'ю' => 'yu',
+        'я' => 'ya',
+        '\'' => ''
+    ];
+    /*
+     * TDMU - create user name for GMail
+     */    
+    static public function CreateGoogleUsername($_card, $type){
+        if($type==1){
+            $tmpFname = self::_create_username(self::_name_cleanup($_card->p4));
+            $tmpMname = self::_create_username(self::_name_cleanup($_card->p5));
+            $tmpLastName = self::_create_username(self::_name_cleanup($_card->p3));
+        } else {
+            if ($_card->st32 == 804){ //ukrainians
+                $tmpFname = self::_create_username(self::_name_cleanup($_card->st3));
+                $tmpMname = self::_create_username(self::_name_cleanup($_card->st4));
+                $tmpLastName = self::_create_username(self::_name_cleanup($_card->st2));
+            } else {                            //foreign
+                $tmpFname = self::_create_username(($_card->st75!=null?self::_name_cleanup($_card->st75):self::_name_cleanup($_card->st3)));
+                $tmpMname = self::_create_username(($_card->st76!=null?self::_name_cleanup($_card->st76):self::_name_cleanup($_card->st4)));
+                $tmpLastName = self::_create_username(($_card->st74!=null?self::_name_cleanup($_card->st74):self::_name_cleanup($_card->st2)));
+            }
+        }
+        if (strlen($tmpLastName)<2) {
+            if (strlen($tmpFname)>2){
+                $tmpLastName = $tmpFname;
+            } elseif (strlen($tmpMname)>2) {
+                $tmpLastName = $tmpMname;
+            } else {
+                $tmpLastName = 'nolastname';
+            }
+        }
+        if (strlen($tmpFname)<2) {
+            if (strlen($tmpFname)>2){
+                $tmpFname = substr($tmpLastName,0,3);
+            } elseif (strlen($tmpMname)>2) {
+                $tmpFname = substr($tmpMname,0,3);
+            } else {
+                $tmpFname = 'nfn';
+            }
+        } else {
+            $tmpFname = substr($tmpFname,0,3);
+        }
+        if (strlen($tmpMname)<2) {
+            if (strlen($tmpFname)>2){
+                $tmpMname = substr($tmpLastName,0,3);
+            } elseif (strlen($tmpFname)>2) {
+                $tmpMname = substr($tmpFname,0,3);
+            } else {
+                $tmpMname = 'nmn';
+            }
+        } else {
+            $tmpMname = substr($tmpMname,0,3);
+        }
+        $username = $tmpLastName."_".$tmpFname.$tmpMname;
+        $username = str_replace(" ","",$username); //finally: remove all possible ocasional spaces
+        return $username; //TDMU-ASU-specific
+    }
     
+    /*
+     * TDMU - create user name
+     */
+    static private function _create_username($ukrainianText){
+            $transliteratedText = '';
+            if (mb_strlen($ukrainianText) > 0) {
+                $transliteratedText = str_replace(
+                    array_keys(self::$ukrainianToEnglishRules),
+                    array_values(self::$ukrainianToEnglishRules),
+                    $ukrainianText
+                );
+            }
+            return strtolower($transliteratedText);
+    }
+    /*
+     * TDMU - clean-up string (especially - for names clean-up)
+     */
+    static private function _name_cleanup($str){
+        //if ($str[0]==' '){$str = substr($str, 1);}  
+        $str = trim($str); //Remove all leading and trailing spaces 
+        $str = str_replace("(","",$str);
+        $str = str_replace(")","",$str);
+        $str = str_replace("-","",$str);
+        $str = str_replace("'","",$str);
+        $str = str_replace(":","",$str);
+        $str = str_replace(".","",$str);
+        $str = str_replace("`","",$str);
+        $str = str_replace("’","",$str);
+        $str = str_replace("\"","",$str);
+        return $str;
+    }
+
     static public function GSuiteUserInfo($uemail)
     {
         if (empty($uemail))
@@ -185,10 +341,19 @@ class GSuiteDirectoryModel extends CModel
                             array('value'=>$tmpGrade,'type'=>'custom','customType'=>'grade'),
                             array('value'=>$tmpID,'type'=>'custom','customType'=>'person_id')));
         try {
+            unset($updateGUserResult);
             if ($gUser) {
                 $updateGUserResult = $service->users->update($gPrimaryEmail, $gUserObject);
+                //update socialrecord table - not working
+                //if ($updateGUserResult) {
+                //    UsersSocialRecords::updateGoogleSocialRecord($user, $updateGUserResult);
+                //}
             } else {
                 $updateGUserResult = $service->users->insert($gUserObject);
+                //update socialrecord table
+                //if ($updateGUserResult) {
+                //    UsersSocialRecords::updateGoogleSocialRecord($user, $updateGUserResult);
+                //}
             }
         } 
         catch (Google_IO_Exception $gioe) {

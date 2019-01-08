@@ -256,7 +256,8 @@ class DefaultController extends AdminController
                 continue;
             }
 
-            $username = $this->create_Google_username($_card, $type); //TDMU-specific
+            //$username = $this->create_Google_username($_card, $type); //TDMU-specific
+            $username = GSuiteDirectoryModel::CreateGoogleUsername($_card, $type); //TDMU-specific
             //$username = 'user'.($id+100000000).$type; //origin
             $password = bin2hex(openssl_random_pseudo_bytes(5));
             $model = new Users;
@@ -1209,7 +1210,8 @@ class DefaultController extends AdminController
                 $_card = P::model()->findByPk($id);
             }
             if(!empty($_card)) {
-                $username = $this->create_Google_username($_card, $type);
+                //$username = $this->create_Google_username($_card, $type);
+                $username = GSuiteDirectoryModel::CreateGoogleUsername($_card, $type);
                 $password = bin2hex(openssl_random_pseudo_bytes(5));
                 $user->u2 = $username;
                 $user->u3 = $password;
