@@ -4,7 +4,6 @@ require_once ('..'.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.ph
 
 class ConsoleGetGSuiteUsersInfoCommand extends CConsoleCommand
 {
-    const GOOGLE = 'googledirectory';
 
     public function actionIndex()
     {
@@ -38,20 +37,19 @@ class ConsoleGetGSuiteUsersInfoCommand extends CConsoleCommand
                 print_r('Google user: ' . $guser->id .' - ' . $guser->primaryEmail . "\n");
                 //get socialrecord info
                 $condition = '(userid=:userID)AND(usertype=:userType)AND(personid=:personID)AND(service=:service)';
-                $params = array(':userID' => $asuuser->u1,':userType' => $asuuser->u5,':personID' => $asuuser->u6, ':service' => GOOGLE);
+                $params = array(':userID' => $asuuser->u1,':userType' => $asuuser->u5,':personID' => $asuuser->u6, ':service' => UsersSocialRecords::GOOGLE);
 
                 $transaction = UsersSocialRecords::model()->dbConnection->beginTransaction();
                 try {
                     $userSocialRecord = UsersSocialRecords::model()->find($condition,$params);
                     if (empty($userSocialRecord)) {
                         //crea new record
-                        unset($userSocialRecord);
                         $userSocialRecord = new UsersSocialRecords;
                         $userSocialRecord->id = new CDbExpression('GEN_ID(GEN_USOCIALRECORDS, 1)');
                         $userSocialRecord->userid = $asuuser->u1;
                         $userSocialRecord->usertype = $asuuser->u5;
                         $userSocialRecord->personid = $asuuser->u6;
-                        $userSocialRecord->service = GOOGLE;
+                        $userSocialRecord->service = UsersSocialRecords::GOOGLE;
                     }
                     //update socialrecord info
                     $userSocialRecord->serviceid = $guser->id;
