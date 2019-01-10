@@ -337,7 +337,9 @@ class GSuiteDirectoryModel extends CModel
         $gUserObject->setName($gNameObject);
         $gUserObject->setPrimaryEmail($gPrimaryEmail);
         $gUserObject->setSuspended(boolval($user->u8));
-        $gUserObject->setPassword($user->password);
+        if (!empty($user->password)) {
+            $gUserObject->setPassword($user->password);
+        }
         $gUserObject->setOrgUnitPath($tmpOrgUnitPath);
         // the JSON object shows us that externalIds is an array, so that's how we set it here
         $gUserObject->setExternalIds(array(
