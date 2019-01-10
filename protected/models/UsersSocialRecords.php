@@ -18,6 +18,7 @@
  */
 class UsersSocialRecords extends CActiveRecord
 {
+    const GOOGLE = 'googledirectory';
 	/**
 	 * @return string the associated database table name
 	 */
@@ -116,4 +117,46 @@ class UsersSocialRecords extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+    
+    public static function updateGoogleSocialRecord($asuuser, $guser)
+    {
+        $condition = '(userid=:userID)AND(usertype=:userType)AND(personid=:personID)AND(service=:service)';
+        $params = array(':userID' => $asuuser->u1,':userType' => $asuuser->u5,':personID' => $asuuser->u6, ':service' => UsersSocialRecords::GOOGLE);
+
+        //$transaction = UsersSocialRecords::model()->dbConnection->beginTransaction();
+        try {
+            $userSocialRecord = UsersSocialRecords::model()->find($condition,$params);
+            if (empty($userSocialRecord)) {
+                //crea new record
+                $userSocialRecord = new UsersSocialRecords();
+                $userSocialRecord->id = new CDbExpression('GEN_ID(GEN_USOCIALRECORDS, 1)');
+                $userSocialRecord->userid = $asuuser->u1;
+                $userSocialRecord->usertype = $asuuser->u5;
+                $userSocialRecord->personid = $asuuser->u6;
+                $userSocialRecord->service = UsersSocialRecords::GOOGLE;
+            }
+            //update socialrecord info
+            $userSocialRecord->serviceid = $guser->id;
+            $userSocialRecord->created = date('d.m.Y H:i:s', strtotime($guser->creationTime));
+            $userSocialRecord->updated = date('d.m.Y H:i:s');
+            //var_dump($userSocialRecord);
+            if($userSocialRecord->save()) {
+                //$userSocialRecord->save();
+                //$transaction->commit();
+                //print_r('Record saved OK!' . "\n");
+                return array(true, 'Record saved OK!' . "\n");
+            } else {
+                //$transaction->rollback();
+                //print_r($userSocialRecord->getErrors());
+                return array(false, $userSocialRecord->getErrors()."\n");
+            }
+        }
+        catch(Exception $e)
+        {
+            //$transaction->rollback();
+            //print_r($e);
+            //continue;
+            return array(false, 'Caught exception: '.$e->getMessage()."\n");
+        }        
+    }
 }

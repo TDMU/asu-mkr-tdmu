@@ -185,9 +185,13 @@ class GSuiteDirectoryModel extends CModel
             }
         }
         
-        //succesfully - return Google Directory user's info: 
+        //success - update socregistration data
+        $user = Users::model()->findByAttributes(array('u4' => $uemail));
+        if (!empty($user)) {
+            UsersSocialRecords::updateGoogleSocialRecord($user, $guser);
+        }
+        //success - return Google Directory user's info: 
         if(Yii::app()->request->isAjaxRequest){
-            //var_dump($guser);
             $suspendedstr = ($guser->suspended) ? 'Yes' : 'No';
             print_r('<div><span>ID: '.$guser->id.'</span><br>');
             print_r('<span>FullName: '.$guser->name->fullName.'</span><br>');
@@ -344,14 +348,15 @@ class GSuiteDirectoryModel extends CModel
             unset($updateGUserResult);
             if ($gUser) {
                 $updateGUserResult = $service->users->update($gPrimaryEmail, $gUserObject);
-                //update socialrecord table - not working
-                //if ($updateGUserResult) {
-                //    UsersSocialRecords::updateGoogleSocialRecord($user, $updateGUserResult);
-                //}
+                //update socialrecord table - working OK
+                if ($updateGUserResult) {
+                    UsersSocialRecords::updateGoogleSocialRecord($user, $updateGUserResult);
+                }
             } else {
                 $updateGUserResult = $service->users->insert($gUserObject);
-                //update socialrecord table
+                //update socialrecord table - not working
                 //if ($updateGUserResult) {
+                //    //var_dump($updateGUserResult);
                 //    UsersSocialRecords::updateGoogleSocialRecord($user, $updateGUserResult);
                 //}
             }
