@@ -306,6 +306,73 @@ class GSuiteDirectoryModel extends CModel
         }
     }
 
+    static public function CheckUserDifference($guser, $asuuser)
+    {
+        $different = false;
+        $tmpUDG = self::tmpUserData2Google($asuuser, $asuuser->u5);
+        
+        if ($guser->orgUnitPath != $tmpUDG->tmpOrgUnitPath) {
+            $different = true;
+        }
+        if ($guser->suspended != $tmpUDG->tmpSuspended) {
+            $different = true;
+        }
+        if ($guser->externalIds[0]['value'] !=$tmpUDG->tmpSchoolID) {
+            $different = true;
+        }
+        if ($guser->externalIds[1]['value'] !=$tmpUDG->tmpGrade) {
+            $different = true;
+        }
+        if ($guser->externalIds[2]['value'] !=$tmpUDG->tmpID) {
+            $different = true;
+        }
+        //TODO: Names!!!
+        return $different;
+    }
+
+    //create temporary object with data, necessary to GSuite
+    private function tmpUserData2Google($user, $type)
+    {
+        //get person's model
+        unset($_card);
+        if($type==0||$type==2){
+            $_card = St::model()->findByPk($user->u6);
+        } elseif($type==1){
+            $_card = P::model()->findByPk($user->u6);
+        }
+        $tmpUDG = new stdClass;
+        //prepare person's data values
+        $tmpUDG->gPrimaryEmail = $user->u4;
+        if($type==1){  //teachers
+            $tmpUDG->tmpID = $_card->p1;
+            $tmpUDG->tmpFname = $_card->p4;
+            $tmpUDG->tmpMname = $_card->p5;
+            $tmpUDG->tmpLastName = $_card->p3;
+            $tmpUDG->tmpSchoolID = -1;
+            $tmpUDG->tmpGrade = -1;
+            $tmpUDG->tmpOrgUnitPath = '/dont_sync/Кафедри/Викладачі';
+        } else {        //students
+            $tmpUDG->tmpID = $_card->st1;
+            $tmpFaculty = self::getStudentFaculty2Directory($_card->st1); //COMPABILITY: get old faculty ID/name
+            $tmpUDG->tmpSchoolID = $tmpFaculty['school_id'];
+            //$tmpUDG->tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
+            $tmpUDG->tmpOrgUnitPath = '/dont_sync/projects/tests';  //test only!
+            $tmpUDG->tmpGrade = (!is_null($_card->st71)?$_card->st71:0);
+            if ($_card->st32 == 804){ //ukrainians
+                $tmpUDG->tmpFname = $_card->st3;
+                $tmpUDG->tmpMname = $_card->st4;
+                $tmpUDG->tmpLastName = $_card->st2;
+            } else {                            //foreign
+                $tmpUDG->tmpFname = ($_card->st75!=null?$_card->st75:$_card->st3);
+                $tmpUDG->tmpMname = ($_card->st76!=null?$_card->st76:$_card->st4);
+                $tmpUDG->tmpLastName = ($_card->st74!=null?$_card->st74:$_card->st2);
+            }
+        }
+        $tmpUDG->tmpSuspended = boolval($user->u8);
+
+        return $tmpUDG;
+    }
+
     //insert or update Google Directory User Account
     static public function GSuiteUpdateUser($user, $type)
     {
