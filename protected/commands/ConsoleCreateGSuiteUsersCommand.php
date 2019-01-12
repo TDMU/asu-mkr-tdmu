@@ -60,22 +60,30 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             $faculty = F::model()->findByPk($student['f1']);
 
             if (!empty($student['u4'])) {
-                //update existing GSuite Users
-                //get ASU userdata
+                //ASU user exist - create / update GSuite Users
+                //get ASU full userdata
                 $asuuser = Users::model()->findByAttributes(array('u4' => $student['u4']));
                 //get Google user
                 unset($guser);
                 $guser = GSuiteDirectoryModel::GSuiteUserInfo($student['u4']);
+                //var_dump($student);
+                //var_dump($guser);
                 if (!empty($guser)) {
-                    //only update EXISTING Google users                
-                    print_r('ifpassword? '.$asuuser->password."\n");
-                    //TODO: check for name / faculty / status changes - and only there update 
-                    unset($gResults);
-                    $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
-                    if ($gResults[0] !== true) {  //error
-                        print_r('FAILED to create new Google user!'."\n");
-                    } else {  //success
-                        print_r('Google user\'s data has been updated successfully!'."\n");
+                    //only update EXISTING Google users
+                    unset($ischanged);
+                    $ischanged = GSuiteDirectoryModel::CheckUserDifference($guser, $asuuser);
+                    print_r('ifchanged?: '.var_export($ischanged, true)."\n");
+                    //TODO: check for name / faculty / status changes - and only there update
+                    if ($ischanged){
+                        unset($gResults);
+                        $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                        if ($gResults[0] !== true) {  //error
+                            print_r('FAILED to create new Google user!'."\n");
+                        } else {  //success
+                            print_r('Google user\'s data has been updated successfully!'."\n");
+                        }
+                    } else {
+                        print_r('MATCH! No need to change Google user\'s data'."\n");
                     }
                 } else {
                     $asuuser->password = bin2hex(openssl_random_pseudo_bytes(5)); //generate new password
@@ -108,7 +116,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                     $i++;
                 }
             } else {
-                //create ASU and Google users
+                //create first ASU and than Google users
                 if (($student['st2']!=''||$student['st3']!=''||$student['st4']!='')||($student['st74']!=''||$student['st75']!=''||$student['st76']!='')) {
                     //Create ASU USER
                     $type = 0; //student only
