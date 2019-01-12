@@ -365,7 +365,11 @@ SQL;
 			$message = <<<HTML
 					{$text}: {$password}
 HTML;
-		Controller::mail($this->u4, tt('Пароль изменен'), $message);
+		try { //TDMU - still go on on mail error
+            Controller::mail($this->u4, tt('Пароль изменен'), $message);
+        } catch (Exception $e) {
+//            continue;
+        }
 	}
 
 	private function genAuthKey(){
