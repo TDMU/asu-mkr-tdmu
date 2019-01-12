@@ -741,7 +741,7 @@ SQL;
         $sql=<<<SQL
 select 
     f.f1,
-    st.st1, st.st2, st.st3, st.st4, st.st15, st.st32, st.st71, st.st74, st.st75, st.st76, st.st144, st.st108,
+    st.st1, st.st2, st.st3, st.st4, st.st7, st.st15, st.st32, st.st71, st.st74, st.st75, st.st76, st.st144, st.st108,
     users.u2, users.u4, 
     gr.gr3,
     std.std7, std.std11,

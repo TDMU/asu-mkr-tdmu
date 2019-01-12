@@ -207,6 +207,39 @@ class GSuiteDirectoryModel extends CModel
             return $guser;
         }
     }
+    
+    //Create ASU user from CLI
+    static public function ASUCLICreateUser($id, $type)
+    {
+        $user = new Users();
+        $user->u1 = new CDbExpression('GEN_ID(GEN_USERS, 1)');
+        //TDMU-specific - prepare user by template
+        unset($username);
+        unset($_card);
+        if($type==0||$type==2){
+            $_card = St::model()->findByPk($id);
+        } elseif($type==1){
+            $_card = P::model()->findByPk($id);
+        }
+        if(!empty($_card)) {
+            $username = self::CreateGoogleUsername($_card, $type);
+            $password = bin2hex(openssl_random_pseudo_bytes(5));
+            $user->u2 = $username;
+            $user->u3 = $password;
+            $user->password = $password;          //TDMU-specific
+            $user->u4 = $username.'@tdmu.edu.ua'; //TDMU-specific
+            $user->u5 = $type;
+            $user->u6 = $id;
+            $user->u7 = 0;
+            if ($user->save(false)) {
+                return $user;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     static public function GSuiteSuspendUser($uemail)
     {
