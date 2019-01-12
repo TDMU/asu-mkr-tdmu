@@ -735,8 +735,13 @@ SQL;
         ));
     }
 
-    public function getStudentsForConsoleWithUserdata()
+    public function getStudentsForConsoleWithUserdata($faculty = null)
     {
+        if (!empty($faculty)){
+            $facultywhere = '(f.f1 = '.$faculty.') and';
+        } else {
+            $facultywhere = '(f.f1 > 0) and';
+        }
         //TODO: add socialauth info too
         $sql=<<<SQL
 select 
@@ -755,7 +760,7 @@ from st
    inner join sp on (sg.sg2 = sp.sp1)
    inner join pnsp on (sp.sp11 = pnsp.pnsp1)
    inner join f on (sp.sp5 = f.f1)
-where (f.f1 > 0) and (pnsp.pnsp1 > 0) and (sp.sp1 > 0) and (std.std7 is null)
+where {$facultywhere} (pnsp.pnsp1 > 0) and (sp.sp1 > 0) and (std.std7 is null)
 order by st.st1;
 SQL;
 
@@ -763,68 +768,6 @@ SQL;
         $students = $command->queryAll();
 
         return $students;
-        
-        $criteria=new CDbCriteria;
-
-        $criteria->join = 'INNER JOIN std ON st1=std2 and std7 is null';
-
-        $criteria->select = array( 't.st2', 't.st3', 't.st4', 't.st15','std11 as st_status');
-        $with = array(
-            'account' => array(
-                'select' => 'u2, u3, u4'
-            ),
-        );
-
-        $criteria->addCondition("st1 > 0");
-        $criteria->addCondition("st2 <> ''");
-		$criteria->addCondition("st101 != 7");
-
-        //$criteria->join = 'INNER JOIN std ON st1=std2';
-		$criteria->addCondition("std11 != 1"); //std11 = 4,2 закончил
-        //$criteria->addSearchCondition('st2', $this->st2);
-        //$criteria->addSearchCondition('st3', $this->st3);
-        //$criteria->addSearchCondition('st4', $this->st4);
-        if(!empty($this->st2))
-		    $criteria->addCondition('st2 CONTAINING :ST2');
-        if(!empty($this->st3))
-		    $criteria->addCondition('st3 CONTAINING :ST3');
-        if(!empty($this->st4))
-		    $criteria->addCondition('st4 CONTAINING :ST4');
-        if(!empty($this->st15))
-            $criteria->addCondition('st15 = :ST15');
-
-        if($this->st_status>0) {
-            if($this->st_status==1)
-                $criteria->addCondition('std11!=4 and std11!=2');
-            if($this->st_status==2)
-                $criteria->addCondition(' ( std11=4 or std11=2)');
-        }
-
-        $criteria->with = $with;
-
-        $criteria->params = array(
-            ':ST2'=>$this->st2,
-            ':ST3'=>$this->st3,
-            ':ST4'=>$this->st4,
-            ':ST15'=>$this->st15
-        );
-//return self::model()->FindAll($criteria);
-        return new CActiveDataProvider($this, array(
-            'criteria'=>$criteria,
-            'pagination'=>array(),
-            'sort' => array(
-                'defaultOrder' => 'st2 collate UNICODE,st3 collate UNICODE,st4 collate UNICODE',
-                'attributes' => array(
-                    'st2',
-                    'st3',
-                    'st4',
-                    'st15',
-                    'account.u2',
-                    'account.u3',
-                    'account.u4',
-                ),
-            )
-        ));
     }
 
     public function getParentsForAdmin()
