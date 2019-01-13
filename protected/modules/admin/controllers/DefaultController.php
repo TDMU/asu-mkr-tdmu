@@ -3,75 +3,6 @@
 
 class DefaultController extends AdminController
 {
-    private static $ukrainianToEnglishRules = [
-        'А' => 'A',
-        'Б' => 'B',
-        'В' => 'V',
-        'Г' => 'G',
-        'Ґ' => 'G',
-        'Д' => 'D',
-        'Е' => 'E',
-        'Є' => 'E',
-        'Ж' => 'J',
-        'З' => 'Z',
-        'И' => 'Y',
-        'І' => 'I',
-        'Ї' => 'Yi',
-        'Й' => 'J',
-        'К' => 'K',
-        'Л' => 'L',
-        'М' => 'M',
-        'Н' => 'N',
-        'О' => 'O',
-        'П' => 'P',
-        'Р' => 'R',
-        'С' => 'S',
-        'Т' => 'T',
-        'У' => 'U',
-        'Ф' => 'F',
-        'Х' => 'H',
-        'Ц' => 'Ts',
-        'Ч' => 'Ch',
-        'Ш' => 'Sh',
-        'Щ' => 'Shch',
-        'Ь' => '',
-        'Ю' => 'Yu',
-        'Я' => 'Ya',
-        'а' => 'a',
-        'б' => 'b',
-        'в' => 'v',
-        'г' => 'g',
-        'ґ' => 'g',
-        'д' => 'd',
-        'е' => 'e',
-        'є' => 'e',
-        'ж' => 'j',
-        'з' => 'z',
-        'и' => 'y',
-        'і' => 'i',
-        'ї' => 'yi',
-        'й' => 'j',
-        'к' => 'k',
-        'л' => 'l',
-        'м' => 'm',
-        'н' => 'n',
-        'о' => 'o',
-        'п' => 'p',
-        'р' => 'r',
-        'с' => 's',
-        'т' => 't',
-        'у' => 'u',
-        'ф' => 'f',
-        'х' => 'h',
-        'ц' => 'ts',
-        'ч' => 'ch',
-        'ш' => 'sh',
-        'щ' => 'shch',
-        'ь'  => '',
-        'ю' => 'yu',
-        'я' => 'ya',
-        '\'' => ''
-    ];
 
     public function beforeAction($action)
     {
@@ -192,21 +123,24 @@ class DefaultController extends AdminController
 
         $sheet->setCellValueByColumnAndRow(0,1,tt('тип'));
         $sheet->setCellValueByColumnAndRow(1,1,tt('ФИО'));
-        $sheet->setCellValueByColumnAndRow(2,1,tt('Дата рождения'));
-        $sheet->setCellValueByColumnAndRow(3,1,tt('id'));
-        $sheet->setCellValueByColumnAndRow(4,1,tt('логин'));
-        $sheet->setCellValueByColumnAndRow(5,1,tt('пароль'));
+        //$sheet->setCellValueByColumnAndRow(2,1,tt('Дата рождения'));
+        $sheet->setCellValueByColumnAndRow(2,1,tt('Факультет/кафедра'));
+        $sheet->setCellValueByColumnAndRow(3,1,tt('Група'));
+        $sheet->setCellValueByColumnAndRow(4,1,tt('ASU_id'));
+        $sheet->setCellValueByColumnAndRow(5,1,tt('логин'));
+        $sheet->setCellValueByColumnAndRow(6,1,tt('пароль'));
 
         $sheet->getColumnDimension('A')->setWidth(15);
-        $sheet->getColumnDimension('B')->setWidth(30);
-        $sheet->getColumnDimension('C')->setWidth(18);
+        $sheet->getColumnDimension('B')->setWidth(40);
+        $sheet->getColumnDimension('C')->setWidth(30);
         $sheet->getColumnDimension('D')->setWidth(18);
-        $sheet->getColumnDimension('E')->setWidth(18);
-        $sheet->getColumnDimension('F')->setWidth(18);
+        $sheet->getColumnDimension('E')->setWidth(10);
+        $sheet->getColumnDimension('F')->setWidth(25);
+        $sheet->getColumnDimension('G')->setWidth(18);
         
         if ($createGogle) { //TDMU-specific
-            $sheet->setCellValueByColumnAndRow(6,1,tt('Google account created'));
-            $sheet->getColumnDimension('G')->setWidth(28);
+            $sheet->setCellValueByColumnAndRow(7,1,tt('Google account created'));
+            $sheet->getColumnDimension('H')->setWidth(28);
         }
 
         $i = 2;
@@ -233,6 +167,14 @@ class DefaultController extends AdminController
                     //$name = SH::getShortName($_card->st2, $_card->st3, $_card->st4);
                     $name = $_card->st2 .' '. $_card->st3 .' '. $_card->st4;
                     $bDate = $_card->st7;
+                    if ($type==0) {
+                        $tmpStudentData = $_card->getStudentInfoForCard();
+                        $tmpFacultyName = $tmpStudentData['f3'];
+                        $tmpGroupName = $tmpStudentData['gr3'];
+                    } else {
+                        $tmpFacultyName = tt('з батьків');
+                        $tmpGroupName = '--';
+                    }
                 }
             }
             if($type==1){
@@ -242,6 +184,8 @@ class DefaultController extends AdminController
                     //$name = SH::getShortName($_card->p3, $_card->p4, $_card->p5);
                     $name = $_card->p3 .' '. $_card->p4 .' '. $_card->p5;
                     $bDate = $_card->p9;
+                    $tmpFacultyName = $_card->getChair()->k3;
+                    $tmpGroupName = '--';
                 }
             }
             if(empty($_card)){
@@ -256,7 +200,6 @@ class DefaultController extends AdminController
                 continue;
             }
 
-            //$username = $this->create_Google_username($_card, $type); //TDMU-specific
             $username = GSuiteDirectoryModel::CreateGoogleUsername($_card, $type); //TDMU-specific
             //$username = 'user'.($id+100000000).$type; //origin
             $password = bin2hex(openssl_random_pseudo_bytes(5));
@@ -272,19 +215,21 @@ class DefaultController extends AdminController
             if($model->save(false)){
                 $sheet->setCellValueByColumnAndRow(0,$i,$typeName);
                 $sheet->setCellValueByColumnAndRow(1,$i,$name);
-                $sheet->setCellValueByColumnAndRow(2,$i,$bDate);
-                $sheet->setCellValueByColumnAndRow(3,$i,$id);
-                $sheet->setCellValueByColumnAndRow(4,$i,$username);
-                $sheet->setCellValueByColumnAndRow(5,$i,$password);
+                //$sheet->setCellValueByColumnAndRow(2,$i,$bDate);
+                $sheet->setCellValueByColumnAndRow(2,$i,$tmpFacultyName);
+                $sheet->setCellValueByColumnAndRow(3,$i,$tmpGroupName);
+                $sheet->setCellValueByColumnAndRow(4,$i,$id);
+                $sheet->setCellValueByColumnAndRow(5,$i,$username);
+                $sheet->setCellValueByColumnAndRow(6,$i,$password);
                 //creating a Google Directory useer account
                 if (($createGogle==true)&&($type == 0||$type == 1)) { //not for parents!
                     unset($gResults);
                     //$gResults = $this->GSuiteUpdateUser($model, $type);
                     $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($model, $type);
                     if ($gResults[0] !== true) {  //error
-                        $sheet->setCellValueByColumnAndRow(6,$i,$gResults[1]);
+                        $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]);
                     } else {  //success
-                        $sheet->setCellValueByColumnAndRow(6,$i,$gResults[1]->creationTime);
+                        $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]->creationTime);
                     }
                 }
             }else{
@@ -316,93 +261,6 @@ class DefaultController extends AdminController
         $objWriter->save('php://output');
     }
     
-    /*
-     * TDMU - create user name for GMail
-     */    
-    private function create_Google_username($_card, $type){
-        if($type==1){
-            $tmpFname = $this->_create_username($this->_name_cleanup($_card->p4));
-            $tmpMname = $this->_create_username($this->_name_cleanup($_card->p5));
-            $tmpLastName = $this->_create_username($this->_name_cleanup($_card->p3));
-        } else {
-            if ($_card->st32 == 804){ //ukrainians
-                $tmpFname = $this->_create_username($this->_name_cleanup($_card->st3));
-                $tmpMname = $this->_create_username($this->_name_cleanup($_card->st4));
-                $tmpLastName = $this->_create_username($this->_name_cleanup($_card->st2));
-            } else {                            //foreign
-                $tmpFname = $this->_create_username(($_card->st75!=null?$this->_name_cleanup($_card->st75):$this->_name_cleanup($_card->st3)));
-                $tmpMname = $this->_create_username(($_card->st76!=null?$this->_name_cleanup($_card->st76):$this->_name_cleanup($_card->st4)));
-                $tmpLastName = $this->_create_username(($_card->st74!=null?$this->_name_cleanup($_card->st74):$this->_name_cleanup($_card->st2)));
-            }
-        }
-        if (strlen($tmpLastName)<2) {
-            if (strlen($tmpFname)>2){
-                $tmpLastName = $tmpFname;
-            } elseif (strlen($tmpMname)>2) {
-                $tmpLastName = $tmpMname;
-            } else {
-                $tmpLastName = 'nolastname';
-            }
-        }
-        if (strlen($tmpFname)<2) {
-            if (strlen($tmpFname)>2){
-                $tmpFname = substr($tmpLastName,0,3);
-            } elseif (strlen($tmpMname)>2) {
-                $tmpFname = substr($tmpMname,0,3);
-            } else {
-                $tmpFname = 'nfn';
-            }
-        } else {
-            $tmpFname = substr($tmpFname,0,3);
-        }
-        if (strlen($tmpMname)<2) {
-            if (strlen($tmpFname)>2){
-                $tmpMname = substr($tmpLastName,0,3);
-            } elseif (strlen($tmpFname)>2) {
-                $tmpMname = substr($tmpFname,0,3);
-            } else {
-                $tmpMname = 'nmn';
-            }
-        } else {
-            $tmpMname = substr($tmpMname,0,3);
-        }
-        $username = $tmpLastName."_".$tmpFname.$tmpMname;
-        $username = str_replace(" ","",$username); //finally: remove all possible ocasional spaces
-        return $username; //TDMU-ASU-specific
-    }
-    
-    /*
-     * TDMU - create user name
-     */
-    private function _create_username($ukrainianText){
-            $transliteratedText = '';
-            if (mb_strlen($ukrainianText) > 0) {
-                $transliteratedText = str_replace(
-                    array_keys(self::$ukrainianToEnglishRules),
-                    array_values(self::$ukrainianToEnglishRules),
-                    $ukrainianText
-                );
-            }
-            return strtolower($transliteratedText);
-    }
-    /*
-     * TDMU - clean-up string (especially - for names clean-up)
-     */
-    private function _name_cleanup($str){
-        //if ($str[0]==' '){$str = substr($str, 1);}  
-        $str = trim($str); //Remove all leading and trailing spaces 
-        $str = str_replace("(","",$str);
-        $str = str_replace(")","",$str);
-        $str = str_replace("-","",$str);
-        $str = str_replace("'","",$str);
-        $str = str_replace(":","",$str);
-        $str = str_replace(".","",$str);
-        $str = str_replace("`","",$str);
-        $str = str_replace("’","",$str);
-        $str = str_replace("\"","",$str);
-        return $str;
-    }
-    
     public function actionDeleteUser($id)
     {
         if(Yii::app()->request->isPostRequest)
@@ -421,9 +279,9 @@ class DefaultController extends AdminController
             if (!empty($useremail2delete)) {
                 $suspendres = GSuiteDirectoryModel::GSuiteSuspendUser($useremail2delete);
                 //TODO: only suspend Google User at a time
-                //if ($suspendres[0] == true) {
-                //    GSuiteDirectoryModel::GSuiteDeleteUser($useremail2delete);
-                //}
+                if ($suspendres[0] == true) {
+                    GSuiteDirectoryModel::GSuiteDeleteUser($useremail2delete);
+                }
             }
             
             
@@ -1075,7 +933,7 @@ class DefaultController extends AdminController
 
         $model = $this->loadGrantsModel($id);
 		$model->scenario = 'admin-teachers';
-        
+
         if (isset($_POST['cancel'])) {
             $this->redirect(array('teachers'));
         }
