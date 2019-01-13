@@ -310,27 +310,34 @@ class GSuiteDirectoryModel extends CModel
     {
         $different = false;
         $tmpUDG = self::tmpUserData2Google($asuuser, $asuuser->u5);
-        
+
         if ($guser->orgUnitPath != $tmpUDG->tmpOrgUnitPath) {
             $different = true;
+            //debug: print_r('google orgUnitPath='.$guser->orgUnitPath.' local='.$tmpUDG->tmpOrgUnitPath."\n");
         }
         if ($guser->suspended != $tmpUDG->tmpSuspended) {
             $different = true;
+            //debug:            print_r('google suspended='.$guser->suspended.' local='.$tmpUDG->tmpSuspended."\n");
         }
-        if ($guser->externalIds[0]['value'] != $tmpUDG->tmpSchoolID) {
+        if ($guser->externalIds[1]['value'] != $tmpUDG->tmpSchoolID) {
             $different = true;
+            //debug:            print_r('google externalIds[1](school)='.$guser->externalIds[1]['value'].' local='.$tmpUDG->tmpSchoolID."\n");
         }
-        if ($guser->externalIds[1]['value'] != $tmpUDG->tmpGrade) {
+        if ($guser->externalIds[2]['value'] != $tmpUDG->tmpGrade) {
             $different = true;
+            //debug:            print_r('google externalIds[2](grade)='.$guser->externalIds[2]['value'].' local='.$tmpUDG->tmpGrade."\n");
         }
-        if ($guser->externalIds[2]['value'] != $tmpUDG->tmpID) {
+        if ($guser->externalIds[0]['value'] != $tmpUDG->tmpID) {
             $different = true;
+            //debug:            print_r('google externalIds[0](id)='.$guser->externalIds[0]['value'].' local='.$tmpUDG->tmpID."\n");
         }
         if ($guser->getName()->familyName != $tmpUDG->tmpLastName) {
             $different = true;
+            //debug:            print_r('google familyName='.$guser->familyName.' local='.$tmpUDG->tmpLastName."\n");
         }
-        if ($guser->getName()->givenName != $tmpUDG->tmpFname) {
+        if ($guser->getName()->givenName != $tmpUDG->tmpFname.' '.$tmpUDG->tmpMname) {
             $different = true;
+            //debug:            print_r('google givenName='.$guser->givenName.' local='.$tmpUDG->tmpFname.' '.$tmpUDG->tmpMname."\n");
         }
         return $different;
     }
@@ -357,11 +364,15 @@ class GSuiteDirectoryModel extends CModel
             $tmpUDG->tmpGrade = -1;
             $tmpUDG->tmpOrgUnitPath = '/dont_sync/Кафедри/Викладачі';
         } else {        //students
-            $tmpUDG->tmpID = $_card->st1;
+            if (!empty($_card->st108)) {
+                $tmpUDG->tmpID = $_card->st108; //compability - Contingent ID
+            } else {
+                $tmpUDG->tmpID = $_card->st1; //asu ID
+            }
             $tmpFaculty = self::getStudentFaculty2Directory($_card->st1); //COMPABILITY: get old faculty ID/name
             $tmpUDG->tmpSchoolID = $tmpFaculty['school_id'];
-            //$tmpUDG->tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
-            $tmpUDG->tmpOrgUnitPath = '/dont_sync/projects/tests';  //test only!
+            $tmpUDG->tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
+            //$tmpUDG->tmpOrgUnitPath = '/dont_sync/projects/tests';  //test only!
             $tmpUDG->tmpGrade = (!is_null($_card->st71)?$_card->st71:0);
             if ($_card->st32 == 804){ //ukrainians
                 $tmpUDG->tmpFname = $_card->st3;
@@ -392,8 +403,8 @@ class GSuiteDirectoryModel extends CModel
         $gNameObject = new Google_Service_Directory_UserName(
                       array(
                          'familyName' =>  $tmpUDG->tmpLastName,
-                         'givenName'  =>  $tmpUDG->tmpFname,
-                         'fullName'   =>  "$tmpUDG->tmpFname $tmpUDG->tmpLastName"));
+                         'givenName'  =>  "$tmpUDG->tmpFname $tmpUDG->tmpMname",
+                         'fullName'   =>  "$tmpUDG->tmpFname $tmpUDG->tmpMname $tmpUDG->tmpLastName"));
                          
         //get Google user if exist
         unset($gUser);
@@ -416,9 +427,10 @@ class GSuiteDirectoryModel extends CModel
         $gUserObject->setOrgUnitPath($tmpUDG->tmpOrgUnitPath);
         // the JSON object shows us that externalIds is an array, so that's how we set it here
         $gUserObject->setExternalIds(array(
+                            array('value'=>$tmpUDG->tmpID,'type'=>'custom','customType'=>'person_id'),
                             array('value'=>$tmpUDG->tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
-                            array('value'=>$tmpUDG->tmpGrade,'type'=>'custom','customType'=>'grade'),
-                            array('value'=>$tmpUDG->tmpID,'type'=>'custom','customType'=>'person_id')));
+                            array('value'=>$tmpUDG->tmpGrade,'type'=>'custom','customType'=>'grade')
+                            ));
         try {
             unset($updateGUserResult);
             if ($gUser) {
