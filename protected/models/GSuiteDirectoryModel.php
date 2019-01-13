@@ -317,21 +317,26 @@ class GSuiteDirectoryModel extends CModel
         if ($guser->suspended != $tmpUDG->tmpSuspended) {
             $different = true;
         }
-        if ($guser->externalIds[0]['value'] !=$tmpUDG->tmpSchoolID) {
+        if ($guser->externalIds[0]['value'] != $tmpUDG->tmpSchoolID) {
             $different = true;
         }
-        if ($guser->externalIds[1]['value'] !=$tmpUDG->tmpGrade) {
+        if ($guser->externalIds[1]['value'] != $tmpUDG->tmpGrade) {
             $different = true;
         }
-        if ($guser->externalIds[2]['value'] !=$tmpUDG->tmpID) {
+        if ($guser->externalIds[2]['value'] != $tmpUDG->tmpID) {
             $different = true;
         }
-        //TODO: Names!!!
+        if ($guser->getName()->familyName != $tmpUDG->tmpLastName) {
+            $different = true;
+        }
+        if ($guser->getName()->givenName != $tmpUDG->tmpFname) {
+            $different = true;
+        }
         return $different;
     }
 
     //create temporary object with data, necessary to GSuite
-    private function tmpUserData2Google($user, $type)
+    static private function tmpUserData2Google($user, $type)
     {
         //get person's model
         unset($_card);
@@ -376,40 +381,8 @@ class GSuiteDirectoryModel extends CModel
     //insert or update Google Directory User Account
     static public function GSuiteUpdateUser($user, $type)
     {
-        //get person's model
-        unset($_card);
-        if($type==0||$type==2){
-            $_card = St::model()->findByPk($user->u6);
-        } elseif($type==1){
-            $_card = P::model()->findByPk($user->u6);
-        }
-        //prepare person's data values
-        $gPrimaryEmail = $user->u4;
-        if($type==1){  //teachers
-            $tmpID = $_card->p1;
-            $tmpFname = $_card->p4;
-            $tmpMname = $_card->p5;
-            $tmpLastName = $_card->p3;
-            $tmpSchoolID = -1;
-            $tmpGrade = -1;
-            $tmpOrgUnitPath = '/dont_sync/Кафедри/Викладачі';
-        } else {        //students
-            $tmpID = $_card->st1;
-            $tmpFaculty = self::getStudentFaculty2Directory($_card->st1); //COMPABILITY: get old faculty ID/name
-            $tmpSchoolID = $tmpFaculty['school_id'];
-            //$tmpOrgUnitPath = $tmpFaculty['google_org_unit_path'];
-            $tmpOrgUnitPath = '/dont_sync/projects/tests';  //test only!
-            $tmpGrade = (!is_null($_card->st71)?$_card->st71:0);
-            if ($_card->st32 == 804){ //ukrainians
-                $tmpFname = $_card->st3;
-                $tmpMname = $_card->st4;
-                $tmpLastName = $_card->st2;
-            } else {                            //foreign
-                $tmpFname = ($_card->st75!=null?$_card->st75:$_card->st3);
-                $tmpMname = ($_card->st76!=null?$_card->st76:$_card->st4);
-                $tmpLastName = ($_card->st74!=null?$_card->st74:$_card->st2);
-            }
-        }
+        //construct temporary object with person's data
+        $tmpUDG = self::tmpUserData2Google($user, $type);
 
         // Get the API client and construct the service object.
         $client = self::getServiceClient();
@@ -418,9 +391,9 @@ class GSuiteDirectoryModel extends CModel
         //construct Google User Object
         $gNameObject = new Google_Service_Directory_UserName(
                       array(
-                         'familyName' =>  $tmpLastName,
-                         'givenName'  =>  $tmpFname,
-                         'fullName'   =>  "$tmpFname $tmpLastName"));
+                         'familyName' =>  $tmpUDG->tmpLastName,
+                         'givenName'  =>  $tmpUDG->tmpFname,
+                         'fullName'   =>  "$tmpUDG->tmpFname $tmpUDG->tmpLastName"));
                          
         //get Google user if exist
         unset($gUser);
@@ -435,21 +408,21 @@ class GSuiteDirectoryModel extends CModel
 
         //set Google User data
         $gUserObject->setName($gNameObject);
-        $gUserObject->setPrimaryEmail($gPrimaryEmail);
+        $gUserObject->setPrimaryEmail($tmpUDG->gPrimaryEmail);
         $gUserObject->setSuspended(boolval($user->u8));
         if (!empty($user->password)) {
             $gUserObject->setPassword($user->password);
         }
-        $gUserObject->setOrgUnitPath($tmpOrgUnitPath);
+        $gUserObject->setOrgUnitPath($tmpUDG->tmpOrgUnitPath);
         // the JSON object shows us that externalIds is an array, so that's how we set it here
         $gUserObject->setExternalIds(array(
-                            array('value'=>$tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
-                            array('value'=>$tmpGrade,'type'=>'custom','customType'=>'grade'),
-                            array('value'=>$tmpID,'type'=>'custom','customType'=>'person_id')));
+                            array('value'=>$tmpUDG->tmpSchoolID,'type'=>'custom','customType'=>'school_id'),
+                            array('value'=>$tmpUDG->tmpGrade,'type'=>'custom','customType'=>'grade'),
+                            array('value'=>$tmpUDG->tmpID,'type'=>'custom','customType'=>'person_id')));
         try {
             unset($updateGUserResult);
             if ($gUser) {
-                $updateGUserResult = $service->users->update($gPrimaryEmail, $gUserObject);
+                $updateGUserResult = $service->users->update($tmpUDG->gPrimaryEmail, $gUserObject);
                 //update socialrecord table - working OK
                 if ($updateGUserResult) {
                     UsersSocialRecords::updateGoogleSocialRecord($user, $updateGUserResult);

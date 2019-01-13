@@ -72,7 +72,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                     //only update EXISTING Google users
                     unset($ischanged);
                     $ischanged = GSuiteDirectoryModel::CheckUserDifference($guser, $asuuser);
-                    print_r('ifchanged?: '.var_export($ischanged, true)."\n");
+                    print_r('Is GUser data has been changed?: '.var_export($ischanged, true)."\n");
                     //TODO: check for name / faculty / status changes - and only there update
                     if ($ischanged){
                         unset($gResults);
