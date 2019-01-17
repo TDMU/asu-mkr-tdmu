@@ -43,11 +43,11 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
         // Get the API client and construct the service object.
         $client = GSuiteDirectoryModel::getServiceClient();
         $service = new Google_Service_Directory($client);
-
+//Controller::mail('semteacher@gmail.com', 'console1', 'console message1');
         //process by faculty
         $faculties = F::model()->FindAll();
         foreach ($faculties as $faculty) {
-            //if ($faculty->f1 == 3) { //debug - remove!
+            if ($faculty->f1 == 3) { //debug - remove!
             
             //get all students along with their portal's userdata
             $students = St::model()->getStudentsForConsoleWithUserdata($faculty->f1);
@@ -78,7 +78,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                         print_r('Is GUser data has been changed?: '.var_export($ischanged, true)."\n");
                         if ($ischanged){
                             unset($gResults);
-                            $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                            //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                             if ($gResults[0] !== true) {  //error
                                 print_r('FAILED to create new Google user!'."\n");
                             } else {  //success
@@ -100,7 +100,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                         //creating a Google Directory useer account
                         if ($type == 0||$type == 1) { //not for parents!
                             unset($gResults);
-                            $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                            //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                             if ($gResults[0] !== true) {  //error
                                 $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]);
                                 print_r('FAILED to create new Google user!'."\n");
@@ -138,7 +138,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                                 //creating a Google Directory useer account
                                 if ($type == 0||$type == 1) { //not for parents!
                                     unset($gResults);
-                                    $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                                    //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                                     if ($gResults[0] !== true) {  //error
                                         $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]);
                                         print_r('FAILED to create new Google user!'."\n");
@@ -174,10 +174,19 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             $tmpdocfilename = transliterator_transliterate ('Any-Latin; [\u0100-\u7fff] Remove; Latin-ASCII; NFD; [:Nonspacing Mark:] Remove; NFC; Lower();', $faculty->f2);
             $tmpdocfilename = preg_replace('/[^A-Za-z0-9_-]/', '_', $tmpdocfilename );
             $tmpdocfilename = transliterator_transliterate ('Ukrainian-Latin/BGN', $tmpdocfilename);
+            $tmpfullfilename = 'CLIGeneratedUsers_'.$tmpdocfilename.'_'.$jobdatestr.'.xls';
+            $objWriter->save($tmpfullfilename);
+            $savedfile = dirname(__FILE__).$tmpfullfilename;
 
-            $objWriter->save('CLIGeneratedUsers_'.$tmpdocfilename.'_'.$jobdatestr.'.xls');
-            //TODO: email to facylty
-        //} //debug - remove!
+            if ($savedfile) {
+                //email to facylty
+                $messageBody = $faculty->f3."\n".' The following Google Directroy users has been created / updated (see attached file)';
+                $savedfile = dirname(__FILE__).$tmpfullfilename;
+                Controller::mail('semteacher@gmail.com', 'Google Directroy Sync', $messageBody, $savedfile);
+            } else {
+                print_r('FAILED to save file with passwords!'."\n");
+            }
+        } //debug - remove!
         }
     }
 }
