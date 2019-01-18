@@ -13,7 +13,11 @@ return array(
 		'cache' => $mainConfig['components']['cache'],
 		'db'    => $mainConfig['components']['db'],
 		'log'   => $mainConfig['components']['log'],
-        'shortcodes'   => $mainConfig['components']['shortcodes'],
+        	'shortcodes'   => $mainConfig['components']['shortcodes'],
+		'Smtpmail'=>array(
+				'class'=>'application.extensions.smtpmail.PHPMailer',
+				'SMTPAuth'=>true,
+				)+require(dirname(__FILE__).'/mail.php'),
 	),
 	
 	'commandMap' => array(
