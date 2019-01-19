@@ -43,7 +43,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
         // Get the API client and construct the service object.
         $client = GSuiteDirectoryModel::getServiceClient();
         $service = new Google_Service_Directory($client);
-//Controller::mail('semteacher@gmail.com', 'console1', 'console message1');
+
         //process by faculty
         $faculties = F::model()->FindAll();
         foreach ($faculties as $faculty) {
@@ -175,13 +175,15 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             $tmpdocfilename = preg_replace('/[^A-Za-z0-9_-]/', '_', $tmpdocfilename );
             $tmpdocfilename = transliterator_transliterate ('Ukrainian-Latin/BGN', $tmpdocfilename);
             $tmpfullfilename = 'CLIGeneratedUsers_'.$tmpdocfilename.'_'.$jobdatestr.'.xls';
-            $objWriter->save($tmpfullfilename);
-            $savedfile = dirname(__FILE__).$tmpfullfilename;
+            $tmp_path = realpath(Yii::app()->basePath . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR  . 'export');
+            $objWriter->save($tmp_path . DIRECTORY_SEPARATOR . $tmpfullfilename);
+            $savedfile = $tmp_path . DIRECTORY_SEPARATOR . $tmpfullfilename;
 
             if ($savedfile) {
                 //email to facylty
                 $messageBody = $faculty->f3."\n".' The following Google Directroy users has been created / updated (see attached file)';
-                $savedfile = dirname(__FILE__).$tmpfullfilename;
+                //$savedfile = dirname(__FILE__).$tmpfullfilename;
+                //$savedfile = $tmp_path . DIRECTORY_SEPARATOR . $tmpfullfilename;
                 Controller::mail('semteacher@gmail.com', 'Google Directroy Sync', $messageBody, $savedfile);
             } else {
                 print_r('FAILED to save file with passwords!'."\n");
