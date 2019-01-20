@@ -7,7 +7,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
     const GOOGLE = 'googledirectory';
 
     public function actionIndex()
-    {
+    {   
         //create Excel document
         Yii::import('ext.phpexcel.XPHPExcel');
         $objPHPExcel= XPHPExcel::createPHPExcel();
@@ -161,7 +161,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                     }
                 }
                 $j++;
-                //if ($j > 10 || $student['st1'] > 41) { break; };
+                //if ($j > 10 || $student['st1'] > 41) { break; };//debug only
             }
             
             $sheet->getStyleByColumnAndRow(0,1,4,$i-1)->getBorders()->getAllBorders()->applyFromArray(array('style'=>PHPExcel_Style_Border::BORDER_THIN,'color' => array('rgb' => '000000')));
@@ -169,6 +169,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             $objPHPExcel->setActiveSheetIndex(0);
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 
+            //save file with passwords in wwwroot/export folder
             $jobdate = new DateTime();
             $jobdatestr = $jobdate->format('Y-m-d_H-i');
             $tmpdocfilename = transliterator_transliterate ('Any-Latin; [\u0100-\u7fff] Remove; Latin-ASCII; NFD; [:Nonspacing Mark:] Remove; NFC; Lower();', $faculty->f2);
@@ -177,13 +178,15 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             $tmpfullfilename = 'CLIGeneratedUsers_'.$tmpdocfilename.'_'.$jobdatestr.'.xls';
             $tmp_path = realpath(Yii::app()->basePath . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR  . 'export');
             $objWriter->save($tmp_path . DIRECTORY_SEPARATOR . $tmpfullfilename);
-            $savedfile = $tmp_path . DIRECTORY_SEPARATOR . $tmpfullfilename;
-
-            if ($savedfile) {
-                //email to facylty
+            
+            //email file as attacment preparations
+            $tmpSavedFile = $tmp_path . DIRECTORY_SEPARATOR . $tmpfullfilename;
+            $savedfile = new stdClass;
+            $savedfile->tempName = $tmp_path . DIRECTORY_SEPARATOR;
+            $savedfile->name = $tmpfullfilename;
+            if (file_exists($tmpSavedFile)) {
+                //email to faculty department
                 $messageBody = $faculty->f3."\n".' The following Google Directroy users has been created / updated (see attached file)';
-                //$savedfile = dirname(__FILE__).$tmpfullfilename;
-                //$savedfile = $tmp_path . DIRECTORY_SEPARATOR . $tmpfullfilename;
                 Controller::mail('semteacher@gmail.com', 'Google Directroy Sync', $messageBody, $savedfile);
             } else {
                 print_r('FAILED to save file with passwords!'."\n");
