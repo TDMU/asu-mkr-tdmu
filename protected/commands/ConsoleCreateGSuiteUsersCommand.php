@@ -186,7 +186,10 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             if (file_exists($tmpSavedFile)) {
                 //email to faculty department
                 $messageBody = $faculty->f3."\n".' The following Google Directroy users has been created / updated (see attached file)';
-                Controller::mail('semteacher@gmail.com', 'Google Directroy Sync', $messageBody, $savedfile);
+                $emails = GSuiteDirectoryModel::getTSMUFacultyEmails($faculty->f1);
+                foreach ($emails as $email) {
+                    Controller::mail($email, 'ASU MKR Google Directroy Sync', $messageBody, $savedfile);
+                }
             } else {
                 print_r('FAILED to save file with passwords!'."\n");
             }
