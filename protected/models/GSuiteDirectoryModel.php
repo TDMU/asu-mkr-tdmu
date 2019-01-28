@@ -126,6 +126,15 @@ class GSuiteDirectoryModel extends CModel
         }
         $username = $tmpLastName."_".$tmpFname.$tmpMname;
         $username = str_replace(" ","",$username); //finally: remove all possible ocasional spaces
+
+        //check if such username could exist
+        do {
+            $user = Users::model()->findByAttributes(array('u4' => $username.'@tdmu.edu.ua'));
+            if (!empty($user)) {
+                $username = $username.'1'; 
+            }
+        } while (empty($user));
+
         return $username; //TDMU-ASU-specific
     }
     
