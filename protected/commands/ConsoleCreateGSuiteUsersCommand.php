@@ -7,7 +7,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
     const GOOGLE = 'googledirectory';
 
     public function actionIndex()
-    {   
+    {
         //create Excel document
         Yii::import('ext.phpexcel.XPHPExcel');
         $objPHPExcel= XPHPExcel::createPHPExcel();
@@ -40,6 +40,8 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
         $sheet->setCellValueByColumnAndRow(7,1,tt('Google account created'));
         $sheet->getColumnDimension('H')->setWidth(28);
 
+        $time_start = new DateTime();
+
         // Get the API client and construct the service object.
         $client = GSuiteDirectoryModel::getServiceClient();
         $service = new Google_Service_Directory($client);
@@ -51,7 +53,6 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             //get all students along with their portal's userdata
             $students = St::model()->getStudentsForConsoleWithUserdata($faculty->f1);
             //process each student
-            //$j=1;  //debug - stop on xx
             $i=2;
             //print_r(mb_internal_encoding()."\n");
             foreach ($students as $student) {
@@ -77,7 +78,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                         print_r('Is GUser data has been changed?: '.var_export($ischanged, true)."\n");
                         if ($ischanged){
                             unset($gResults);
-                            $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                            //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                             if ($gResults[0] !== true) {  //error
                                 print_r('FAILED to create new Google user!'."\n");
                             } else {  //success
@@ -99,7 +100,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                         //creating a Google Directory useer account
                         if ($type == 0||$type == 1) { //not for parents!
                             unset($gResults);
-                            $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                            //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                             if ($gResults[0] !== true) {  //error
                                 $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]);
                                 print_r('FAILED to create new Google user!'."\n");
@@ -137,7 +138,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                                 //creating a Google Directory useer account
                                 if ($type == 0||$type == 1) { //not for parents!
                                     unset($gResults);
-                                    $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                                    //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                                     if ($gResults[0] !== true) {  //error
                                         $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]);
                                         print_r('FAILED to create new Google user!'."\n");
@@ -159,8 +160,6 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                         print_r('ERROR! No any name for student'."\n");
                     }
                 }
-                $j++;
-                //if ($j > 10 || $student['st1'] > 41) { break; };//debug only
             }
             
             $sheet->getStyleByColumnAndRow(0,1,4,$i-1)->getBorders()->getAllBorders()->applyFromArray(array('style'=>PHPExcel_Style_Border::BORDER_THIN,'color' => array('rgb' => '000000')));
@@ -195,5 +194,9 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
             }
         } //debug - remove!
         }
+
+        $time_end = new DateTime();
+        $interval = date_diff($time_start,$time_end);
+        print_r('Time taken: '.$interval->format('%h:%i:%s'));
     }
 }
