@@ -475,11 +475,11 @@ class GSuiteDirectoryModel extends CModel
     static public function getTSMUFacultyEmails($facultyId){
         unset($email_arr);
         switch ($facultyId) {
-            case '2': $email_arr = array('medical@tdmu.edu.ua'); break;
+            case '2': $email_arr = array('med_dekanat@tdmu.edu.ua'); break;
             case '3': $email_arr = array('farmm@tdmu.edu.ua'); break;
-            case '4': $email_arr = array('dental@tdmu.edu.ua'); break;
-            case '5': $email_arr = array('foreign@tdmu.edu.ua'); break;
-            case '8': $email_arr = array('nursing@tdmu.edu.ua'); break;
+            case '4': $email_arr = array('stom@tdmu.edu.ua'); break;
+            case '5': $email_arr = array('deans_office@tdmu.edu.ua'); break;
+            case '8': $email_arr = array('med_wkola@tdmu.edu.ua', 'yastremska@tdmu.edu.ua'); break;
             default: $email_arr = array('admin@tdmu.edu.ua', 'it@tdmu.edu.ua'); break;
         } 
         return $email_arr;
