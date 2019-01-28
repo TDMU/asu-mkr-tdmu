@@ -863,7 +863,7 @@ SQL;
     {
         $year = Yii::app()->session['year'];
         $sem = Yii::app()->session['sem'];
-        $date = $sem == 1 ? '31.05.'.($year+1) : '31.12.'.$year;
+        $date = $sem == 1 ? '31.05.'.($year+1) : '20.01.'.($year+1);
         /*$sql = <<<SQL
        select st1,st2,st3,st4,st45,st71,st163,st167, elgvst2, elgvst3
         from st
@@ -1214,9 +1214,12 @@ SQL;
 
     public static function getTimeTable($st1, $date1, $date2)
     {
+        if (empty($st1))
+            return array();
+
         $sql = <<<SQL
         SELECT *
-        FROM RAST(:LANG, :ST1, :DATE_1, :DATE_2)
+        FROM RAGRST(:LANG, 0, :ST1, 0, 0, 0, :DATE_1, :DATE_2)
         ORDER BY r2,r3,rz2
 SQL;
 

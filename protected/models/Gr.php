@@ -761,29 +761,30 @@ SQL;
 
     public static function getTimeTable($id, $date1, $date2,$type)
     {
-        $max=8;
+        if(empty($id))
+            return array();
+
         switch($type)
         {
                 case 0:
-                        $sql ='SELECT * FROM RAGR(:LANG, :ID, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
+                        $sql ='SELECT * FROM RAGRST(:LANG, :ID, 0, 0, 0, 0, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
                         break;
                 case 1:
-                        $sql ='SELECT * FROM RAST(:LANG, :ID, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
+                        $sql ='SELECT * FROM RAGRST(:LANG, 0, :ID, 0, 0, 0, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
                         break;
                 case 2:
-                        $sql ='SELECT * FROM RAPR_L(:LANG, :ID, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
+                        $sql ='SELECT * FROM RAGRST(:LANG, 0, 0, 0, :ID, 0, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
                         break;
                 case 3:
                         //$sql ="SELECT *,(DATEDIFF(DAY,r2, :DATE_1)*{$max}+r3) as colonka  FROM RAPR(:ID, :DATE_1, :DATE_2) ORDER BY colonka";
-                        $sql ='SELECT * FROM RAPR_L(:LANG, :ID, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
+                        $sql ='SELECT * FROM RAGRST(:LANG, 0, 0, 0, :ID, 0, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
                         break;
                 case 4: /*расписание кафедры по группам*/
-                        $sql ='SELECT * FROM RAGR(:LANG, :ID, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
+                        $sql ='SELECT * FROM RAGRST(:LANG, :ID, 0, 0, 0, 0, :DATE_1, :DATE_2) ORDER BY r2,r3,rz2';
                         break;
         }
         $command = Yii::app()->db->createCommand($sql);
-		//if($type!=2)
-			$command->bindValue(':LANG', TimeTableForm::getLangCode());
+        $command->bindValue(':LANG', TimeTableForm::getLangCode());
         $command->bindValue(':ID', $id);
         $command->bindValue(':DATE_1', $date1);
         $command->bindValue(':DATE_2', $date2);

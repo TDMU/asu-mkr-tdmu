@@ -402,6 +402,8 @@ class TimeTableController extends Controller
 
     private function generateExcel($timeTable,$minMax,$maxLessons,$rz,$model,$title)
     {
+        throw new CHttpException(403, 'Access denied');
+
         Yii::import('ext.phpexcel.XPHPExcel');
         $objPHPExcel= XPHPExcel::createPHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
@@ -422,9 +424,6 @@ class TimeTableController extends Controller
         $sheet->getPageMargins()->setLeft(0.1);
         $sheet->getPageMargins()->setBottom(0.1);
 
-        //$sheet->getHeaderFooter()->setOddHeader("&C$title");
-        //$sheet->getHeaderFooter()->setOddFooter('&L&B'.$sheet->getTitle().'&RСтраница &P из &N');
-
         $sheet->getColumnDimension('A')->setWidth(9);
 
         $sheet->mergeCells('A1:D1');
@@ -438,8 +437,6 @@ class TimeTableController extends Controller
         // Применяем заливку
         $sheet->getStyleByColumnAndRow(0, 1,1,2)->getFill()->
             setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-        /*$sheet->getStyleByColumnAndRow(0, 1,1,2)->getFill()->
-            getStartColor()->applyFromArray(array('rgb' => '6FB3E0'));*/
         $sheet->getRowDimension(1)->setRowHeight(13);
         $sheet->getRowDimension(2)->setRowHeight(13);
 
@@ -447,8 +444,6 @@ class TimeTableController extends Controller
         $amountOfWeeks =  ceil(((current($timestamps) - end($timestamps))/86400) / -7);
         reset($timestamps);
         $stroka=2;
-        $stroka_day=2;
-        $str=0;
         $header_height=19;
         $column_width=25;
         foreach(range(1,7) as $dayOfWeek) {

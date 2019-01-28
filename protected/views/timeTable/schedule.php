@@ -77,9 +77,10 @@ HTML;
             $shortText = $fullText = $params = '';
             if (isset($tt[$lesson])) {
                 $shortText = $tt[$lesson]['shortText'];
-                $fullText  = trim($tt[$lesson]['fullText'], '<br>');
+                $fullText  = $tt[$lesson]['fullText'];
+                /*$fullText  = trim($tt[$lesson]['fullText'], '<br>');
                 if(isset($tt[$lesson]['gr3']))
-                    $fullText  =str_replace('{$gr3}',$tt[$lesson]['gr3'],$fullText);
+                    $fullText  =str_replace('{$gr3}',$tt[$lesson]['gr3'],$fullText);*/
             }else{
                 if($isClosed){
                     $html .= <<<HTML
@@ -103,23 +104,22 @@ HTML;
     $html .= '</tr>';
 }
 $html .= '</table>';
-$class="print-btn";
+/*$class="print-btn";
 if('teacherExcel'==$action||'classroomExcel'==$action)
     $class="print-btn-tch";
 
 if(isset(Yii::app()->session['printAttr']))
-    $model->printAttr = Yii::app()->session['printAttr'];
+    $model->printAttr = Yii::app()->session['printAttr'];*/
 
-?>
-	<a id="print-table" data-url="<?=Yii::app()->createUrl('/timeTable/'.$action.'?type=%type%')?>" class="btn btn-info btn-small <?=$class?>">
+	/*<a id="print-table" data-url="<?=Yii::app()->createUrl('/timeTable/'.$action.'?type=%type%')?>" class="btn btn-info btn-small <?=$class?>">
         <i class="icon-print bigger-110"></i>
     </a>
     <label class="inline">
         <?php
         echo CHtml::activeCheckBox($model, "printAttr");
         ?>
-        <?=$model->getAttributeLabel("printAttr")?>
-    </label>
+        <?=$model->getAttributeLabel("printAttr")
+    </label>*/?>
     <h3 class="red header lighter tooltip-info noprint">
         <i class="icon-info-sign show-info" style="cursor:pointer"></i>
         <small>

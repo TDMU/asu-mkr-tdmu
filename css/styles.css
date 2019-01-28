@@ -14,10 +14,10 @@
 .journal_table_1 tr:hover .btn-fin-block{
     display: block;
 }
-footer .user-block{
+/*footer .user-block{
     float: left;
     text-align: left;
-}
+}*/
 
 h5.name-c2{
     text-decoration:underline;

@@ -734,9 +734,11 @@ SQL;
 
     public static function getTimeTable($p1, $date1, $date2)
     {
+        if (empty($p1))
+            return array();
+
         $sql = <<<SQL
-        SELECT *
-        FROM RAPR_L(:LANG, :P1, :DATE_1, :DATE_2)
+        SELECT * FROM RAGRST(:LANG, 0, 0, 0, :P1, 0, :DATE_1, :DATE_2)
         ORDER BY r2,r3,rz2
 SQL;
 

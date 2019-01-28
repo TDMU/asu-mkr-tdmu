@@ -392,7 +392,7 @@ class Elgzst extends CActiveRecord
         if (empty($st1) || empty($date1) || empty($date2))
             return array();
 
-        $sql=<<<SQL
+        /*$sql=<<<SQL
                 SELECT elgz1
                 FROM elgzst
                     LEFT JOIN elgp on (elgzst.elgzst0 = elgp.elgp1)
@@ -404,7 +404,13 @@ class Elgzst extends CActiveRecord
                     INNER JOIN nr on (r.r1 = nr.nr1)
                     INNER JOIN us on (nr.nr2 = us.us1)
                 WHERE elgzst1=:ST1 and r2 >= :DATE1 and r2 <= :DATE2 and elgzst3!=0 and d1 in (select d1 FROM  EL_GURNAL(:P1,:YEAR,:SEM,0,0,0,0,3,0))
+SQL;*/
+
+        $sql = <<<SQL
+        SELECT elgz1 FROM EL_GURNAL_INFO(:YEAR, :SEM, :DATE1, :DATE2, 0, 0, :ST1, 0, 0) 
+            where d1 in (select d1 FROM  EL_GURNAL(:P1,:YEAR1,:SEM1,0,0,0,0,3,0)) and elgzst0 is not null and propusk>0
 SQL;
+
 
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':ST1', $st1);
@@ -413,6 +419,8 @@ SQL;
         $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
         $command->bindValue(':YEAR', Yii::app()->session['year']);
         $command->bindValue(':SEM', Yii::app()->session['sem']);
+        $command->bindValue(':YEAR1', Yii::app()->session['year']);
+        $command->bindValue(':SEM1', Yii::app()->session['sem']);
         $rows = $command->queryAll();
 
         $res=array();
