@@ -390,20 +390,8 @@ class TimeTableController extends Controller
 
     }
 
-    private function countHeight($maxLessons, $dayOfWeek, $lesson)
-    {
-        $h=50;
-        $height = isset($maxLessons[$dayOfWeek][$lesson])
-            ? $h*$maxLessons[$dayOfWeek][$lesson]
-            : $h;
-
-        return $height;
-    }
-
     private function generateExcel($timeTable,$minMax,$maxLessons,$rz,$model,$title)
     {
-        throw new CHttpException(403, 'Access denied');
-
         Yii::import('ext.phpexcel.XPHPExcel');
         $objPHPExcel= XPHPExcel::createPHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
@@ -473,10 +461,8 @@ class TimeTableController extends Controller
             $sheet->getRowDimension($stroka)->setRowHeight($header_height);
 
             foreach (range($min, $max) as $lesson) {
-                //$interval = isset($rz[$lesson]) ? $rz[$lesson]['rz2'].' - '.$rz[$lesson]['rz3'] : null;
                 $start=isset($rz[$lesson]) ? $rz[$lesson]['rz2']: null;
                 $finish=isset($rz[$lesson]) ? $rz[$lesson]['rz3']: null;
-                $h = $this->countHeight($maxLessons, $dayOfWeek, $lesson);
                 $tmp=$lesson.' '.tt('пара').': '.$start.'-'.$finish;
                 $stroka++;
                 $sheet->setCellValueByColumnAndRow(0,$stroka,$tmp)->getStyleByColumnAndRow(0, $stroka)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)->setWrapText(true);
@@ -511,12 +497,9 @@ class TimeTableController extends Controller
                     $k++;
                     $less = '';
                     if (isset($tt[$lesson])) {
-                        $less = $tt[$lesson]['printText'];
+                        $less = CHtml::decode($tt[$lesson]['printText']);
                         $color = $tt[$lesson]['color'];
                         $color=str_replace('#','',$color);
-                        //$color=strtoupper($color);
-                        if(isset($tt[$lesson]['gr3']))
-                            $less  =str_replace('{$gr3}',$tt[$lesson]['gr3'],$less);
                         $sheet->getStyleByColumnAndRow($week+1, $stroka_day+$k)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
                         $sheet->getStyleByColumnAndRow($week+1, $stroka_day+$k)->getFill()->getStartColor()->applyFromArray(array('rgb' => $color));
                     }
@@ -550,9 +533,6 @@ class TimeTableController extends Controller
 
     public function actionGroup()
     {
-        //if($this->mobileCheck())
-            //$this->redirect('/mobile/timeTableGroup');
-
         $model = new TimeTableForm;
         $model->scenario = 'group';
 		

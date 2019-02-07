@@ -98,6 +98,20 @@
                     ),
                 ),
                 array(
+                    'name'       => 'Портфолио',
+                    'controller' => 'portfolio',
+                    'items' => array(
+                        'student'=> array(
+                            'name'=>'Студент',
+                            'authOnly' => $studentStr
+                        ),
+                        'teacher'=> array(
+                            'name'=>'Преподователь',
+                            'authOnly' => $teacherStr
+                        )
+                    ),
+                ),
+                array(
                     'name'       => 'Эл. журнал',
                     'controller' => 'journal',
                     'items' => array(

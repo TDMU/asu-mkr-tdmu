@@ -14,7 +14,7 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/t
 if(!(PortalSettings::model()->findByPk(77)->ps2&&Yii::app()->user->isGuest)) {
 	$form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 			'id' => 'search-form',
-			'htmlOptions' => array('class' => 'form-inline noprint'),
+			'htmlOptions' => array('class' => 'form-inline'),
 			'method' => 'post',
 			'action' => array('timeTable/searchStudent'),
 	));
@@ -33,23 +33,14 @@ if(!(PortalSettings::model()->findByPk(77)->ps2&&Yii::app()->user->isGuest)) {
 	<?php
 	$this->endWidget();
 }
-if($this->mobileCheck()) {
-	?>
-	<div class="pull-right">
-		<?=
-		CHtml::link('<i class="icon-hand-right"></i>'.' '.tt('Мобильный вид'), array('/mobile/timeTableStudent'));
-		?>
-	</div>
-	<?php
-}
-echo '<div class="noprint">';
+
 $this->renderPartial('/filter_form/timeTable/student', array(
     'model' => $model,
     'showDateRangePicker' => true,
 	'type'=>$type,
 	'showCheckBoxCalendar'=>true
 ));
-echo '</div>';
+
 Yii::app()->clientScript->registerScript('calendar-checkbox',"
 				$(document).on('change', '#checkbox-timeTable', function(){
 					if($(this).is(':checked')) {
@@ -69,9 +60,6 @@ Yii::app()->clientScript->registerScript('calendar-checkbox',"
 echo <<<HTML
     <span id="spinner1"></span>
 HTML;
-
-
-
 
 if (! empty($model->student))
 	if($type==0)

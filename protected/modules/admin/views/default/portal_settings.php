@@ -451,6 +451,50 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
     </div>
 </div>
 
+    <div class="span6">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4><?=tt('Портфолио')?></h4>
+                <span class="widget-toolbar">
+                <a data-action="collapse" href="#">
+                    <i class="icon-chevron-up"></i>
+                </a>
+            </span>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <?php
+                    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+                        'id'=>'ps-portfolio',
+                        'htmlOptions' => array('class' => 'form-horizontal'),
+                        'action' => '#'
+                    ));
+                    ?>
+
+                    <div class="control-group">
+                        <?=CHtml::checkBox('', PortalSettings::model()->getSettingFor(PortalSettings::USE_PORTFOLIO), $checkboxStyle)?>
+                        <span class="lbl"> <?=tt('Использовать портфолио')?></span>
+                        <?=CHtml::hiddenField('settings['.PortalSettings::USE_PORTFOLIO.']', PortalSettings::model()->getSettingFor(PortalSettings::USE_PORTFOLIO))?>
+                    </div>
+
+                    <div class="control-group">
+                        <span class="lbl"> <?=tt('Путь к папке с файлами')?>:</span>
+                        <?=CHtml::textField('settings['.PortalSettings::PORTFOLIO_PATH.']', PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH))?>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-info btn-small">
+                            <i class="icon-ok bigger-110"></i>
+                            <?=tt('Сохранить')?>
+                        </button>
+                    </div>
+
+                    <?php $this->endWidget();?>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <?php
 
 /*<div class="span6">

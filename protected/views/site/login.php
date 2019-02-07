@@ -30,8 +30,8 @@ $this->pageHeader=$this->pageTitle;
                                 /*$url = Yii::app()->request->urlReferrer;
                                 $host = Yii::app()->request->hostInfo;
                                 echo $url.' '.$host;*/
-                                    $model->setNewValidationKey();
-                                    echo $form->hiddenField($model, 'validationKey');
+                                    //$model->setNewValidationKey();
+                                    //echo $form->hiddenField($model, 'validationKey');
                                 ?>
                                 <label>
                                     <span class="block input-icon input-icon-right">

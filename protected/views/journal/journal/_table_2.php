@@ -1,4 +1,14 @@
 <?php
+/**
+ * @var $this JournalController
+ */
+
+/**
+ * @param $uo1
+ * @param $gr1
+ * @param $st1
+ * @return string
+ */
 
 function table2TrItog($uo1, $gr1, $st1){
     $vmp = Vmp::model()->getVedItog($uo1, $gr1, 98, $st1);
@@ -461,7 +471,7 @@ HTML
     return '<td colspan="4"></td>';
 }
 
-function generateTh2($ps9,$date,$type_lesson,$ps57)
+function generateTh2($ps9,$date,$type_lesson,$ps57, $enableMinMax = true)
 {
     if($date['elgz4']==2&&$ps57==1) {
         return sprintf('<th>%s</th><th>%s</th><th>%s</th><th>%s</th>',tt('Тек.'),tt('Инд.р.'),tt('ПМК'),tt('Итог.'));
@@ -479,13 +489,16 @@ function generateTh2($ps9,$date,$type_lesson,$ps57)
         $elgz5=round($date['elgz5'],1);
     if($date['elgz6']>0)
         $elgz6=round($date['elgz6'],1);
-
-    $pattern = <<<HTML
+    return $enableMinMax ?
+        <<<HTML
 <th><input value="{$elgz5}" maxlength="3" placeholder="min" data-name="elgz5" data-elgz1="{$date['elgz1']}"></th>
 <th><input value="{$elgz6}" maxlength="3" placeholder="max" data-name="elgz6" data-elgz1="{$date['elgz1']}"></th>
+HTML
+     :
+        <<<HTML
+            <th><label>{$elgz5}</label></th>
+            <th><label>{$elgz6}</label></th>
 HTML;
-
-    return sprintf($pattern);
 }
 
 function generateColumnName($date,$type_lesson,$ps57,$ps59, $ps90,$permLesson, $date1, $ps78,$ps27)
@@ -662,6 +675,13 @@ HTML;
     /*количество занятий для пересчета оценки дифзачета запорожье*/
     $countDivZacvmarks =0;
 
+    //проверка на редактирование минмакс для ирпени
+    $enableMimMax  = true;
+    if($this->universityCode == U_IRPEN&& count($elgz1_arr)>0 && $ps9 == 1){
+        $firstElgz = Elgz::model()->findByPk($elgz1_arr[0]);
+        $enableMimMax =  $firstElgz == null ? false : $firstElgz->checkAccessMinMixIrpen();
+    }
+
     $sem1End = null;
     if($elg->elg20->uo6==3) {
         $sem1End = Vmp::model()->getEndSem1($elg->elg2);
@@ -671,7 +691,7 @@ HTML;
         $date2  = new DateTime($date['r2']);
 
         $th .= generateColumnName($date, $model->type_lesson,$ps57,$ps59, $ps90, $permLesson,$date1, $ps78,$ps27);
-        $th2 .= generateTh2($ps9, $date, $model->type_lesson,$ps57);
+        $th2 .= generateTh2($ps9, $date, $model->type_lesson,$ps57, $enableMimMax);
         //$column++;
 
         $date2  = new DateTime($date['r2']);

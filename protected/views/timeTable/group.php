@@ -10,7 +10,7 @@ $this->pageHeader=tt('Расписание академ. группы');
 $this->breadcrumbs=array(
     tt('Расписание'),
 );
-echo '<div class="noprint">';
+
 $showCheckBoxCalendar=true;
 if($type==-1)
 {
@@ -37,7 +37,6 @@ if($showCheckBoxCalendar)
         });
 
     ");
-echo '</div>';
 echo <<<HTML
     <span id="spinner1"></span>
 HTML;

@@ -1095,16 +1095,28 @@ SQL;
                 if($value!=0&&$value!=-1&&$value!=-2)
                     if ($field == 'elgzst4'||$field == 'elgzst5')
                     {
-                        $min=PortalSettings::model()->findByPk(37)->ps2;
+                        //$min=PortalSettings::model()->findByPk(37)->ps2;
                         $bal=PortalSettings::model()->findByPk(36)->ps2;
                         if($bal!=0)
                         {
-                            if($value>$bal||$value<$min)
+                            if($value>$bal/*||$value<$min*/ || $value<0)
                                 if($value!=0)
                                 {
                                     $error=true;
                                     $errorType=4;
                                 }
+                        }
+
+                        if(!$error){
+                            if(PortalSettings::model()->getSettingFor(9) == 1){
+                                if($elgz->elgz6 > 0) {
+                                    if ($elgz->elgz6 < $value || $value < $elgz->elgz5)
+                                        if ($value != 0) {
+                                            $error = true;
+                                            $errorType = 4;
+                                        }
+                                }
+                            }
                         }
                     }
                 //блокировка пересдач
@@ -1369,6 +1381,7 @@ SQL;
         $elgz1 = Yii::app()->request->getParam('elgz1', null);
         $field = Yii::app()->request->getParam('field', null);
         $value = Yii::app()->request->getParam('value', null);
+        $error = false;
 
         if($elgz1==null || $field==null || $value==null)
             $error = true;
@@ -1385,8 +1398,18 @@ SQL;
                 $error=true;
             else
             {
-                $elgz->$field=$value;
-                $error =!$elgz->save();
+                ///проверка для ирпени, что имзенения минмакс біло только в течении 10 дней от первой даті занятия
+                if($this->universityCode == U_IRPEN && PortalSettings::model()->getSettingFor(9) == 1){
+                    if(!$elgz->checkAccessMinMixIrpen())
+                    {
+                        $error = true;
+                    }
+                }
+
+                if(!$error) {
+                    $elgz->$field = $value;
+                    $error = !$elgz->save();
+                }
             }
 
         }

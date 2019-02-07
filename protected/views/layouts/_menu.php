@@ -668,6 +668,27 @@ $this->widget('zii.widgets.CMenu', array(
             'visible' => _ch('doc', 'main') && ($isTch||$isAdmin||$isStd),
         ),
         array(
+            'label' => _l('Портфолио', 'book'),
+            'url' => '#',
+            'linkOptions'=> $_l,
+            'itemOptions'=>_i('portfolio'),
+            'items' => array(
+                array(
+                    'label'   => $_l2.tt('Студент'),
+                    'url'     => _u('/portfolio/student'),
+                    'visible' => _ch('portfolio', 'student') && ($isAdmin||$isStd),
+                    'active'  => $_c=='portfolio' && stristr($_a, 'student')
+                ),
+                array(
+                    'label'   => $_l2.tt('Преподаватель'),
+                    'url'     => _u('/portfolio/teacher'),
+                    'visible' => _ch('portfolio', 'teacher') && ($isTch||$isAdmin),
+                    'active'  => $_c=='portfolio' && stristr($_a, 'teacher')
+                ),
+            ),
+            'visible' => _ch('portfolio', 'main') && ($isTch||$isAdmin||$isStd) && PortalSettings::model()->getSettingFor(PortalSettings::USE_PORTFOLIO) == 1,
+        ),
+        array(
             'label' => _l('Абитуриент', 'book'),
             'url' => '#',
             'linkOptions'=> $_l,

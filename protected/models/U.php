@@ -215,7 +215,7 @@ SQL;
             select first 1 u1 as ANALIZIROVAT
             from u
             inner join uo on (u1 = uo.uo22)
-            inner join us on (uo.uo1 = us.us2)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0)
             inner join sem on (us.us3 = sem.sem1)
             where (u38<=current_timestamp and u39>=current_timestamp) and (sem3 = {$uch_god}) and (sem5 = {$semester}) and (
                 (u1 in ({$subSql})) or
@@ -360,7 +360,7 @@ SQL;
             select count(*)  as KOL from
             (select us2
             from uo
-            inner join us on (uo.uo1 = us.us2)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg1)
@@ -391,7 +391,7 @@ SQL;
             inner join uo on (d.d1 = uo.uo3)
             /*inner join u on (uo.uo22 = u.u1)
             inner join c on (u.u15 = c.c1)*/
-            inner join us on (uo.uo1 = us.us2)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1, ucx6 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg1)
@@ -424,7 +424,7 @@ SQL;
             inner join uo on (d.d1 = uo.uo3)
             inner join u on (uo.uo22 = u.u1)
             inner join c on (u.u15 = c.c1)
-            inner join us on (uo.uo1 = us.us2)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1, ucx6 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg1)
@@ -452,7 +452,7 @@ SQL;
      select count(*)  as KOL from
                 (select ucsn2
                 from uo
-                   inner join us on (uo.uo1 = us.us2)
+                   inner join us on (uo.uo1 = us.us2 and us.us6>0)
                    inner join sem on (us.us3 = sem.sem1)
                    inner join (select ucx1 from ucx where ucx5>1) on (uo.uo19 = ucx1)
                    inner join ucxg on (ucx1 = ucxg1)
@@ -477,7 +477,7 @@ SQL;
         $sql = <<<SQL
             select uo3
             from uo
-            inner join us on (uo.uo1 = us.us2)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg.ucxg1)

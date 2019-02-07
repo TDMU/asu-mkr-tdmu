@@ -172,4 +172,12 @@ SQL;
 		return $disabled;
 	}
 
+    /**
+     * Проверка можно ли редактированиять мин/макс для ирпеня
+     * @return bool
+     */
+	public function checkAccessMinMixIrpen(){
+	    return true;
+    }
+
 }
