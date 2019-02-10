@@ -78,7 +78,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                         print_r('Is GUser data has been changed?: '.var_export($ischanged, true)."\n");
                         if ($ischanged){
                             unset($gResults);
-                            //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                            $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                             if ($gResults[0] !== true) {  //error
                                 print_r('FAILED to create new Google user!'."\n");
                             } else {  //success
@@ -100,7 +100,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                         //creating a Google Directory useer account
                         if ($type == 0||$type == 1) { //not for parents!
                             unset($gResults);
-                            //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                            $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                             if ($gResults[0] !== true) {  //error
                                 $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]);
                                 print_r('FAILED to create new Google user!'."\n");
@@ -138,7 +138,7 @@ class ConsoleCreateGSuiteUsersCommand extends CConsoleCommand
                                 //creating a Google Directory useer account
                                 if ($type == 0||$type == 1) { //not for parents!
                                     unset($gResults);
-                                    //$gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
+                                    $gResults = GSuiteDirectoryModel::GSuiteUpdateUser($asuuser, $asuuser->u5);
                                     if ($gResults[0] !== true) {  //error
                                         $sheet->setCellValueByColumnAndRow(7,$i,$gResults[1]);
                                         print_r('FAILED to create new Google user!'."\n");
