@@ -25,3 +25,5 @@ define('U_IRPEN',  24);
 define('U_KIEV_MVD',  23);
 define('U_UMAN',  37);
 define('U_RGIIS',  21);
+define('U_KNU',  61);
+define('U_HTEI',  59);

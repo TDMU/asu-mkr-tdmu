@@ -561,28 +561,28 @@ table.timeTable td{
     min-height: 260px;
 }
 .mh-250{
-     min-height: 325px;
+    min-height: 325px;
  }
 .mh-300{
     min-height: 390px;
 }
 .mh-350{
-    min-height: 350px;
+    min-height: 455px;
 }
 .mh-400{
-    min-height: 400px;
+    min-height: 520px;
 }
 .mh-450{
-    min-height: 450px;
+    min-height: 585px;
 }
 .mh-500{
-    min-height: 500px;
+    min-height: 650px;
 }
 .mh-550{
-    min-height: 550px;
+    min-height: 715px;
 }
 .mh-600{
-    min-height: 600px;
+    min-height: 780px;
 }
 
 table.timeTable .cell {
