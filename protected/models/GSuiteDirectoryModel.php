@@ -129,11 +129,11 @@ class GSuiteDirectoryModel extends CModel
 
         //check if such username could exist
         do {
-            $user = Users::model()->findByAttributes(array('u4' => $username.'@tdmu.edu.ua'));
+            $user = Users::model()->findByAttributes(array('u5' => $type, 'u4' => $username.'@tdmu.edu.ua'));
             if (!empty($user)) {
                 $username = $username.'1'; 
             }
-        } while (empty($user));
+        } while (!empty($user));
 
         return $username; //TDMU-ASU-specific
     }
