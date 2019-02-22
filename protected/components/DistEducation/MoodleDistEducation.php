@@ -120,6 +120,40 @@ class MoodleDistEducation extends DistEducation
     }
 
     /**
+     * Проверка email
+     * @param string $email
+     * @return bool
+     */
+    protected function _getUserByEmail($email)
+    {
+        $body = $this->_sendQuery('core_user_get_users','GET', array(
+            'criteria'=>array(
+                '0'=>array(
+                    'key'=>'email',
+                    'value'=>$email
+                )
+            )
+        ));
+
+        $array = json_decode($body);
+
+        if(!isset($array->users))
+            return false;
+        else {
+            if(count($array->users)!=1){
+                return false;
+            }else{
+                if ($array->users[0]->email == $email) {
+                    return $array->users[0];
+                } else {
+                    return false;
+                }
+                
+            }
+        }
+    }
+
+    /**
      * @return mixed
      * @throws CHttpException
      */
@@ -339,6 +373,36 @@ class MoodleDistEducation extends DistEducation
     }
 
     /**
+     * check If student ahs already Subscribed To Course with Student role
+     * @param Stdist $st
+     * @param string $courseId
+     * @return array
+     */
+    protected function _checkIfSubscribedToCourseAsStudent($st, $courseId){
+
+        $body = $this->_sendQuery('core_user_get_course_user_profiles','POST', array(
+            'userlist'=>array(
+                '0'=>array(
+                    'userid'=> $st->stdist3,
+                    'courseid' => $courseId
+                )
+            )
+        ));
+
+        $array = json_decode($body);        
+
+        if(isset($array->errorcode)){
+            return array(false, 'Ошибка '.$array->message);
+        }else {
+            if ($array[0]->roles[0]->roleid==5) {
+                return array(true, 'OK: already enrolled as student ');
+            } else {
+                return array(false, 'Warning: already enrolled as '.$array[0]->roles[0]->shortname);
+            }
+        }
+    }
+
+    /**
      * Записать студента на курс
      * @param Stdist $st
      * @param string $courseId
@@ -457,12 +521,40 @@ class MoodleDistEducation extends DistEducation
             $log .='<br>';
             $stModel = Stdist::model()->findByPk($student->st1);
             if($stModel==null){
-                $globalResult = false;
-                $log .= $student->getShortName(). ' Ошибка записи: Студент не зарегистрирован в Дист.образовании';
-                continue;
+                $user = Users::model()->findByAttributes(array('u5' => 0, 'u6' => $student->st1));
+                if (!empty($user)){
+                    $moodleUser = $this->_getUserByEmail($user->u4);
+                    if (!empty($moodleUser)) {
+                        //create integration Moodle2ASU
+                        $stModel = new Stdist;
+                        $stModel->stdist1 = $student->st1;
+                        $stModel->stdist2 = $moodleUser->email;
+                        $stModel->stdist3 = $moodleUser->id;
+                        if(!$stModel->save()) {
+                            $globalResult = false;
+                            $log .= $student->getShortName(). ' Помилка запису про реєстрацію інтеграції облікових записів АСУ та системи Дист. освіти';
+                            continue;                            
+                        }
+                        
+                    } else {
+                        $globalResult = false;
+                        $log .= $student->getShortName(). ' Помилка запису: Студент не зарєстрований в системі Дист. освіти';
+                        continue;
+                    }
+                } else {
+                    $globalResult = false;
+                    $log .= $student->getShortName(). ' Помилка запису: Студент немає облікового запису порталу АСУ';
+                    continue;
+                }
             }
 
-            list($result, $message) = $this->_subscribeToCourse($stModel, $id);
+            //check if already enrolled as student (in any way)
+            list($result, $message) = $this->_checkIfSubscribedToCourseAsStudent($stModel, $id);
+
+            if (!$result) {
+                //not enrolled - perform manual enrollment
+                list($result, $message) = $this->_subscribeToCourse($stModel, $id);
+            }
 
             if(!$result) {
                 $globalResult = false;

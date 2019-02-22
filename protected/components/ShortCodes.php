@@ -640,6 +640,9 @@ class SH extends ShortCodes
                 return new MoodleDistEducation($url, $apiKey);
                 break;
 
+            case 52:
+                return new MoodleDistEducation($url, $apiKey);
+                break;
             default:
                 return null;
         }
@@ -667,7 +670,9 @@ class SH extends ShortCodes
             case U_IRPEN:
                 return new MoodleSignUpOldForm($universityCode);
                 break;
-
+            case 52:
+                return new MoodleSignUpOldForm($universityCode);
+                break;
             default:
                 return null;
         }
