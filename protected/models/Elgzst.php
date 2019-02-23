@@ -711,4 +711,62 @@ SQL;
             $elgzst->save();
         }
     }
+
+    /**
+     * Проверка можно ли редатированить пропуск (для фарма)
+     *
+     * @return bool
+     * @throws
+     */
+    public function checkAccessForFarmPass(){
+        if($this->elgzst3 == 0)
+            return true;
+
+        //проверка на участие в заявке на оплату
+        $sql = <<<SQL
+          SELECT count(*) from elgp 
+            INNER JOIN pptz on (pptz2=elgp0)
+            INNER JOIN ppt on (PPTZ1=ppt1)
+          WHERE elgp1=:ELGZST0 and ppt5 is null
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':ELGZST0', $this->elgzst0);
+        $count = $command->queryScalar();
+
+        if(!empty($count))
+            return false;
+
+        if($this->checkIssetAdmit())
+            return false;
+
+        return true;
+    }
+
+    /***
+     * Проверка есть допуск для данного проруска
+     * @return bool
+     * @throws CException
+     */
+    public function checkIssetAdmit(){
+        if($this->elgzst3 == 0)
+            return true;
+
+        //проверка на участие в допуске
+        $sql = <<<SQL
+          SELECT count(*) from elgp 
+            INNER JOIN admitz on (admitz2=elgp0)
+            INNER JOIN admit on (admitz1=admit1)
+          WHERE elgp1=:ELGZST0 and admit5 is null
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':ELGZST0', $this->elgzst0);
+        $count = $command->queryScalar();
+
+        if(!empty($count))
+            return true;
+
+        return false;
+    }
 }

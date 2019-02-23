@@ -133,10 +133,8 @@
                             'authOnly' => $teacherStr
                         ),
                         'attendanceStatistic'=>'Статистика посещаемости',
-                        'newAttendanceStatistic'=> array(
-                            'name'=>'Статистика посещаемости',
-                            'authOnly' => $teacherStr
-                        ),
+                        'newAttendanceStatistic'=> 'Статистика посещаемости',
+                        'newAttendanceStatisticStudent'=> 'Статистика посещаемости студента',
                         'attendanceStatisticPrint'=>'Статистика посещаемости на поток',
                         'stJournal'=> array(
                             'name'=>'Ввод посещаемости (для старост)',

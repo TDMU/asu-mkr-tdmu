@@ -87,8 +87,7 @@ HTML;
             {
                 $name=$cur['d2'];
 
-                $name = str_replace('"','&quot;',$name);
-                $group=$cur['gr3'];
+                $group=$cur['grupfull'];
                 $a2=$cur['a2'];
                 $added = date('d.m.Y H:i', strtotime($cur['r11']));
                 $datetime2 = new DateTime($cur['r11']);
@@ -101,23 +100,14 @@ HTML;
                 $r3=$cur['r3'];
                 $teacher = $cur['fio'];
                 $next=next($timTable);
-               /* if($next!=false)
-                {
-                    /*while($r2==$next['r2']&&$r3==$next['r3'])
-                    {
-                       $group.=', '.$next['gr3'];
-                        $r2=$next['r2'];
-                        $r3=$next['r3']; 
-                        $next=next($timTable);
-                    }
-                }*/
+
                 $pattern = <<<HTML
                     {$name}[{$type_str}]<br>
                     {$teacher}<br>
                     {$class}. {$a2}<br>
                     {$text}: {$added}
 HTML;
-                $fullText=trim($pattern);
+                $fullText=CHtml::encode(trim($pattern));
                 $tr .='<td class="'.$class_day.' '.$class_interval.'" style="background-color:'.SH::getLessonColor($cur['tip']).'!important"><div data-rel="popover" data-placement="right" data-content="'.$fullText.'">X</div></td>';
             }  else {
                 $tr .='<td class="empty-day '.$class_day.'">&nbsp;</td>';

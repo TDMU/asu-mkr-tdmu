@@ -446,11 +446,6 @@ HTML;
 		$date = new DateTime();
 		$date->modify("-{$countMin} minutes");
 
-		/*var_dump($date);
-
-		var_dump($date->format('d.m.Y H:i:s'));
-
-		var_dump(date('Y-m-d H:i:s', strtotime("-{$countMin} minute")));*/
 		$count = Yii::app()->db->createCommand()
 				->select('count(*)')
 				->from('users_auth_fail')
@@ -468,8 +463,6 @@ HTML;
 	}
 
 	const COOKIE_NAME_AUTH_KEY = 'akc';
-
-	//const COOKIE_NAME_AUTH_KEY1 = 'akc1';
 
 	const SESSION_NAME_AUTH_KEY = 'aks';
 
@@ -491,11 +484,6 @@ HTML;
 
 			//записіваем в сессию
 			Yii::app()->session[self::SESSION_NAME_AUTH_KEY] = $this->_getSessionKey($key);
-
-			/*$nameCookie = self::COOKIE_NAME_AUTH_KEY1;
-            $cookie=new CHttpCookie($nameCookie,$this->_getCookieKey1($key));
-            //$cookie->httpOnly = true;
-            Yii::app()->request->cookies[$nameCookie]=$cookie;*/
 
 			//записіваем в сессию
 			Yii::app()->session[self::SESSION_NAME_AUTH_KEY1] = $this->_getSessionKey1($key);
@@ -522,16 +510,7 @@ HTML;
         if(empty($this->u4)) {
             Yii::app()->user->setFlash('warning', '<strong>' . tt('Внимание!') . '</strong> ' . tt('Заполните Email!'));
         }else{
-            /*$validator = new EmailValidator();
-            $validator->validateDomen = true;
-            $validator->universityCode = $universityCode;
 
-            if (!$validator->validateDomen($this->u4)){
-                Yii::app()->user->setFlash('warning', '<strong>' . tt('Внимание!') . '</strong> ' . tt('Ваш {attribute} не является правильным E-Mail адресом в домене {domen}.', array(
-                        '{attribute}' => $this->getAttributeLabel('u4'),
-                        '{domen}' => $validator->universitiesDomens[$validator->universityCode]
-                )));
-            }*/
         }
 
         if($universityCode==U_NULAU){
@@ -550,13 +529,6 @@ HTML;
 			return false;
 		if($cookie->value !== $this->_getCookieKey($key))
 			return false;
-
-		//проверка на совпадении спец ключа в куки
-		/*$cookie=Yii::app()->request->cookies[self::COOKIE_NAME_AUTH_KEY1];
-		if($cookie==null)
-			return false;
-		if($cookie->value !== $this->_getCookieKey1($key))
-			return false;*/
 
 		if(Yii::app()->session[self::SESSION_NAME_AUTH_KEY]!==$this->_getSessionKey($key))
             return false;
@@ -613,13 +585,7 @@ HTML;
 	protected function _getCookieKey($key){
 		return crypt($key.$this->u12,self::CRYPT_KEY_COOKIE);
 	}
-	/**
-	 * шифровка названиии ключа для куки1
-	 * @return string
-	 */
-	/*protected function _getCookieKey1($key = ''){
-		return md5('mkp'.$this->u2..$key);
-	}*/
+
 	/**
 	 * шифровка названиии ключа для сессии1
 	 * @return string
@@ -635,15 +601,56 @@ HTML;
 		$this->saveAttributes(array('u12'=>$key));
 	}
 
-	//TODO: Удалить этот метод
     /**
-     * Генерация ключа для мобильного приложения
-     * @return bool
+     * @return string
      */
-	public function generateMobileKey(){
-        $token = openssl_random_pseudo_bytes(3);
-        $key   = bin2hex($token);
+    public function getNameWithDept(){
+	    $name = $this->getName();
 
-        return $this->saveAttributes(array('u13'=>$key.'_'.date('md')));
+	    if($this->isStudent){
+            $st = St::model()->getInfoForStudentInfoExcel($this->u6);
+            $name=$name.' ('.tt('гр.').$st['name'].')';
+        }else if($this->isTeacher){
+	        $p = P::model()->findByPk($this->u6);
+            $chair = $p->getChair();
+            $name=$name.' ('.tt('каф.').$chair->k2.')';
+        }
+
+	    return $name;
+    }
+    /**
+     * Входяшие сообщения
+     * @param $u1
+     * @param bool $isStd
+     * @return static[]
+     */
+    public function getInputMessages(){
+        $extraQuery = $this->isStudent ? <<<SQL
+              UNION
+                SELECT um.* from UM
+                  INNER JOIN gr on (gr1=um8)
+                  INNER JOIN std on (std2={$this->u1} and std3=gr1)
+                  where um8>0 and um7=0 and um9=0 and STD11 in (0,5,6,8) and (STD7 is null)
+              UNION
+                SELECT um.* from UM
+                  INNER JOIN sg on (sg1=um9)
+                  inner join gr on (sg.sg1 = gr.gr2)
+                  INNER JOIN std on (std2={$this->u1} and std3=gr1)
+                  where um8=0 and um7=0 and um9>0 and STD11 in (0,5,6,8) and (STD7 is null)
+SQL
+            : '';
+
+        return Um::model()->findAllBySql(
+            <<<SQL
+              select * from (
+                SELECT um.* from UM
+                  where um7=:id
+                {$extraQuery}
+              ) order by um3 desc
+SQL
+            , array(
+                ':id' => $this->u1
+            )
+        );
     }
 }

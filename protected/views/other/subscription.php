@@ -36,7 +36,7 @@ if(empty($params)) {
     if(!empty($errorMessage))
         $message = $errorMessage;
 
-    throw new CHttpException(400, $errorMessage);
+    throw new CHttpException(400, $message);
 }
 $params['st1'] = $model->st1;
 $params['semester'] =0;

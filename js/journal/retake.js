@@ -98,7 +98,18 @@ $(document).ready(function(){
                 addGritter('', tt.success, 'success');
                 $.fn.yiiGridView.update('retake');
             }
-        }, 'json')
+        }, 'json').error(function(jqXHR, textStatus, errorThrown) {
+            $('#myModal').modal('hide');
+            if (jqXHR.status == 500) {
+                addGritter('', 'Internal error: ' + jqXHR.responseText, 'error')
+            } else {
+                if (jqXHR.status == 403) {
+                    addGritter('', 'Access error: ' + jqXHR.responseText, 'error')
+                } else {
+                    addGritter('', tt.error, 'error');
+                }
+            }
+        });
 
         return false;
     });

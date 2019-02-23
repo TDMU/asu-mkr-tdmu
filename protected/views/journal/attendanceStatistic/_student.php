@@ -9,8 +9,9 @@
 				<thread>
 					<tr>
 						<th>№</th>
-                                                <th>'.tt('Тип').'</th>
+                        <th>'.tt('Тип').'</th>
 						<th>'.tt('Дата').'</th>
+						<th>'.tt('Кол-во часов').'</th>
 						<th>'.tt('Дисциплина').'</th>
 						
 					</tr>
@@ -36,6 +37,7 @@
             $table.= '<td>'.$i.'</td>
                 <td>'.SH::convertUS4($key['us4']).'</td>
                 <td>'.date('d.m.Y',strtotime($key['r2'])).'</td>
+                <td>'.round($key['rz8'], 2).'</td>
                 <td>'.$key['d2'].'</td>
                 </tr>';
 			$i++;

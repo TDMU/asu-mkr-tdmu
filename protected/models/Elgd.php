@@ -135,4 +135,87 @@ SQL;
 		}
 		//return $rows;
 	}
+
+    /***
+     * Проверка доступа на редактрование инд. работы для ирпеня
+     * @param int $gr1
+     * @return bool
+     * @throws
+     */
+	public function checkAccessIndForIrpen($gr1){
+
+	    $elg = Elg::model()->findByPk($this->elgd1);
+	    if(empty($elg))
+	        return false;
+
+        $sql=<<<SQL
+              SELECT first 1 r2 from EL_GURNAL_ZAN(:UO1,:GR1,:SEM1,:ELG4)
+				inner join rz on (EL_GURNAL_ZAN.r4 = rz1)
+			  order by EL_GURNAL_ZAN.nom desc
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':UO1', $elg->elg2);
+        $command->bindValue(':SEM1', $elg->elg3);
+        $command->bindValue(':ELG4', $elg->elg4);
+        $command->bindValue(':GR1', $gr1);
+        $date = $command->queryScalar();
+
+        if(empty($date))
+            return false;
+
+        $date1 = new DateTime(date('Y-m-d H:i:s'));
+        $date2 = new DateTime($date);
+
+        if($date1 < $date2)
+            return true;
+
+        $diff = $date1->diff($date2)->days;
+        if ($diff > 4)
+            return false;
+
+	    return true;
+    }
+
+    /***
+     * Проверка доступа на редактрование доп. колонок
+     * @param int $gr1
+     * @return bool
+     * @throws
+     */
+    public function checkAccess($gr1){
+
+        $elg = Elg::model()->findByPk($this->elgd1);
+        if(empty($elg))
+            return false;
+
+        $sql=<<<SQL
+              SELECT first 1 r1 from EL_GURNAL_ZAN(:UO1,:GR1,:SEM1,:ELG4)
+				inner join rz on (EL_GURNAL_ZAN.r4 = rz1)
+			  order by EL_GURNAL_ZAN.nom asc 
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':UO1', $elg->elg2);
+        $command->bindValue(':SEM1', $elg->elg3);
+        $command->bindValue(':ELG4', $elg->elg4);
+        $command->bindValue(':GR1', $gr1);
+        $r1 = $command->queryScalar();
+
+        if(empty($r1))
+            return false;
+
+        $sql = <<<SQL
+            SELECT * FROM  EL_GURNAL(:P1,0,0,0,2,0,:R1,0,0);
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+        $command->bindValue(':R1', $r1);
+        $res = $command->queryRow();
+        if (count($res) == 0 || empty($res) || $res['dostup'] == 0) {
+            return false;
+        }
+
+        return true;
+    }
 }

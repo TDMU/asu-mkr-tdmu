@@ -218,18 +218,23 @@ class PortfolioController extends Controller
         $this->redirect('/portfolio/'.$url);
     }
 
+    /**
+     * Экшен отображения файла
+     * @param $id
+     * @throws CHttpException
+     */
     public function actionShowFile($id){
         $model=$this->_loadModel($id);
 
         if(!$this->_checkPermissionUserForFile($model, 0))
             throw new CHttpException(403,'You don\'t have an access to this service.');
 
-        $fileName = PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH).'/'.$id.'.pdf';
+        $fileName = PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH).'/'.$id.'.'.$model->zrst8;
 
         if(!file_exists($fileName))
             throw new CHttpException(400,tt('Файл не существует или удален.'));
 
-        header('Content-Type: application/pdf');
+        header('Content-Type: application/'.$model->zrst8);
         header('Content-Disposition: inline; filename="'.basename($fileName).'"');
         header('Content-Transfer-Encoding: binary');
         header('Accept-Ranges: bytes');
@@ -238,7 +243,11 @@ class PortfolioController extends Controller
         exit;
     }
 
-
+    /**
+     * @param $id
+     * @return Zrst|null
+     * @throws CHttpException
+     */
     private function _loadModel($id)
     {
         $model=Zrst::model()->findByPk($id);
@@ -259,13 +268,17 @@ class PortfolioController extends Controller
             CreateZrstForm::TYPE_TABLE1,
             CreateZrstForm::TYPE_TABLE2,
             CreateZrstForm::TYPE_TABLE3,
+            CreateZrstForm::TYPE_TABLE4,
+            CreateZrstForm::TYPE_TABLE5,
             CreateZrstForm::TYPE_TEACHER
         )))
             throw new CHttpException(400, 'Bad request');
 
         if(in_array($type, array(
             CreateZrstForm::TYPE_TABLE2,
-            CreateZrstForm::TYPE_TABLE3
+            CreateZrstForm::TYPE_TABLE3,
+            CreateZrstForm::TYPE_TABLE4,
+            CreateZrstForm::TYPE_TABLE5
         )))
             $us1 = 0;
 
@@ -287,7 +300,7 @@ class PortfolioController extends Controller
                         Yii::app()->user->setFlash('error', 'Ошибка добавления файла');
                     }
                 }catch (Exception $error){
-                    Yii::app()->user->setFlash('error', 'Ошибка удаления файла '. $error);
+                    Yii::app()->user->setFlash('error', 'Ошибка добавления файла '. $error);
                 }
                 $this->_redirect($model->scenario == CreateZrstForm::TYPE_TEACHER ? 'teacher' : 'student');
             }

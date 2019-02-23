@@ -199,7 +199,8 @@ $(document).ready(function(){
             var params = {
                 value : 0,
                 field : $that.data('name'),
-                elgz1 : $that.data('elgz1')
+                elgz1 : $that.data('elgz1'),
+                gr1: $that.parents('[data-gr1]').data('gr1')
             }
 
             var $td = $that.parent();
@@ -241,7 +242,8 @@ $(document).ready(function(){
         var params = {
             value : parseFloat( $that.val().replace(',','.') ),
             field : $that.data('name'),
-            elgz1 : $that.data('elgz1')
+            elgz1 : $that.data('elgz1'),
+            gr1: $that.parents('[data-gr1]').data('gr1')
         }
 
         var $td = $that.parent();
@@ -559,9 +561,18 @@ $(document).ready(function(){
 
                     }
                 },
-                error: function( data ) {
-                    addGritter(title, tt.error, 'error');
+                error: function(jqXHR, textStatus, errorThrown){
+                    if (jqXHR.status == 500) {
+                        addGritter(title, 'Internal error: ' + jqXHR.responseText, 'error')
+                    } else {
+                        if (jqXHR.status == 403) {
+                            addGritter(title, 'Access error: ' + jqXHR.responseText, 'error')
+                        } else {
+                            addGritter(title, tt.error, 'error');
+                        }
+                    }
                     $td.addClass('error');
+                    $spinner1.hide();
                 }
             });
         }
@@ -615,8 +626,16 @@ $(document).ready(function(){
                 }
                 $spinner1.hide();
             },
-            error: function( data ) {
-                addGritter('', tt.error, 'error');
+            error: function(jqXHR, textStatus, errorThrown){
+                if (jqXHR.status == 500) {
+                    addGritter('Ошибка', 'Internal error: ' + jqXHR.responseText, 'error')
+                } else {
+                    if (jqXHR.status == 403) {
+                        addGritter('Ошибка', 'Access error: ' + jqXHR.responseText, 'error')
+                    } else {
+                        addGritter('', tt.error, 'error');
+                    }
+                }
                 $spinner1.hide();
             }
         });
@@ -744,8 +763,16 @@ $(document).ready(function(){
                 $spinner1.hide();
                 $('#modalRetake').modal('hide');
             },
-            error: function( data ) {
-                addGritter(title, tt.error, 'error');
+            error: function(jqXHR, textStatus, errorThrown){
+                if (jqXHR.status == 500) {
+                    addGritter(title, 'Internal error: ' + jqXHR.responseText, 'error')
+                } else {
+                    if (jqXHR.status == 403) {
+                        addGritter(title, 'Access error: ' + jqXHR.responseText, 'error')
+                    } else {
+                        addGritter(title, tt.error, 'error');
+                    }
+                }
                 $spinner1.hide();
                 $('#modalRetake').modal('hide');
             }
@@ -892,7 +919,19 @@ function send(url,params,title,$td,$that,$spinner1,st1,ps84,ps88)
                 }
             }
         }
-    }, 'json');
+    }, 'json').error(function(jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 500) {
+            addGritter(title, 'Internal error: ' + jqXHR.responseText, 'error')
+        } else {
+            if (jqXHR.status == 403) {
+                addGritter(title, 'Access error: ' + jqXHR.responseText, 'error')
+            } else {
+                addGritter(title, tt.error, 'error');
+            }
+        }
+        $td.addClass('error');
+        $spinner1.hide();
+    });
 }
 
 function recalculateBothTotal(st1,ps84)

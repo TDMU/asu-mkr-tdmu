@@ -55,6 +55,17 @@ $(document).ready(function(){
             }
 
             $spinner1.hide();
+        }).error(function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 500) {
+                addGritter(title, 'Internal error: ' + jqXHR.responseText, 'error')
+            } else {
+                if (jqXHR.status == 403) {
+                    addGritter(title, 'Access error: ' + jqXHR.responseText, 'error')
+                } else {
+                    addGritter(title, tt.error, 'error');
+                }
+            }
+            $spinner1.hide();
         })
     });
 
@@ -109,6 +120,18 @@ $(document).ready(function(){
                 }
             }
 
+            $spinner1.hide();
+        }).error(function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 500) {
+                addGritter(title, 'Internal error: ' + jqXHR.responseText, 'error')
+            } else {
+                if (jqXHR.status == 403) {
+                    addGritter(title, 'Access error: ' + jqXHR.responseText, 'error')
+                } else {
+                    addGritter(title, tt.error, 'error');
+                }
+            }
+            $td.addClass('error');
             $spinner1.hide();
         })
 

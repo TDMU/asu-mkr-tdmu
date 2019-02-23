@@ -605,6 +605,12 @@ $this->widget('zii.widgets.CMenu', array(
                     'active'  => $_c=='journal' && $_a=='newAttendanceStatistic'
                 ),
                 array(
+                    'label'   => $_l2.tt('Статистика посещаемости студента'),
+                    'url'     => _u('/journal/newAttendanceStatisticStudent'),
+                    'visible' => _ch('journal', 'newAttendanceStatisticStudent'),
+                    'active'  => $_c=='journal' && $_a=='newAttendanceStatisticStudent'
+                ),
+                array(
                     'label'   => $_l2.tt('Статистика посещаемости на поток'),
                     'url'     => _u('/journal/attendanceStatisticPrint'),
                     'visible' => _ch('journal', 'attendanceStatisticPrint') && PortalSettings::model()->getSettingFor(41)==0,

@@ -495,54 +495,44 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
         </div>
     </div>
 
-<?php
-
-/*<div class="span6">
-    <div class="widget-box">
-        <div class="widget-header">
-            <h4><?=tt('Xml api')?></h4>
-            <span class="widget-toolbar">
+    <div class="span6">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4><?=tt('Оповещение')?></h4>
+                <span class="widget-toolbar">
                 <a data-action="collapse" href="#">
                     <i class="icon-chevron-up"></i>
                 </a>
             </span>
-        </div>
-        <div class="widget-body">
-            <div class="widget-main">
-                <?php
-                $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-                    'id'=>'ps-student-info',
-                    'htmlOptions' => array('class' => 'form-horizontal'),
-                    'action' => '#'
-                ));
-                ?>
+            </div>
+            <div class="widget-body">
+                <div class="widget-main">
+                    <?php
+                    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+                        'id'=>'ps-alert',
+                        'htmlOptions' => array('class' => 'form-horizontal'),
+                        'action' => '#'
+                    ));
+                    ?>
 
-                <div class="control-group">
-                    <?=CHtml::checkBox('', PortalSettings::model()->findByPk(125)->ps2, $checkboxStyle)?>
-                    <span class="lbl"> <?=tt('Включено')?></span>
-                    <?=CHtml::hiddenField('settings[125]', PortalSettings::model()->findByPk(125)->ps2)?>
+                    <div class="control-group">
+                        <?=CHtml::checkBox('', PortalSettings::model()->getSettingFor(PortalSettings::STUDENT_SEND_IN_ALERT), $checkboxStyle)?>
+                        <span class="lbl"> <?=tt('Отправка сообщений студентами')?></span>
+                        <?=CHtml::hiddenField('settings['.PortalSettings::STUDENT_SEND_IN_ALERT.']', PortalSettings::model()->getSettingFor(PortalSettings::STUDENT_SEND_IN_ALERT))?>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-info btn-small">
+                            <i class="icon-ok bigger-110"></i>
+                            <?=tt('Сохранить')?>
+                        </button>
+                    </div>
+
+                    <?php $this->endWidget();?>
                 </div>
-
-                <div class="control-group">
-                    <span class="lbl"> <?=tt('Login')?>:</span>
-                    <?=CHtml::textField('settings[95]', PortalSettings::model()->findByPk(95)->ps2)?>
-                </div>
-
-                <div class="control-group">
-                    <span class="lbl"> <?=tt('Password')?>:</span>
-                    <?=CHtml::passwordField('settings[96]', PortalSettings::model()->findByPk(96)->ps2)?>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-info btn-small">
-                        <i class="icon-ok bigger-110"></i>
-                        <?=tt('Сохранить')?>
-                    </button>
-                </div>
-
-                <?php $this->endWidget();?>
             </div>
         </div>
     </div>
-</div> */
+
+<?php
 

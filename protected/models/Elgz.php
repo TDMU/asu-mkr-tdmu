@@ -176,7 +176,39 @@ SQL;
      * Проверка можно ли редактированиять мин/макс для ирпеня
      * @return bool
      */
-	public function checkAccessMinMixIrpen(){
+	public function checkAccessMinMixIrpen($gr1){
+
+        $elg = Elg::model()->findByPk($this->elgz2);
+        if(empty($elg))
+            return false;
+
+        $sql=<<<SQL
+              SELECT first 1 r2 from EL_GURNAL_ZAN(:UO1,:GR1,:SEM1,:ELG4)
+				inner join rz on (EL_GURNAL_ZAN.r4 = rz1)
+			  order by  EL_GURNAL_ZAN.nom asc
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':UO1', $elg->elg2);
+        $command->bindValue(':SEM1', $elg->elg3);
+        $command->bindValue(':ELG4', $elg->elg4);
+        $command->bindValue(':ELG1', $elg->elg1);
+        $command->bindValue(':GR1', $gr1);
+        $date = $command->queryScalar();
+
+        if(empty($date))
+            return false;
+
+        $date1 = new DateTime(date('Y-m-d H:i:s'));
+        $date2 = new DateTime($date);
+
+        if($date1 < $date2)
+            return true;
+
+        $diff = $date1->diff($date2)->days;
+        if ($diff > 15)
+            return false;
+
 	    return true;
     }
 

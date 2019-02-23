@@ -678,8 +678,8 @@ HTML;
     //проверка на редактирование минмакс для ирпени
     $enableMimMax  = true;
     if($this->universityCode == U_IRPEN&& count($elgz1_arr)>0 && $ps9 == 1){
-        $firstElgz = Elgz::model()->findByPk($elgz1_arr[0]);
-        $enableMimMax =  $firstElgz == null ? false : $firstElgz->checkAccessMinMixIrpen();
+        $firstElgz = Elgz::model()->findByPk(reset($elgz1_arr));
+        $enableMimMax =  $firstElgz == null ? false : $firstElgz->checkAccessMinMixIrpen($gr1);
     }
 
     $sem1End = null;

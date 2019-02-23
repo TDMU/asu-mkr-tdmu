@@ -15,13 +15,7 @@
             17 => 'label',
             18 => 'label',
         );
-	/*$css='';	
-	for( $i= 0 ; $i <= 18 ; $i++ ) 
-	{
-		$css.='.event'.$i.'{
-			background-color:'.$.';
-		}';
-	}*/
+
 	$events='';
 	$arr='[';
 	$i=0;
@@ -67,24 +61,16 @@
                             $r3=$event['r3'];
                             $i++;
                     }
-                    if($groups=='')
-                            $groups=$event['gr3'];
-                    else
-                            $groups.=','.$event['gr3'];
-                    $full_name=$event['d2'];
-                    $full_name = str_replace("'",'`', $full_name);
-                    $full_name=str_replace( '"','&quot', $full_name);
-                    $full_name=str_replace( "'",'&quot', $full_name);
 
-                    $tem_name = str_replace("'",'`', $tem_name);
-                    $tem_name=str_replace( '"','&quot', $tem_name);
-                    $tem_name=str_replace( "'",'&quot', $tem_name);
+                    $groups=CHtml::encode($event['grupfull']);
 
-                    $tem_name_full = str_replace("'",'`', $tem_name_full);
-                    $tem_name_full=str_replace( '"','&quot', $tem_name_full);
-                    $tem_name_full=str_replace( "'",'&quot', $tem_name_full);
+                    $full_name=CHtml::encode($event['d2']);
 
-                    $fio= str_replace("'",'`', $fio);
+                    $tem_name = CHtml::encode($tem_name);
+
+                    $tem_name_full = CHtml::encode($tem_name_full);
+
+                    $fio= CHtml::encode($fio);
 
                     $text='{';
                     $text.="id:'".$i."',";
@@ -146,13 +132,6 @@ Yii::app()->clientScript->registerScript('calendar', "
 		});
 		
 	});
-
-	$('#print-table').click(
-		function(){
-			$('#sidebar').addClass('menu-min');
-			window.print();
-		}
-	);
 ");
 
 ?>
