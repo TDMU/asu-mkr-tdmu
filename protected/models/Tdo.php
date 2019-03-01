@@ -15,7 +15,7 @@
  */
 class Tdo extends CActiveRecord
 {
-	/**
+    /**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
@@ -102,4 +102,16 @@ class Tdo extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+    public static function getAll()
+    {
+        $res = CHtml::listData(
+            self::model()->findAll(array("select"=>"tdo1, tdo2", "order"=>"tdo2 ASC")),
+            // поле модели $myOptionsModel, из которого будет взято value для <option>
+            'tdo1',
+            // поле модели $myOptionsModel, из которого будет взята подпись для <option>
+            'tdo2'
+        );
+        return $res;
+    }
 }

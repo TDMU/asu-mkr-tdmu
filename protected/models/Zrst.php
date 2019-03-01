@@ -125,8 +125,8 @@ class Zrst extends CActiveRecord
                    iif(us4=8,'курсовая',
                    iif(us4=7 and (select w8 from w where w1=us.us6)=2,'реферат','контрольная' )))) as vid,
                    (select first 1 stusvst6 from stusv,stusvst where stusv0=stusvst1 and stusv1=us.us1 and stusvst3=st.st1 order by stusv11 DESC) as ocenka,
-                   (select zrst1 from zrst where zrst6=0 and zrst2=st.st1 and zrst3=us.us1) as rabota,
-                   (select zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1) as recenziya
+                   (select first 1 zrst1 from zrst where zrst6=0 and zrst2=st.st1 and zrst3=us.us1 order by zrst1 desc) as rabota,
+                   (select first 1 zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1 order by zrst1 desc) as recenziya
             from uo
                inner join us on (uo.uo1 = us.us2)
                inner join nr on (us.us1 = nr.nr2)
@@ -145,8 +145,8 @@ class Zrst extends CActiveRecord
                    iif(us4=8,'курсовая',
                    iif(us4=7 and (select w8 from w where w1=us.us6)=2,'реферат','контрольная' )))) as vid,
                    (select first 1 stusvst6 from stusv,stusvst where stusv0=stusvst1 and stusv1=us.us1 and stusvst3=st.st1 order by stusv11 DESC) as ocenka,
-                   (select zrst1 from zrst where zrst6=0 and zrst2=st.st1 and zrst3=us.us1) as rabota,
-                   (select zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1) as recenziya
+                   (select first 1 zrst1 from zrst where zrst6=0 and zrst2=st.st1 and zrst3=us.us1 order by zrst1 desc) as rabota,
+                   (select first 1 zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1 order by zrst1 desc) as recenziya
             from ucgn
                inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
                inner join ucx on (ucxg.ucxg1 = ucx.ucx1)
@@ -177,7 +177,7 @@ SQL;
     public  function getTable1DataTeacher($p1, $us1){
         $sql=<<<SQL
         select st2,st3,st4,std3,st1,us1,sem4,gr19,gr20,gr21,gr22,gr23,gr24,gr28,gr3,
-               (select zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1) as recenziya
+               (select first 1 zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1 order by zrst1 desc) as recenziya
         from uo
            inner join us on (uo.uo1 = us.us2)
            inner join nr on (us.us1 = nr.nr2)
@@ -193,7 +193,7 @@ SQL;
         group by st2,st3,st4,std3,st1,us1,sem4,gr19,gr20,gr21,gr22,gr23,gr24,gr28,gr3
         UNION
         select st2,st3,st4,std3,st1,us1,sem4,gr19,gr20,gr21,gr22,gr23,gr24,gr28,gr3,
-               (select zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1) as recenziya
+               (select first 1 zrst1 from zrst where zrst6=1 and zrst2=st.st1 and zrst3=us.us1 order by zrst1 desc) as recenziya
         from ucgn
            inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
            inner join ucx on (ucxg.ucxg1 = ucx.ucx1)

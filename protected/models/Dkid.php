@@ -4,9 +4,11 @@
  * This is the model class for table "dkid".
  *
  * The followings are the available columns in table 'dkid':
+ * @property integer $dkid0
  * @property integer $dkid1
  * @property string $dkid2
  * @property string $dkid3
+ * @property $performens Ido[]
  */
 class Dkid extends CActiveRecord
 {
@@ -26,11 +28,10 @@ class Dkid extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('dkid1', 'numerical', 'integerOnly'=>true),
-			array('dkid2, dkid3', 'length', 'max'=>10),
+			array('dkid1, dkid0', 'numerical', 'integerOnly'=>true),
+			array('dkid2, dkid3', 'length', 'max'=>20),
 			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('dkid1, dkid2, dkid3', 'safe', 'on'=>'search'),
+			//array('dkid0,dkid1, dkid2, dkid3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -42,6 +43,7 @@ class Dkid extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'performens' => array(self::HAS_MANY, 'Ido', 'ido11'),
 		);
 	}
 
@@ -51,37 +53,11 @@ class Dkid extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+            'dkid0' => 'Dkid0',
 			'dkid1' => 'Dkid1',
 			'dkid2' => 'Dkid2',
 			'dkid3' => 'Dkid3',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('dkid1',$this->dkid1);
-		$criteria->compare('dkid2',$this->dkid2,true);
-		$criteria->compare('dkid3',$this->dkid3,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
@@ -94,4 +70,17 @@ class Dkid extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+    /**
+     * @param $date false|DateTime
+     * @return string
+     */
+	public function getDateString($date){
+        if($date===false)
+            return '';
+        if($date->format('Y') =='0001')
+            return '';
+
+        return $date->format('Y-m-d');
+    }
 }

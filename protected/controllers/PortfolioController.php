@@ -184,10 +184,10 @@ class PortfolioController extends Controller
         if(!$this->_checkPermissionUserForFile($model, 1))
             throw new CHttpException(403,'You don\'t have an access to this service.');
 
-        $fileName = PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH).'/'.$id.'.pdf';
+        $fileName = PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH).'/'.$id.'.'.$model->zrst8;
 
         if(!file_exists($fileName))
-            throw new CHttpException(400,tt('Файл не существует или удален.'));
+            throw new CHttpException(400,tt('Файл не существует или удален.'.$fileName));
 
         try {
             if ($model->delete()) {
@@ -297,9 +297,9 @@ class PortfolioController extends Controller
                     if ($model->save()) {
                         Yii::app()->user->setFlash('success', 'Файл успешно добавлен');
                     } else {
-                        Yii::app()->user->setFlash('error', 'Ошибка добавления файла');
+                        Yii::app()->user->setFlash('error', 'Ошибка добавления файла1');
                     }
-                }catch (Exception $error){
+                }catch (CException $error){
                     Yii::app()->user->setFlash('error', 'Ошибка добавления файла '. $error);
                 }
                 $this->_redirect($model->scenario == CreateZrstForm::TYPE_TEACHER ? 'teacher' : 'student');

@@ -223,7 +223,7 @@ class Tddo extends CActiveRecord
 		$criteria->join .= " LEFT JOIN INNFP ON (IDO4 = INNFP2)";
 
 		$p1 = Yii::app()->user->dbModel->p1;
-		$criteria->addCondition(" (pd2={$p1} OR innfp1={$p1}) ");
+		$criteria->addCondition(" (pd2={$p1} OR innfp1={$p1} or IDO9={$p1}) ");
 
 		return new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
@@ -331,7 +331,7 @@ class Tddo extends CActiveRecord
 	public function getPerformans(){
 		$data = array();
 
-		$models = Ido::model()->findAll('ido1=:TDDO1 AND (ido8 is null OR ido8=0)', array(
+		$models = Ido::model()->findAll('ido1=:TDDO1 AND (ido8 is null OR ido8=0) and ido11=0', array(
 			':TDDO1'=>$this->tddo1
 		));
 
@@ -410,6 +410,6 @@ SQL;
 	 */
 	public function getExtByName($fileName){
 		$ext = explode(".",$fileName);
-		return end($ext);
+		return strtolower(end($ext));
 	}
 }

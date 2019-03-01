@@ -13,6 +13,7 @@
  * @property string $ido7
  * @property integer $ido8
  * @property integer $ido9
+ * @property integer $ido11
  *
  * The followings are the available model relations:
  * @property Ido $ido80
@@ -40,7 +41,7 @@ class Ido extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ido0, ido1, ido2, ido4, ido5, ido8, ido9', 'numerical', 'integerOnly'=>true),
+			array('ido0, ido1, ido2, ido4, ido5, ido8, ido9, ido11', 'numerical', 'integerOnly'=>true),
 			array('ido6', 'length', 'max'=>8),
 			array('ido7', 'length', 'max'=>400),
 			// The following rule is used by search().
@@ -163,11 +164,11 @@ class Ido extends CActiveRecord
 		}
 
 		$text= tt("Исполнитель: ") . $text . ";";
-		if ($text.$this->ido9 > 0)
+		if ($this->ido9 > 0)
 		{
 			$info = Pd::model()->getTeacherAndChairByP1($this->ido9);
 			if(!empty($info))
-				$text .= tt(" Контролер: ") . sprintf("%s (%s);", SH::getShortName($info['p3'],$info['p4'],$info['p5']), $info['k3']);
+				$text .=' '. tt(" Контролер: ") . sprintf("%s (%s);", SH::getShortName($info['p3'],$info['p4'],$info['p5']), $info['k3']);
 		}
 
 		return $text;

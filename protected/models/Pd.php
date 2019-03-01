@@ -220,7 +220,7 @@ SQL;
 
 	public function getTeacherAndChairByP1($p1){
 		$sql = <<<SQL
-            SELECT p3,p4,p5,k2,k3 FROM pd
+            SELECT first 1 p3,p4,p5,k2,k3 FROM pd
             INNER JOIN  P ON ( PD2 = P1)
             INNER JOIN  K ON ( PD4 = K1)
             WHERE p1=:p1

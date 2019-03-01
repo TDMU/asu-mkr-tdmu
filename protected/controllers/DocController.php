@@ -154,48 +154,61 @@ class DocController extends Controller
         if($tddo->tddo24 == 1)
             return false;
 
-        if(!Yii::app()->user->isAdmin) {
+        if(Yii::app()->user->isAdmin)
+            return true;
 
-            if(Yii::app()->user->isStd) {
-                if($tddo->tddo26 != 1)
-                    return false;
-                else
-                    return true;
-            }
-
-            if($tddo->tddo25 == 1)
+        if(Yii::app()->user->isStd) {
+            if($tddo->tddo26 != 1)
+                return false;
+            else
                 return true;
+        }
 
-            $sql = <<<SQL
+        if($tddo->tddo25 == 1)
+            return true;
+
+        $sql = <<<SQL
               SELECT COUNT(*) FROM IDO
               INNER JOIN PD on (IDO2=PD1)
               WHERE PD2=:P1 AND IDO1=:TDDO1
 SQL;
-            $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(':TDDO1', $tddo->tddo1);
-            $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
-            $count = $command->queryScalar();
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':TDDO1', $tddo->tddo1);
+        $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+        $count = $command->queryScalar();
 
-            $result = $count>0;
+        $result = $count>0;
 
-            if($result)
-                return $result;
+        if($result)
+            return $result;
 
-            $sql = <<<SQL
+        $sql = <<<SQL
+              SELECT COUNT(*) FROM IDO
+              WHERE IDO9=:P1 AND IDO1=:TDDO1
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':TDDO1', $tddo->tddo1);
+        $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+        $count = $command->queryScalar();
+
+        $result = $count>0;
+
+        if($result)
+            return $result;
+
+        $sql = <<<SQL
               SELECT COUNT(*) FROM IDO
               INNER JOIN INNFP on (IDO4=INNFP2)
               WHERE INNFP1=:P1 AND IDO1=:TDDO1
 SQL;
-            $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(':TDDO1', $tddo->tddo1);
-            $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
-            $count = $command->queryScalar();
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':TDDO1', $tddo->tddo1);
+        $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
+        $count = $command->queryScalar();
 
-            $result = $count>0;
+        $result = $count>0;
 
-            return $result;
-        }else
-            return true;
+        return $result;
     }
 
     public function actionView($id){

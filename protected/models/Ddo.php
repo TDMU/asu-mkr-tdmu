@@ -302,7 +302,7 @@ class Ddo extends CActiveRecord
 
 						return $tdo->tdo2;
 					};
-					$items[$docTypeIndexModel->$indexAttr]['filter'] = Org::getAll();
+					$items[$docTypeIndexModel->$indexAttr]['filter'] = Tdo::getAll();
 				break;
 				case 'tddo17':
 					$items[$docTypeIndexModel->$indexAttr]['value'] ='$data->getTddo17Type()';
@@ -456,11 +456,15 @@ class Ddo extends CActiveRecord
 										<tr>
 											<th>'.tt('Необходимая дата').'</th>
 											<th>'.tt('Фактическая дата').'</th>
+											<th>'.tt('Исполнитель').'</th>
 										</tr>
 									</thead>
 									<tbody>
 							';
 							foreach ($dkids as $dkid) {
+                                /**
+                                 * @var $dkid Dkid
+                                 */
 								if(!empty($dkid->dkid3))
 									$html.= '<tr class="success">';
 								else
@@ -470,15 +474,23 @@ class Ddo extends CActiveRecord
 									else
 										$html.= '<tr class="warning">';
 								}
-
-								$html.= '<td>'.date_format(date_create_from_format('Y-m-d H:i:s', $dkid->dkid2), 'Y-m-d').'</td>';
+								$html.= '<td>'.Dkid::model()->getDateString(date_create_from_format('Y-m-d H:i:s', $dkid->dkid2)).'</td>';
 								if(!empty($dkid->dkid3))
-									$html.= '<td>'.date_format(date_create_from_format('Y-m-d H:i:s', $data['tddo4']), 'Y-m-d').'</td>';
+									$html.= '<td>'.Dkid::model()->getDateString(date_create_from_format('Y-m-d H:i:s', $data['tddo4'])).'</td>';
 								else
 									$html.= '<td/>';
 
+                                $html.='<td/>';
+
 								$html.= '</tr>';
-							}
+                                foreach ($dkid->performens as $performen){
+                                    /**
+                                     * @var $performen Ido
+                                     */
+                                    $html.='<tr><td/><td/><td>'.$performen->getFullText().'</td></tr>';
+                                }
+
+                            }
 
 							$html.='
 									</tbody>

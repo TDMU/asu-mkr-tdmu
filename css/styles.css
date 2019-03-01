@@ -586,6 +586,7 @@ table.timeTable td{
 }
 
 table.timeTable .cell {
+    white-space: nowrap;
     border: 1px solid #ddd;
     background: linear-gradient(to bottom, #fcfcfc, #f6f6f6) repeat-x scroll 0 0 #F3F3F3;
 }

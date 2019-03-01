@@ -167,9 +167,30 @@ class CreateZrstForm extends CFormModel
         }
         $model->zrst1 = Yii::app()->db->createCommand('select gen_id(GEN_ZRST, 1) from rdb$database')->queryScalar();
 
-        if($model->save()){
-            $fileName = PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH).'/'.$model->zrst1.'.'.$model->zrst8;
-            return $this->file->saveAs($fileName);
+        $trans = $model->getDbConnection()->beginTransaction();
+        try {
+            if (in_array($this->scenario, array(self::TYPE_TABLE1, self::TYPE_TEACHER))) {
+                Zrst::model()->deleteAllByAttributes(array(
+                    'zrst2'=>$model->zrst2,
+                    'zrst3'=>$model->zrst3,
+                    'zrst6'=>$model->zrst6
+                ));
+            }
+
+            if ($model->save()) {
+                $fileName = PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH) . '/' . $model->zrst1 . '.' . $model->zrst8;
+                if($this->file->saveAs($fileName) === false)
+                    throw new CException('Ошибка сохранения файла');
+            }else{
+                throw new CException('Ошибка добавления файла');
+            }
+
+            $trans->commit();
+
+            return true;
+        }catch (CException $error){
+            $trans->rollback();
+            throw new CException('Ошибка сохранения файла, откат');
         }
     }
 }
