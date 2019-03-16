@@ -10,6 +10,7 @@
  * @var $model Users
  * @var $this AlertController
  * @var $message Um
+ * @var $isOutputEnabled bool
  */
 
 
@@ -19,13 +20,12 @@ if(empty($user)){
     $name = '-';
 }else{
     $url = Yii::app()->createUrl('/site/userPhoto', array(
-        '_id' => $user->u5,
-        'type' => $user->u6
+        '_id' => $user->u6,
+        'type' => $user->u5 == 1 ? 0 : 1
     ));
     $name = $user->getNameWithDept();
 }
 
-$extra = '';
 $extra = '';
 /*if($message->um10 > 0)
     if(!empty($message->um100)){
@@ -34,11 +34,28 @@ $extra = '';
             'message'=> $message->um100
         ), true);
     }*/
+$extraTitle = $isOutputEnabled ? CHtml::tag(
+    'div',
+    array(
+        'class' => 'pull-right'
+    ),
+    CHtml::button(
+        tt('Ответить'),
+        array(
+            'class' => 'btn btn-mini btn-success btn-response',
+            'data-id' => $message->um2,
+            'data-name' => $name,
+            'data-type' => ! $user ? '0' : ($user->u5 == 0 ? 1 : 4)
+        )
+    )
+) : '';
 
 echo $this->renderPartial('_message', array(
     'date' => $message->um3,
     'text' => $message->um5,
     'url'=> $url,
     'name' => $name,
-    'extra' => $extra
+    'extra' => $extra,
+    'model' =>$message,
+    'extraTitle' => $extraTitle
 ));

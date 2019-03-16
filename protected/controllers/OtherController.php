@@ -10,7 +10,22 @@ class OtherController extends Controller
 
         return array(
             'accessControl',
+            'requestPayment + deleteRequestPayment, createRequestPayment'
         );
+    }
+
+    public function filterRequestPayment($filterChain)
+    {
+        if (!Yii::app()->user->isStd)
+            throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
+
+        if (PortalSettings::model()->getSettingFor(PortalSettings::ENABLE_REGISTRATION_PASS)!=1)
+            throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
+
+        if (PortalSettings::model()->getSettingFor(PortalSettings::SHOW_REGISTRATION_PASS_TAB)!=1)
+            throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
+
+        $filterChain->run();
     }
 
     public function accessRules() {
@@ -37,6 +52,8 @@ class OtherController extends Controller
                     'addSpkr',
                     'studentInfoExcel',
                     'studentInfoPdf',
+                    'deleteRequestPayment',
+                    'createRequestPayment',
                     'antiplagiat'
                 ),
                 'expression' => 'Yii::app()->user->isStd',
@@ -69,6 +86,94 @@ class OtherController extends Controller
                 'users' => array('*'),
             ),
         );
+    }
+
+    public function actionDeleteRequestPayment($id)
+    {
+        //if(Yii::app()->request->isPostRequest)
+            //throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+
+        if (!Yii::app()->user->isStd)
+            throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
+
+        $model=Zsno::model()->findByPk($id);
+        if($model===null)
+            throw new CHttpException(404,'The requested page does not exist.');
+
+        if($model->zsno1!=Yii::app()->user->dbModel->st1)
+            throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
+
+        if($model->delete()){
+            Yii::app()->user->setFlash('success', tt('Заявка на оплату №{number} от {date} успешно удалена', array(
+                '{number}' => $model->zsno0,
+                '{date}'=> date("d.m.Y",strtotime($model->zsno2))
+            )));
+        }else{
+            Yii::app()->user->setFlash('success', tt('Ошибка удаления заявки на оплату №{number} от {date}', array(
+                '{number}' => $model->zsno0,
+                '{date}'=> date("d.m.Y",strtotime($model->zsno2))
+            )));
+        }
+
+        $this->redirect('/other/studentCard');
+    }
+
+    public function actionCreateRequestPayment()
+    {
+        if(!Yii::app()->request->isPostRequest)
+            throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+
+        if (!Yii::app()->user->isStd)
+            throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
+
+        if(!isset($_POST['lessons']))
+            throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+
+        $form = new CreateRequestPaymentForm();
+        $form->lessons = $_POST['lessons'];
+
+        if(!$form->validateLessons())
+            throw new CHttpException(400,'Ошибка в выбранных занятиях, возможно, некоторые занятия отработаны или уже участвуют в справках.');
+
+
+        $model = new Zsno();
+        $model->zsno1= Yii::app()->user->dbModel->st1;
+        $model->zsno0 =  Yii::app()->db->createCommand('select gen_id(GEN_ZSNO, 1) from rdb$database')->queryScalar();
+        $model->zsno2 = date('Y-m-d H:i:s');
+
+        $trans = Yii::app()->db->beginTransaction();
+
+        try{
+
+            if(!$model->save()){
+                throw new Exception(tt('Ошибка создания заявки на оплату'));
+            }
+
+            foreach ( $form->lessons as $lesson) {
+                $zsnop = new Zsnop();
+                $zsnop->zsnop0 = $model->zsno0;
+                $zsnop->zsnop1 = $lesson;
+
+                if(!$zsnop->save())
+                    throw new Exception('Ошибка добавления занятия в заявку на оплату');
+            }
+
+            $trans->commit();
+
+            Yii::app()->user->setFlash('success', tt('Заявка на оплату №{number} от {date} успешно создана', array(
+                '{number}' => $model->zsno0,
+                '{date}'=> date("d.m.Y",strtotime($model->zsno2))
+            )));
+
+        }catch (Exception $error){
+            $trans->rollback();
+
+            throw new CHttpException(400,tt('Ошибка создания заявки на оплату №{number} от {date}: {error}', array(
+                '{number}' => $model->zsno0,
+                '{date}'=> date("d.m.Y",strtotime($model->zsno2)),
+                '{error}' => $error->getMessage()
+            )));
+        }
     }
 
     public function actionShowRetake()

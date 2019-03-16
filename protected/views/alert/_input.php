@@ -10,10 +10,11 @@
 /**
  * @var $this AlertController
  * @var $model Users
+ * @var $period string
  */
 
 
-$messages = $model->getInputMessages();
+$messages = $model->getInputMessages($period);
 
 if(empty($messages)): ?>
     <div class="alert alert-warning">
@@ -26,6 +27,7 @@ endif;
 foreach ($messages as $message){
     echo $this->renderPartial('_inputMessage', array(
         'model' => $model,
-        'message'=> $message
+        'message'=> $message,
+        'isOutputEnabled' => $isOutputEnabled
     ));
 }

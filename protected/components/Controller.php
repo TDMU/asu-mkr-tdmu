@@ -326,16 +326,46 @@ SQL;
         return self::mail($to,$subject,$message,$file);
     }
 
+    /**
+     * @param $to string|array
+     * @param $subject
+     * @param $message
+     * @param null $file
+     * @return array
+     * @throws phpmailerException
+     */
     public function mailsend($to,$subject,$message,$file = null){
         return self::mail($to,$subject,$message,$file);
     }
 
+    /**
+     * @param $to string|array
+     * @param $subject
+     * @param $message
+     * @param null $file
+     * @return array
+     * @throws phpmailerException
+     */
     public static function mail($to,$subject,$message,$file = null){
+        /**
+         * @var PHPMailer $mail
+         */
         $mail=Yii::app()->Smtpmail;
         $mail->SetFrom($mail->Username,$_SERVER['HTTP_HOST']);
         $mail->Subject = $subject;
         $mail->MsgHTML($message);
-        $mail->AddAddress($to, "");
+        //var_dump($to);
+        if(is_array($to)){
+            //$first = true;
+            foreach ($to as $email=>$name) {
+                //if($first)
+                    $mail->AddAddress($email, $name);
+                /*else
+                    $mail->AddReplyTo($mail,$name);
+                $first = false;*/
+            }
+        }else
+            $mail->AddAddress($to, "");
         $mail->CharSet = "UTF-8";
         if($file !== null){
             $path= $file->tempName;
@@ -344,9 +374,9 @@ SQL;
         }
 
         if(!$mail->Send()) {
-            $result = array(false, "Mailer Error: " . $mail->ErrorInfo);
+            $result = array(false, "Ошибка отправки Еmail: " . $mail->ErrorInfo);
         }else {
-            $result = array(true,  "Message sent!");
+            $result = array(true,  "Email отправлено!");
         }
         $mail->ClearAddresses();
         return $result;

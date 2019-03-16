@@ -21,6 +21,8 @@
  */
 class Um extends CActiveRecord
 {
+    const TIME_PERIOD_MONTH = 'month';
+    const TIME_PERIOD_YEAR = 'year';
 	/**
 	 * @return string the associated database table name
 	 */
@@ -136,8 +138,8 @@ class Um extends CActiveRecord
                 $name = '-';
             }else{
                 $url = Yii::app()->createUrl('/site/userPhoto', array(
-                    '_id' => $user->u5,
-                    'type' => $user->u6
+                    '_id' => $user->u6,
+                    'type' => $user->u5 == 1 ? 0 : 1
                 ));
                 $name = $user->getNameWithDept();
             }
@@ -146,10 +148,10 @@ class Um extends CActiveRecord
         if($this->um8 > 0){
             $gr = Gr::model()->findByPk($this->um8);
             if(empty($gr)){
-                $url= '#';
+                $url= '';
                 $name = '-';
             }else{
-                $url = '#';
+                $url = '';
                 $name = $gr->getNameByDate($gr->gr1, date('d.m.Y'));
             }
         }
@@ -157,11 +159,11 @@ class Um extends CActiveRecord
         if($this->um9 > 0){
             $sg = Gr::model()->getInfoBySg($this->um9);
             if(empty($sg)){
-                $url= '#';
+                $url= '';
                 $name = '-';
             }else{
-                $url = '#';
-                $name = $sg['pnsp2'] . '('.$sg['f2'].')';
+                $url = '';
+                $name = $sg['pnsp2'] . '('.$sg['f2'].') '. $sg['sg3']. ' '. SH::convertEducationType($sg['sg4']);
             }
         }
 

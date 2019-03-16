@@ -46,6 +46,12 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
     </div>*/ ?>
 
     <div class="control-group">
+        <?=CHtml::checkBox('', PortalSettings::model()->getSettingFor(PortalSettings::ENABLE_REGISTRATION_PASS), $htmlOptions2)?>
+        <span class="lbl"> <?=tt('Расширенная "Регистрация пропусков"')?></span>
+        <?=CHtml::hiddenField('settings['.PortalSettings::ENABLE_REGISTRATION_PASS.']', PortalSettings::model()->getSettingFor(PortalSettings::ENABLE_REGISTRATION_PASS))?>
+    </div>
+
+    <div class="control-group">
         <?=CHtml::checkBox('', PortalSettings::model()->findByPk(60)->ps2, $htmlOptions2)?>
         <span class="lbl"> <?=tt('Блокировать непереведенных студентов')?></span>
         <?=CHtml::hiddenField('settings[60]', PortalSettings::model()->findByPk(60)->ps2)?>

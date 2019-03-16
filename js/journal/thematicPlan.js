@@ -79,9 +79,9 @@ $(document).ready(function(){
 
             if (data.error) {
                 var title=tt.error;
-                if(data.typeError==1)
+                if(data.errorType==1)
                     title=tt.errorUs6;
-                if(data.typeError==3)
+                if(data.errorType==3)
                     title=tt.errorAccess;
                 addGritter('', title, 'error');
                 elem.addClass('error');
@@ -334,9 +334,9 @@ $(document).ready(function(){
 
                             if (data.error) {
                                 var title=tt.error;
-                                if(data.typeError==1)
+                                if(data.errorType==1)
                                     title=tt.errorUs6;
-                                if(data.typeError==3)
+                                if(data.errorType==3)
                                     title=tt.errorAccess;
                                 addGritter('', title, 'error');
                                 //elem.addClass('error');
@@ -389,9 +389,9 @@ $(document).ready(function(){
                 }else
                 {
                     var title=tt.error;
-                    if(data.typeError==1)
+                    if(data.errorType==1)
                         title=tt.errorUs6;
-                    if(data.typeError==3)
+                    if(data.errorType==3)
                         title=tt.errorAccess;
                     addGritter('', title, 'error')
                 }

@@ -17,6 +17,7 @@
  * @property string $u11
  * @property string $u12
  * @property string $u13
+ * @property string $u15
  *
  * @property bool isStudent
  * @property bool isAdmin
@@ -63,6 +64,7 @@ class Users extends CActiveRecord
 			array('u4', 'length', 'max'=>400),
 			array('u9, u10, u12', 'length', 'max'=>45),
             array('u13', 'length', 'max'=>20),
+            array('u15', 'length', 'max'=>20),
             array('u2, u4', 'checkIfUnique'),
             //array('u2', 'length', 'min'=>5, 'max'=>30),
             // Логин должен соответствовать шаблону
@@ -270,35 +272,42 @@ class Users extends CActiveRecord
 
     public function renderPhoto($foto1, $type)
     {
-        $sql = <<<SQL
+        try {
+            $sql = <<<SQL
         SELECT foto3 as foto
         FROM foto
         WHERE foto1 = {$foto1} AND foto2 = {$type}
 SQL;
 
-        $string = Yii::app()->db->connectionString;
-        $parts  = explode('=', $string);
+            $string = Yii::app()->db->connectionString;
+            $parts = explode('=', $string);
 
-        $host = str_replace(';role', '', $parts[1]);
+            $host = str_replace(';role', '', $parts[1]);
 
-        $host     = trim($host.'d');
+            $host = trim($host . 'd');
 
-        $login    = Yii::app()->db->username;
-        $password = Yii::app()->db->password;
-        $dbh      = ibase_connect($host, $login, $password);
+            $login = Yii::app()->db->username;
+            $password = Yii::app()->db->password;
+            $dbh = ibase_connect($host, $login, $password);
 
-        $result = ibase_query($dbh, $sql);
-        $data   = ibase_fetch_object($result);
+            $result = ibase_query($dbh, $sql);
+            $data = ibase_fetch_object($result);
 
-        if (empty($data->FOTO)) {
+            if (empty($data->FOTO)) {
+                header("Content-type: image/png");
+                $defaultImg = imagecreatefrompng(Yii::app()->basePath . '/../theme/ace/assets/avatars/avatar2.png');
+                imagepng($defaultImg);
+            } else {
+                header("Content-type: image/jpeg");
+                ibase_blob_echo($data->FOTO);
+            }
+
+            ibase_free_result($result);
+        }catch (Exception $error){
+            header("Content-type: image/png");
             $defaultImg = imagecreatefrompng(Yii::app()->basePath.'/../theme/ace/assets/avatars/avatar2.png');
             imagepng($defaultImg);
-        } else {
-            header("Content-type: image/jpeg");
-            ibase_blob_echo($data->FOTO);
         }
-
-        ibase_free_result($result);
     }
 
 	public function getU8Type(){
@@ -620,22 +629,24 @@ HTML;
     }
     /**
      * Входяшие сообщения
-     * @param $u1
-     * @param bool $isStd
-     * @return static[]
+     * @param $period string
+     * @return Um[]
      */
-    public function getInputMessages(){
+    public function getInputMessages($period=Um::TIME_PERIOD_MONTH){
+
+        list($date1, $date2) = $this->_datesByPeriod($period);
+
         $extraQuery = $this->isStudent ? <<<SQL
               UNION
                 SELECT um.* from UM
                   INNER JOIN gr on (gr1=um8)
-                  INNER JOIN std on (std2={$this->u1} and std3=gr1)
+                  INNER JOIN std on (std2={$this->u6} and std3=gr1)
                   where um8>0 and um7=0 and um9=0 and STD11 in (0,5,6,8) and (STD7 is null)
               UNION
                 SELECT um.* from UM
                   INNER JOIN sg on (sg1=um9)
                   inner join gr on (sg.sg1 = gr.gr2)
-                  INNER JOIN std on (std2={$this->u1} and std3=gr1)
+                  INNER JOIN std on (std2={$this->u6} and std3=gr1)
                   where um8=0 and um7=0 and um9>0 and STD11 in (0,5,6,8) and (STD7 is null)
 SQL
             : '';
@@ -646,11 +657,80 @@ SQL
                 SELECT um.* from UM
                   where um7=:id
                 {$extraQuery}
-              ) order by um3 desc
+              ) where um3 between :DATE1 and :DATE2 order by um3 desc
 SQL
             , array(
-                ':id' => $this->u1
+                ':id' => $this->u1,
+                ':DATE1' => $date1,
+                ':DATE2' => $date2
             )
         );
     }
+
+    private function _datesByPeriod($period){
+        $datetime1 = new DateTime('tomorrow');
+        $datetime2 = new DateTime();
+
+        if($period == Um::TIME_PERIOD_MONTH){
+            $datetime2 = new DateTime('- 1 month');
+        }
+        if($period == Um::TIME_PERIOD_YEAR){
+            $datetime2 = new DateTime('- 1 year');
+        }
+
+
+        return array($datetime2->format('Y-m-d H:i:s'), $datetime1->format('Y-m-d H:i:s'));
+    }
+    /**
+     * Исходящие сообщения
+     * @param $period string
+     * @return Um[]
+     */
+    public function getOutputMessages($period=Um::TIME_PERIOD_MONTH){
+
+        list($date1, $date2) = $this->_datesByPeriod($period);
+
+        return Um::model()->findAllBySql(<<<SQL
+    SELECT * FROM um WHERe um2=:um2 and um3 between :DATE1 and :DATE2 ORDER BY um3 DESC
+SQL
+            , array(
+                ':um2'=> $this->u1,
+                ':DATE1' => $date1,
+                ':DATE2' => $date2
+            ));
+    }
+
+    /**
+     * @param $gr1
+     * @return Users[]
+     */
+    public function getUsersByGroup($gr1){
+        $sql = <<<SQL
+        SELECT users.* FROM std
+            INNER JOIN users on (u5=0 and u6=std2)
+            where STD11 in (0,5,6,8) and (STD7 is null) and u4!='' and std3=:GR1
+SQL;
+
+        return $this->findAllBySql($sql, array(
+            ':GR1' => $gr1
+        ));
+    }
+
+    /**
+     * @param $gr1
+     * @return Users[]
+     */
+    public function getUsersByStream($sg1){
+        $sql = <<<SQL
+        SELECT users.* FROM gr
+            INNER JOIN std on (std3=gr1)
+            INNER JOIN users on (u5=0 and u6=std2)
+            where STD11 in (0,5,6,8) and (STD7 is null) and u4!='' and gr2=:SG1
+SQL;
+
+        return $this->findAllBySql($sql, array(
+            ':SG1' => $sg1
+        ));
+    }
+
 }

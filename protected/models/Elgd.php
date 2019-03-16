@@ -171,7 +171,7 @@ SQL;
             return true;
 
         $diff = $date1->diff($date2)->days;
-        if ($diff > 4)
+        if ($diff >  PortalSettings::model()->getSettingFor(PortalSettings::IRPEN_COUNT_DAYS_FOR_IND))
             return false;
 
 	    return true;

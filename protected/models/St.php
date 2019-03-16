@@ -1771,4 +1771,121 @@ SQL;
 
         return $model;
     }
+
+    /**
+     * Пропуски студента (для расширеной регитсрации пропусков / карточка студента)
+     * @return array
+     * @throws CHttpException
+     */
+    public function getPass(){
+        if(empty($this->st1))
+            return array();
+
+        $sql=<<<SQL
+            SELECT * from EL_GURNAL_STUD_PROP(:st1, :year, :sem) 
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':st1', $this->st1);
+        $command->bindValue(':year', Yii::app()->session['year']);
+        $command->bindValue(':sem', Yii::app()->session['sem']);
+        $passes = $command->queryAll();
+
+        return $passes;
+    }
+
+    /**
+     * Справки студента (для расширеной регитсрации пропусков / карточка студента)
+     * @return Rpspr[]
+     * @throws CHttpException
+     */
+    public function getReferences(){
+        if(empty($this->st1))
+            return null;
+
+        $sql=<<<SQL
+            SELECT rpspr.* from elgp 
+            inner join elgzst on ( elgp.elgp1 = elgzst.elgzst0)
+            inner join elgz on (elgzst.elgzst2 = elgz.elgz1)
+            inner join elg on (elgz.elgz2 = elg.elg1)
+            inner JOIN sem on (elg3 = sem1)
+            inner join rpspr on (elgp.ELGP8 = rpspr.RPSPR0)
+            LEFT JOIN rpsprd on (rpspr.RPSPR0 = rpsprd.rpsprd0 and rpsprd.rpsprd1 = elgp0)
+          WHERE  elgzst1 = :ST1 and sem3 = :YEAR and sem5=:SEM and rpsprd2 is null and rpspr0>0
+SQL;
+
+
+        $references = Rpspr::model()->findAllBySql($sql, array(
+            ':ST1' => $this->st1,
+            ':YEAR' => Yii::app()->session['year'],
+            ':SEM' => Yii::app()->session['sem']
+        ));
+
+        return $references;
+    }
+
+    /**
+     * Справки студента (для расширеной регитсрации пропусков / карточка студента)
+     * @return Zsno[]
+     * @throws CHttpException
+     */
+    public function getRequestPayment(){
+        if(empty($this->st1))
+            return null;
+
+        $sql=<<<SQL
+            SELECT zsno0, zsno1, zsno2 from zsno 
+            inner join zsnop on ( zsnop.zsnop0 = zsno.zsno0)
+            inner join elgp on ( elgp.elgp0 = zsnop.zsnop1)
+            inner join elgzst on ( elgp.elgp1 = elgzst.elgzst0)
+            inner join elgz on (elgzst.elgzst2 = elgz.elgz1)
+            inner join elg on (elgz.elgz2 = elg.elg1)
+            inner JOIN sem on (elg3 = sem1)
+          WHERE  zsno.zsno1=:ST1_ and elgzst1 = :ST1 and sem3 = :YEAR and sem5=:SEM
+          GROUP BY zsno0, zsno1, zsno2
+          ORDER BY zsno2 desc 
+SQL;
+
+
+        $result = Zsno::model()->findAllBySql($sql, array(
+            ':ST1_' => $this->st1,
+            ':ST1' => $this->st1,
+            ':YEAR' => Yii::app()->session['year'],
+            ':SEM' => Yii::app()->session['sem']
+        ));
+
+        return $result;
+    }
+
+    public function findUsersByStudentName($query, $faculty)
+    {
+        $sql = <<<SQL
+            select u1, st1,st2,st3,st4,st20, std3, gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28
+			FROM st
+			    INNER JOIN users on (u6 = st1 and u5 =0)
+				INNER JOIN std ON(st1=std2)
+				INNER JOIN gr ON(std3=gr1)
+				INNER JOIN sg ON(sg1=gr2)
+				INNER JOIN sp ON(sp1=sg2)
+				where st2<>'' and sp5=:f1 and std11 in (0,5,6,8) and std7 is null
+				and
+				(
+					st2 CONTAINING :QUERY1
+					or st74 CONTAINING :QUERY2
+					or st117 CONTAINING :QUERY3
+					or st120 CONTAINING :QUERY4
+					or st123 CONTAINING :QUERY5
+				)
+            group by u1,st1,st2,st3,st4,st20, std3, gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28
+			order by st2 collate UNICODE,st3,st4
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':QUERY1', $query);
+        $command->bindValue(':QUERY2', $query);
+        $command->bindValue(':QUERY3', $query);
+        $command->bindValue(':QUERY4', $query);
+        $command->bindValue(':QUERY5', $query);
+        $command->bindValue(':f1', $faculty);
+        return $command->queryAll();
+    }
 }

@@ -788,6 +788,21 @@ $this->widget('zii.widgets.CMenu', array(
             'visible' => _ch('payment', 'main') && ($isStd || $isTch)
         ),
         array(
+            'label' => _l('Информатор', 'comment'),
+            'url' => '#',
+            'linkOptions'=> $_l,
+            'itemOptions'=>_i('alert'),
+            'items' =>array_merge( array(
+                array(
+                    'label'   => $_l2.tt('Сообщения'),
+                    'url'     => _u('/alert/index'),
+                    'visible' => _ch('alert', 'index') && ($isTch || $isStd),
+                    'active'  => $_c=='alert' && $_a=='index'
+                ),
+            ),getDopItem('alert',0)),
+            'visible' => _ch('alert', 'main'),
+        ),
+        array(
             'label' => _l('Опрос', 'ok-sign'),
             'url' => '#',
             'linkOptions'=> $_l,
@@ -797,7 +812,7 @@ $this->widget('zii.widgets.CMenu', array(
                     'label'   => $_l2.tt('Опрос'),
                     'url'     => _u('/quiz/index'),
                     'visible' => _ch('quiz', 'index') && ($isTch || $isDoctor),
-                    'active'  => $_c=='quiz' && $_a=='index '
+                    'active'  => $_c=='quiz' && $_a=='index'
                 ),
             ),getDopItem('quiz',0)),
             'visible' => _ch('quiz', 'main'),

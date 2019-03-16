@@ -9,6 +9,16 @@
  */
 class PortalSettings extends CActiveRecord
 {
+    /**
+     * Количетво дней на редектированеи мин макс
+     */
+    const IRPEN_COUNT_DAYS_FOR_MIN_MAX = 24999999;
+
+    /**
+     * Количевто дней ра редактированеи инд работы
+     */
+    const IRPEN_COUNT_DAYS_FOR_IND = 24999998;
+
     const ENABLE_DIST_EDUCATION = 122;
     const HOST_DIST_EDUCATION = 123;
     const APIKEY_DIST_EDUCATION = 124;
@@ -56,6 +66,26 @@ class PortalSettings extends CActiveRecord
     const ACCEPT_EMAIL_DIST_EDUCATION = 134;
 
     /**
+     * @var int ОТобразить таб "регистрация пропусков" в карточке студента
+     */
+    const SHOW_REGISTRATION_PASS_TAB = 141;
+
+    /**
+     * @var int включить "регистрацию пропуска"
+     */
+    const ENABLE_REGISTRATION_PASS = 137;
+
+    /**
+     * @var int ОТобразить таб "Сводный электронный журнал" в карточке студента
+     */
+    const SHOW_SVOD_JOURNAL_TAB = 109;
+
+    /**
+     * @var int ОТобразить таб "Общая информация" в карточке студента
+     */
+    const SHOW_GENERAL_INFO_TAB = 91;
+
+    /*
      *
      */
     const USE_PORTFOLIO = 138;
@@ -69,6 +99,11 @@ class PortalSettings extends CActiveRecord
      * Разрешено ли стущдикам отправлять сообщения в сервисе оповещения
      */
     const STUDENT_SEND_IN_ALERT = 140;
+
+    /**
+     * @var int дефолтный акшен
+     */
+    const DEFAULT_ACTION = 142;
 
     /**
      * Для хранения настро

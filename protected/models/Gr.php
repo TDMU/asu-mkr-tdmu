@@ -554,6 +554,127 @@ SQL;
     }
 
     /**
+     * Список потоков по факультету
+     * @param $f1
+     * @return array
+     * @throws
+     */
+    public function getStreamsForFaculty($f1, $query = null)
+    {
+        if (empty($f1))
+            return array();
+
+        $where= empty($query) ? '' : ' AND ( sp2 CONTAINING :QUERY or gr3 CONTAINING :QUERY7 or 
+            gr19 CONTAINING :QUERY1 or 
+            gr20 CONTAINING :QUERY2 or 
+            gr21 CONTAINING :QUERY3 or 
+            gr22 CONTAINING :QUERY4 or 
+            gr23 CONTAINING :QUERY5 or 
+            gr24 CONTAINING :QUERY6)';
+        $sql=<<<SQL
+           SELECT  sem4, sp2, t2.sg4, gr7,gr3,gr1, gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26, t2.sg1
+			from sp
+			   inner join sg t2 on (sp.sp1 = t2.sg2)
+			   inner join sem on (t2.sg1 = sem.sem2)
+			   inner join gr on (t2.sg1 = gr.gr2)
+			WHERE sg1 in (
+			  select t.sg1 from sp
+			      inner join sg t on (sp.sp1 = t.sg2)
+                   inner join sem on (t.sg1 = sem.sem2)
+                   inner join gr on (t.sg1 = gr.gr2)
+			  where  gr13=0 and gr6 is null
+				 and sp5=:FACULTY and sem3=:YEAR1 and sem5=:SEM1 {$where}
+			) and sem3=:YEAR2 and sem5=:SEM2 and gr13=0
+			GROUP BY sem4, sp2, sg4, gr7,gr3,gr1, gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26, sg1
+			ORDER BY sem4, gr7,gr3
+SQL;
+
+        list($year, $sem) = SH::getCurrentYearAndSem();
+
+        $command = Yii::app()->db->createCommand($sql);
+        if(!empty($query)) {
+            $command->bindValue(':QUERY1', $query);
+            $command->bindValue(':QUERY', $query);
+            $command->bindValue(':QUERY2', $query);
+            $command->bindValue(':QUERY3', $query);
+            $command->bindValue(':QUERY4', $query);
+            $command->bindValue(':QUERY5', $query);
+            $command->bindValue(':QUERY6', $query);
+            $command->bindValue(':QUERY7', $query);
+        }
+        $command->bindValue(':FACULTY', $f1);
+        $command->bindValue(':YEAR1', $year);
+        $command->bindValue(':YEAR2', $year);
+        $command->bindValue(':SEM1', $sem);
+        $command->bindValue(':SEM2', $sem);
+        $groups = $command->queryAll();
+
+        $result = array();
+
+        foreach($groups as $group) {
+            if(isset($result[$group['sg1']])) {
+                $result[$group['sg1']] .= ', ' . $this->getGroupName($group['sem4'], $group);
+            }else{
+                $result[$group['sg1']] = $group['sp2'].' '.$group['sem4'].'к. : '. $this->getGroupName($group['sem4'], $group);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Список потоков по факультету
+     * @param $f1
+     * @return array
+     * @throws
+     */
+    public function getGroupsForFaculty($f1, $query = null)
+    {
+        if (empty($f1))
+            return array();
+
+        $where= empty($query) ? '' : ' AND (
+            gr3 CONTAINING :QUERY or 
+            gr19 CONTAINING :QUERY1 or 
+            gr20 CONTAINING :QUERY2 or 
+            gr21 CONTAINING :QUERY3 or 
+            gr22 CONTAINING :QUERY4 or 
+            gr23 CONTAINING :QUERY5 or 
+            gr24 CONTAINING :QUERY6  
+        )';
+        $sql=<<<SQL
+           SELECT  sem4,gr7,gr3,gr1, gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26
+			from sp
+			   inner join sg t2 on (sp.sp1 = t2.sg2)
+			   inner join sem on (t2.sg1 = sem.sem2)
+			   inner join gr on (t2.sg1 = gr.gr2)
+			WHERE gr13=0 and gr6 is null
+				 and sp5=:FACULTY and sem3=:YEAR1 and sem5=:SEM1 {$where}
+			GROUP BY sem4, gr7,gr3,gr1, gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26, sg1
+			ORDER BY sem4, gr7,gr3
+SQL;
+
+        list($year, $sem) = SH::getCurrentYearAndSem();
+
+        $command = Yii::app()->db->createCommand($sql);
+        if(!empty($query)) {
+            $command->bindValue(':QUERY', $query);
+            $command->bindValue(':QUERY1', $query);
+            $command->bindValue(':QUERY2', $query);
+            $command->bindValue(':QUERY3', $query);
+            $command->bindValue(':QUERY4', $query);
+            $command->bindValue(':QUERY5', $query);
+            $command->bindValue(':QUERY6', $query);
+        }
+        $command->bindValue(':FACULTY', $f1);
+        $command->bindValue(':YEAR1', $year);
+        $command->bindValue(':YEAR2', $year);
+        $command->bindValue(':SEM1', $sem);
+        $command->bindValue(':SEM2', $sem);
+        return $command->queryAll();
+    }
+
+    /**
      * Список потоков by specilalty
      * @param $f1
      * @param $course
@@ -932,6 +1053,18 @@ SQL;
         return array($gr1, $names);
     }
 
+    public function getGroupsIdBySg1($sg1)
+    {
+        $sql= <<<SQL
+				SELECT gr1 from gr
+				WHERE gr2 = :SG1 and gr13=0 and gr6 is null
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':SG1', $sg1);
+        return $command->queryColumn();
+    }
+
     public function getCourseFor($gr1, $year, $sem)
     {
         $sql = <<<SQL
@@ -1264,12 +1397,12 @@ SQL;
             return array();
 
         $sql = <<<SQL
-          SELECT pnsp2, pnsp17,f2,f3,f26,f35 FROM sg
+          SELECT pnsp2, pnsp17,f2,f3,f26,f35,sg3, sg4 FROM sg
 			inner join sp on (sg.sg2 = sp.sp1)
 			inner join pnsp on (sp.sp11 = pnsp.pnsp1)
 			inner join f on (sp.sp5= f.f1)
 		where sg1=:SG1
-		GROUP BY pnsp2,pnsp17,f2,f3,f26,f35
+		GROUP BY pnsp2,pnsp17,f2,f3,f26,f35,sg3, sg4
 SQL;
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':SG1', $sg1);
@@ -1296,6 +1429,6 @@ SQL;
         if(empty($row))
             return '-';
 
-        return Gr::getGroupName($row, $row['sem4']);
+        return $this->getGroupName($row['sem4'],$row);
     }
 }

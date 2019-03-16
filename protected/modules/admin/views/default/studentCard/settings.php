@@ -24,6 +24,7 @@ $options = array(
     ' '.tt('Общая успеваемость'),
     ' '.tt('Общая информация'),
     ' '.tt('Сводный электронный журнал'),
+    ' '.tt('Регистрация пропусков'),
 );
 
 $htmlOptions = array(
@@ -79,6 +80,12 @@ $htmlOptions = array(
         <?=CHtml::checkBox('settings[109]', PortalSettings::model()->findByPk(109)->ps2, $htmlOptions2)?>
         <span class="lbl"> <?=tt('Показывать таб "Сводный электронный журнал"')?></span>
         <?=CHtml::hiddenField('settings[109]', PortalSettings::model()->findByPk(109)->ps2)?>
+    </div>
+
+    <div class="control-group">
+        <?=CHtml::checkBox('settings['.PortalSettings::SHOW_REGISTRATION_PASS_TAB.']', PortalSettings::model()->getSettingFor(PortalSettings::SHOW_REGISTRATION_PASS_TAB), $htmlOptions2)?>
+        <span class="lbl"> <?=tt('Показывать таб "Регистрация пропусков"')?></span>
+        <?=CHtml::hiddenField('settings['.PortalSettings::SHOW_REGISTRATION_PASS_TAB.']', PortalSettings::model()->getSettingFor(PortalSettings::SHOW_REGISTRATION_PASS_TAB))?>
     </div>
 
     <div class="form-actions">

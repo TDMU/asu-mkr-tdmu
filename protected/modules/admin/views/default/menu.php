@@ -249,7 +249,20 @@
                     'name'       => 'Опрос',
                     'controller' => 'quiz',
                     'items' => array(
-                        'controller' => 'index',
+                        'index' => 'Опрос',
+                    ),
+                ),
+                array(
+                    'name'       => 'Информатор',
+                    'controller' => 'alert',
+                    'items' => array(
+                        'index' => array(
+                            'name'=>'Сообщения',
+                            'authOnly' => array(
+                                $teacherStr,
+                                $studentStr
+                            )
+                        ),
                     ),
                 ),
                 array(

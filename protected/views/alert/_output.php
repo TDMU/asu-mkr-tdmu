@@ -9,9 +9,10 @@
 /**
  * @var $this AlertController
  * @var $model Users
+ * @var $period string
  */
 
-$messages = Um::model()->findAllByAttributes(array('um2'=> $model->u1));
+$messages = $model->getOutputMessages($period);
 
 if(empty($messages)): ?>
    <div class="alert alert-warning">

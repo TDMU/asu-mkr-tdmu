@@ -291,7 +291,7 @@ SQL;
 		//var_dump($gr1);
 
 		$sql = <<<SQL
-			select r1
+			select first 1 r1
 			from elgz
 			inner join EL_GURNAL_ZAN(:UO1,:GR1,:SEM1, :TYPE_LESSON) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
 			WHERE elgz1 = :ELGZ1

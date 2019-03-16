@@ -9,6 +9,11 @@
  * @property WebUser $user
  * @property CHttpSession $session
  * @property CFormatter $format
+ * @property PHPMailer $Smtpmail
+ * @property ShortCodes $shortcodes
+ * @property EYiiPdf $ePdf
+ * @property CFirebirdConnection $db
+ * @property CFirebirdConnection $db2
  */
 class CApplication
 {}

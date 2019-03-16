@@ -207,6 +207,8 @@ class RatingForm extends CFormModel
                 return array();
         }
 
+        $extraJoin.= 'INNER JOIN uo on (proc.uo1 = uo.uo1 and uo28=0) ';
+
         $sql = <<<SQL
             SELECT {$extraColumns} proc.bal_5, proc.bal_100 FROM IZ_OC(:ST1, :SG1, :GR1, 0, 0, CURRENT_TIMESTAMP) proc
               {$extraJoin}
