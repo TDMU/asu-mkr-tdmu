@@ -223,38 +223,26 @@ SQL;
     }
 
     public function actionFile($id){
-
-        $dbh = SH::getGrafConnection();
-
-        try{
-            $dbh->active = true;
-        }catch(Exception $error) {
-            throw new Exception("Ошибка подключения к графической базе, с ошибкой: " . $error->getMessage());
-        }
-
-        $sql = <<<SQL
-			SELECT *
-			FROM fpdd
-			WHERE fpdd1 = {$id}
-SQL;
-        $command=$dbh->createCommand($sql);
-        $file=$command->queryRow();
-        $dbh->active = false;
+        /**
+         * @var $file Fpdd
+         */
+        $file = Fpdd::model()->findByPk($id);
 
         if(empty($file))
             throw new CHttpException(404,'The requested page does not exist.');
 
-        $model = $this->loadModel($file['FPDD2']);
+        $model = $this->loadModel($file->fpdd2);
 
         if(!$this->checkAccessToDoc($model))
             throw new CHttpException(403,'Your don`t have access to this doc');
 
-        if(Tddo::model()->isImage($file['FPDD4'])) {
-            header("Content-type: image/jpeg");
-        }else{
-            header("Content-type: application/".Tddo::model()->getExtByName($file['FPDD4']));
-        }
-        header('Content-Disposition: filename="'.$file['FPDD4'].'"');
-        echo $file['FPDD3'];
+        header('Content-Disposition: inline; filename="'.$file->fpdd4.'"');
+        header('Content-Transfer-Encoding: binary');
+        header('Accept-Ranges: bytes');
+        if($file->isImage())
+            header("Content-type: image/".$file->getExtension());
+        else
+            header("Content-type: application/".$file->getExtension());
+        echo $file->fpdd3;
     }
 }

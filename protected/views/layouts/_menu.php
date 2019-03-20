@@ -270,21 +270,6 @@ $this->widget('zii.widgets.CMenu', array(
                     'active' => $_a=='rating' && $_m=='admin'
                 ),
                 array(
-                    'label'  => $_l2.tt('Ведение модулей'),
-                    'url'    => _u('/admin/default/modules'),
-                    'active' => $_a=='modules' && $_m=='admin'
-                ),
-                array(
-                    'label'  => $_l2.tt('Абитуриент'),
-                    'url'    => _u('/admin/default/entrance'),
-                    'active' => $_a=='entrance' && $_m=='admin'
-                ),
-                array(
-                    'label'  => $_l2.tt('Трудоустройство'),
-                    'url'    => _u('/admin/default/employment'),
-                    'active' => $_a=='employment' && $_m=='admin'
-                ),
-                array(
                     'label'  => $_l2.tt('Меню'),
                     'url'    => _u('/admin/default/menu'),
                     'active' => $_a=='menu' && $_m=='admin'
@@ -349,7 +334,7 @@ $this->widget('zii.widgets.CMenu', array(
             'linkOptions'=> $_l,
             'itemOptions'=>array('class'=> ( $_c=='timeTable' && $_a=='self')||($_c=='workLoad' && $_a=='self')
             ||($_c=='other' && $_a=='subscription')||($_c=='other' && $_a=='studentInfo')
-            ||($_c=='other' && $_a=='gostem') ||($_c=='other' && $_a=='orderLesson')||($_c=='other' && $_a=='studentCard') ? 'active open' : ''),
+             ||($_c=='other' && $_a=='orderLesson')||($_c=='other' && $_a=='studentCard') ? 'active open' : ''),
 
             //'itemOptions'=> _i('self'),
             'items' =>array_merge(array(
@@ -382,19 +367,7 @@ $this->widget('zii.widgets.CMenu', array(
                     'url'     => _u('/self/studentInfo'),
                     'active'  => $_c=='other' && $_a=='studentInfo',
                     'visible' => _ch('self', 'studentInfo') && ($isTch || $isStd),
-                ),
-                array(
-                    'label'   => $_l2.tt('Запись на гос. экзамены'),
-                    'url'     => _u('/self/gostem'),
-                    'active'  => $_c=='other' && $_a=='gostem',
-                    'visible' => _ch('self', 'gostem') && $isStd,
-                ),
-                array(
-                    'label'   => $_l2.tt('Заказ переноса занятий'),
-                    'url'     => _u('/self/orderLesson'),
-                    'active'  => $_c=='other' && $_a=='orderLesson',
-                    'visible' => _ch('self', 'orderLesson') && $isTch,
-                ),
+                )
             ), getDopItem('self',0)),
             'visible' => ($isStd||$isTch||$isAdmin||$isPrnt)
         ),
@@ -536,6 +509,18 @@ $this->widget('zii.widgets.CMenu', array(
                     'visible' => _ch('list', 'chair')
                 ),
                 array(
+                    'label'   => $_l2. tt('Контакты академ. группы'),
+                    'url'     => _u('/list/contactStudents'),
+                    'active'  => $_c=='list' && $_a=='contactStudents',
+                    'visible' => _ch('list', 'contactStudents') && $this->universityCode == U_RGIIS
+                ),
+                array(
+                    'label'   => $_l2. tt('Контакты кафедры'),
+                    'url'     => _u('/list/contactTeachers'),
+                    'active'  => $_c=='list' && $_a=='contactTeachers',
+                    'visible' => _ch('list', 'contactTeachers') && $this->universityCode == U_RGIIS
+                ),
+                array(
                     'label'   => $_l2. tt('Students2Moodle'),
                     'url'     => _u('/list/students2moodle'),
                     'active'  => $_c=='list' && $_a=='students2moodle',
@@ -636,19 +621,7 @@ $this->widget('zii.widgets.CMenu', array(
                     'url'     => _u('/progress/test'),
                     'visible' => _ch('progress', 'test') && $isStd,
                     'active'  => $_c=='progress' && $_a=='test'
-                ),
-                array(
-                    'label'   => $_l2.tt('Ведение модулей'),
-                    'url'     => _u('/progress/modules'),
-                    'visible' => _ch('progress', 'modules') && $isTch,
-                    'active'  => $_c=='progress' && $_a=='modules'
-                ),
-                array(
-                    'label'   => $_l2.tt('Экз. сессия'),
-                    'url'     => _u('/progress/examSession'),
-                    'visible' => _ch('progress', 'examSession') && $isTch,
-                    'active'  => $_c=='progress' && $_a=='examSession'
-                ),
+                )
             ),getDopItem('progress',0)),
             'visible' => _ch('progress', 'main')
         ),
@@ -693,39 +666,6 @@ $this->widget('zii.widgets.CMenu', array(
                 ),
             ),
             'visible' => _ch('portfolio', 'main') && ($isTch||$isAdmin||$isStd) && PortalSettings::model()->getSettingFor(PortalSettings::USE_PORTFOLIO) == 1,
-        ),
-        array(
-            'label' => _l('Абитуриент', 'book'),
-            'url' => '#',
-            'linkOptions'=> $_l,
-            'itemOptions'=>_i('entrance'),
-            'items' => array_merge(array(
-                array(
-                    'label'   => $_l2.tt('Ход приема документов'),
-                    'url'     => _u('/entrance/documentReception'),
-                    'visible' => _ch('entrance', 'documentReception'),
-                    'active'  => $_c=='entrance' && $_a=='documentReception'
-                ),
-                array(
-                    'label'   => $_l2.tt('Рейтинговый список'),
-                    'url'     => _u('/entrance/rating'),
-                    'visible' => _ch('entrance', 'rating'),
-                    'active'  => $_c=='entrance' && $_a=='rating' && !Yii::app()->request->getParam('sortByStatus', null)
-                ),
-                array(
-                    'label'   => $_l2.tt('Список рекомендованных'),
-                    'url'     => _u('/entrance/rating', array('sortByStatus' => 1)),
-                    'visible' => _ch('entrance', 'rating'),
-                    'active'  => $_c=='entrance' && $_a=='rating' && Yii::app()->request->getParam('sortByStatus', null)
-                ),
-                array(
-                    'label'   => $_l2.tt('Регистрация'),
-                    'url'     => _u('/entrance/registration'),
-                    'visible' => _ch('entrance', 'registration'),
-                    'active'  => $_c=='entrance' && $_a=='registration'
-                ),
-            ),getDopItem('entrance',0)),
-            'visible' => _ch('entrance', 'main')
         ),
         array(
             'label' => _l('Нагрузка', 'briefcase'),
@@ -824,34 +764,10 @@ $this->widget('zii.widgets.CMenu', array(
             'itemOptions'=>_i('other'),
             'items' =>array_merge( array(
                 array(
-                    'label'   => $_l2.tt('Опрос'),
-                    'url'     => _u('/quiz/index'),
-                    'visible' => _ch('quiz', 'index') && ($isTch || $isDoctor),
-                    'active'  => $_c=='quiz' && $_a=='index '
-                ),
-                array(
                     'label'   => $_l2.tt('Телефонный справочник'),
                     'url'     => _u('/other/phones'),
                     'visible' => _ch('other', 'phones'),
                     'active'  => $_c=='other' && $_a=='phones'
-                ),
-                array(
-                    'label'   => $_l2.tt('Запись на гос. экзамены'),
-                    'url'     => _u('/other/gostem'),
-                    'active'  => $_c=='other' && $_a=='gostem',
-                    'visible' => _ch('other', 'gostem') && $isStd,
-                ),
-                array(
-                    'label'   => $_l2.tt('Заказ переноса занятий'),
-                    'url'     => _u('/other/orderLesson'),
-                    'active'  => $_c=='other' && $_a=='orderLesson',
-                    'visible' => _ch('other', 'orderLesson') && $isTch,
-                ),
-                array(
-                    'label'   => $_l2.tt('Трудоустройство'),
-                    'url'     => _u('/other/employment'),
-                    'active'  => $_c=='other' && $_a=='employment',
-                    'visible' => _ch('other', 'employment'),
                 ),
                 array(
                     'label'   => $_l2.tt('Запись на дисциплины'),

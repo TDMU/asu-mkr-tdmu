@@ -202,35 +202,6 @@ class D extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-    //не используеться(В скорорм отработка)
-    public function getUsFromDiscipline($d1)
-    {
-        if (empty($d1))
-            return array();
-
-        $sql = <<<SQL
-			select us4,us1,sp2,sg3
-			from us
-			   inner join sem on (us.us3 = sem.sem1)
-			   inner join sg on (sem.sem2 = sg.sg1)
-			   inner join sp on (sg.sg2 = sp.sp1)
-			   inner join uo on (us.us2 = uo.uo1)
-			where uo3=:d1 and sem3=:year AND sem5=:sem AND us4 in (1,2,3,4)
-			group by us4,us1,sp2,sg3
-			order by us4
-SQL;
-
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':d1', $d1);
-        $command->bindValue(':year', Yii::app()->session['year']);
-        $command->bindValue(':sem', Yii::app()->session['sem']);
-        $res = $command->queryAll();
-
-        foreach ($res as $key => $us) {
-            $res[$key]['name'] = SH::convertUS4($us['us4']).' '.$us['sp2'].' ('.$us['sg3'].')';
-        }
-        return $res;
-    }
 
     public function getUоFromDiscipline($d1)
     {
@@ -262,34 +233,7 @@ SQL;
         return $res;
     }
 
-	public function getDisciplineForRetake($sg1)
-    {
-        if (empty($sg1))
-            return array();
-		$sql = <<<SQL
-			select d2,us4,us1
-			from d
-			   inner join uo on (d.d1 = uo.uo3)
-			   inner join us on (uo.uo1 = us.us2)
-			   inner join sem on (us.us3 = sem.sem1)
-			   inner join u on (uo.uo22 = u.u1)
-			where u2=:sg1 and sem3=:year AND sem5=:sem AND us4 in (1,2,3,4)
-			group by d2,us4,us1
-			order by d2 collate UNICODE
-SQL;
-
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':sg1', $sg1);
-	    $command->bindValue(':year', Yii::app()->session['year']);
-        $command->bindValue(':sem', Yii::app()->session['sem']);
-        $disciplines = $command->queryAll();
-        
-        foreach ($disciplines as $key => $d) {
-            $disciplines[$key]['name'] = $d['d2'].'('.SH::convertUS4($d['us4']).')';
-        }
-        return $disciplines;
-    }
-        public function getDisciplineForThematicPlan($sg1,$sem1)
+    public function getDisciplineForThematicPlan($sg1,$sem1)
     {
         if (empty($sg1)||empty($sem1))
             return array();
@@ -344,39 +288,6 @@ SQL;
         return $disciplines;
 	
 	}
-        
-    public function getDisciplinesForJournal()
-    {
-
-        $sql = <<<SQL
-                select d1,d2,nr2,nr30,k2,k3
-                from u
-                  inner join uo on (u.u1 = uo.uo22)
-                  inner join d on (uo.uo3 = d.d1)
-                  inner join us on (uo.uo1 = us.us2)
-                  inner join (
-                    select nr2,nr30
-                    from pd
-                      inner join nr on (pd1 = nr6) or (pd1 = nr7) or (pd1 = nr8) or (pd1 = nr9)
-                    where pd1>0 and pd2=:P1
-                    group by nr2,nr30)             on (us1 = nr2)
-                  inner join k on (nr30=k1)
-                  inner join sem on (us.us3 = sem.sem1)
-                  inner join sg on (u.u2 = sg.sg1)
-                where sg4=0 and sem3=:YEAR and sem5=:SEM
-                group by d1,d2,nr2,nr30,k2,k3
-                order by d2 collate UNICODE
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
-        $command->bindValue(':YEAR', Yii::app()->session['year']);
-        $command->bindValue(':SEM', Yii::app()->session['sem']);
-        $disciplines = $command->queryAll();
-        foreach ($disciplines as $key => $d) {
-            $disciplines[$key]['name'] = $d['d2'].' ('.$d['k2'].')';
-        }    
-        return $disciplines;
-    }
 
     public function getDisciplinesForJournalPermition()
     {
@@ -539,26 +450,6 @@ SQL;
         $command->bindValue(':SEM', Yii::app()->session['sem']);
         $disciplines = $command->queryAll();
 
-        return $disciplines;
-    }
-
-    public function getDisciplinesForExamSession($type = null)
-    {
-        $sql = <<<SQL
-            select *
-            from LIST_DISC_PREP(:P1, :YEAR, :SEM)
-            order by d2 collate UNICODE, vid collate UNICODE, gr3
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
-        $command->bindValue(':YEAR', Yii::app()->session['year']);
-        $command->bindValue(':SEM', Yii::app()->session['sem']);
-        $disciplines = $command->queryAll();
-
-        foreach ($disciplines as $key => $d) {
-            $disciplines[$key]['id']   = implode(':', array($d['gr1'], $d['cxmb0'], $d['stus18'], $d['stus19'], $d['stus20'], $d['stus21']));
-            $disciplines[$key]['name'] = implode(', ', array($d['d2'], $d['vid'], $d['gr3'], ));
-        }
         return $disciplines;
     }
 

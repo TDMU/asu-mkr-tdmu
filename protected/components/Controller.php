@@ -203,9 +203,10 @@ SQL;
     {
         $enable_close=true;
         if(Yii::app()->user->isAdmin)
-            $enable_close=false;
+            return;
+
         if(Yii::app()->controller->id=='site'&&$action->id!='index')
-            $enable_close=false;
+            return;
 
         $close=PortalSettings::model()->findByPk(38)->ps2;
         $text_close=PortalSettings::model()->findByPk(39)->ps2;
@@ -213,11 +214,6 @@ SQL;
             $text_close=tt('Портал закрыт на тех. обслуживание');
         if($close&&$enable_close)
         {
-            Yii::app()->setComponents(array(
-                'errorHandler'=>array(
-                    'errorAction'=>'site/close',
-                ),
-            ));
             throw new CHttpException(403,$text_close);
         }
     }
@@ -281,19 +277,6 @@ SQL;
 
         Yii::app()->session['date2'] = $date2;
     }
-
-    /*public function mailsend($to,$from,$subject,$message){
-        $mail=Yii::app()->Smtpmail;
-        $mail->SetFrom($from, 'From Name');
-        $mail->Subject    = $subject;
-        $mail->MsgHTML($message);
-        $mail->AddAddress($to, "");
-        if(!$mail->Send()) {
-            return array(false, "Mailer Error: " . $mail->ErrorInfo);
-        }else {
-            return array(true,  "Message sent!");
-        }
-    }*/
 
     /**
      * @param $to
@@ -391,8 +374,4 @@ SQL;
     public function getUniversityCode(){
         return $this->_universityCode;
     }
-
-    //public function setUniversityCode($value){
-        //$this->_universityCode = $value;
-    //}
 }

@@ -4,12 +4,15 @@
         "ext-curl": "*",
         "ext-bcmath": "*",
         "ext-calendar": "*",
-        "ext-interbase": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-PDO": "*",
         "ext-PDO_Firebird": "*",
-        "apostle/apostle-php": "dev-master",
         "google/apiclient": "2.0"
+    },
+    "autoload": {
+        "files": [
+            "protected/globalFunctions.php"
+        ]
     }
 }

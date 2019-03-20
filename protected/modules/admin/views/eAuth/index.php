@@ -48,21 +48,17 @@
                 'infoUrl' => 'https://developers.facebook.com/apps/'
             ))?>
 
-            <?php /* $this->renderPartial('_panel',array(
-                'form' => $form,
-                'model' => $model,
-                'serviceTitle'=>'Wargaming',
-                'serviceFileName' => '_wargaming',
-            ))*/?>
-        </div>
-
-        <div class="row-fluid">
             <?= $this->renderPartial('_panel',array(
                 'form' => $form,
                 'model' => $model,
-                'serviceTitle'=>'Yahoo',
-                'serviceFileName' => '_yahoo',
+                'serviceTitle'=>'Dropbox',
+                'serviceFileName' => '_dropbox',
+                'infoUrl' => 'https://www.dropbox.com/developers/apps/create'
             ))?>
+
+        </div>
+
+        <div class="row-fluid">
 
             <?= $this->renderPartial('_panel',array(
                 'form' => $form,
@@ -78,6 +74,15 @@
                 'serviceTitle'=>'Google',
                 'serviceFileName' => '_google',
                 'infoUrl' => 'https://code.google.com/apis/console/'
+            ))?>
+
+
+            <?= $this->renderPartial('_panel',array(
+                'form' => $form,
+                'model' => $model,
+                'serviceTitle'=>'Linkedin',
+                'serviceFileName' => '_linkedin',
+                'infoUrl' => 'https://www.linkedin.com/secure/developer'
             ))?>
         </div>
 
@@ -104,32 +109,6 @@
                 'serviceTitle'=>'Mailru',
                 'serviceFileName' => '_mailru',
                 'infoUrl' => 'http://api.mail.ru/sites/my/add'
-            ))?>
-        </div>
-
-        <div class="row-fluid">
-            <?= $this->renderPartial('_panel',array(
-                'form' => $form,
-                'model' => $model,
-                'serviceTitle'=>'Dropbox',
-                'serviceFileName' => '_dropbox',
-                'infoUrl' => 'https://www.dropbox.com/developers/apps/create'
-            ))?>
-
-            <?= $this->renderPartial('_panel',array(
-                'form' => $form,
-                'model' => $model,
-                'serviceTitle'=>'Linkedin',
-                'serviceFileName' => '_linkedin',
-                'infoUrl' => 'https://www.linkedin.com/secure/developer'
-            ))?>
-
-            <?= $this->renderPartial('_panel',array(
-                'form' => $form,
-                'model' => $model,
-                'serviceTitle'=>'Odnoklassniki',
-                'serviceFileName' => '_odnoklassniki',
-                'infoUrl' => 'http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=13992188'
             ))?>
         </div>
 

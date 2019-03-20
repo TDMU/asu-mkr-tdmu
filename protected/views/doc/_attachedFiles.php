@@ -1,14 +1,14 @@
 <?php
 /**
  *
- * @var DocsController $this
+ * @var DocController $this
  * @var Tddo $model
- * @var Fpdd $fpdd
  */
 
+/**
+ * @var $attachedFiles Fpdd[]
+ */
 $attachedFiles = $model->getFiles();
-//var_dump($attachedFiles);
-
 ?>
 
     <ul class="thumbnails">
@@ -27,52 +27,20 @@ $attachedFiles = $model->getFiles();
 HTML;
 
         foreach ($attachedFiles as $file) {
-            $link = Yii::app()->createUrl('/doc/file/',array('id'=>$file['FPDD1']));
+            $link = Yii::app()->createUrl('/doc/file/',array('id'=>$file->fpdd1));
 
-            if(Tddo::model()->isImage($file['FPDD4'])) {
+            if($file->isImage()) {
                 $file_ = '<img src="%s" alt="%s">';
-                $file_ = sprintf($file_, $link, $file['FPDD4']);
+                $file_ = sprintf($file_, $link, $file->fpdd4);
             }else{
                 $file_ ='';
             }
 
-            $html .= sprintf($pattern,$link, $file_, $file['FPDD4']);
+            $html .= sprintf($pattern,$link, $file_, $file->fpdd4);
         }
         echo $html;
         ?>
     </ul>
 <?php
-/*
 
-<div class="widget-box no-margin span6">
-    <div class="widget-header">
-        <h4>Custom File Input</h4>
-    </div>
-
-    <div class="widget-body">
-        <div class="widget-main">
-            <?php
-                $form=$this->beginWidget('CActiveForm', array(
-                    'id'=>'attach-file-form',
-                    'htmlOptions' => array(
-                        'enctype' => 'multipart/form-data',
-                        'class' => 'form-horizontal'
-                    )
-                ));
-            ?>
-
-            <?php echo CHtml::fileField('files[]', '', array('id' => 'id-input-file-3', 'multiple' => 'true')) ?>
-
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-info">
-                    <i class="icon-ok bigger-110"></i>
-                    <?=tt('Сохранить')?>
-                </button>
-            </div>
-
-            <?php $this->endWidget(); ?>
-        </div>
-    </div>
-</div>*/
 

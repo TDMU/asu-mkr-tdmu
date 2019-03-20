@@ -18,10 +18,10 @@ define('MENU_ELEMENT_AUTH_DOCTOR', 'need_auth_doctor');
 
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 
-$params = require(dirname(__FILE__).'/params.php');
+$params = getSettingsArrayFromFile(dirname(__FILE__).'/params.inc');
 //разрешена ли у нас авторизация через соцсети
 $params['enableEAuth'] = false;
-$paramsEAuth = require(dirname(__FILE__) . '/paramsEAuth.php');
+$paramsEAuth = getSettingsArrayFromFile(dirname(__FILE__) . '/paramsEAuth.inc');
 if (isset($paramsEAuth['enable']))
     $params['enableEAuth'] = $paramsEAuth['enable'];
 
@@ -34,12 +34,13 @@ $config = array(
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
+        'application.forms.*',
 		'application.components.*',
+        'application.components.OAuth.*',
         'application.validators.*',
 		'application.extensions.bootstrap.*',
 		'application.extensions.behaviors.*',
 		'ext.elFinder.*',
-		'ext.EScriptBoost.*',
 		'ext.LangPick.*',
         'application.components.DistEducation.*',
         'application.components.DistEducation.forms.*',
@@ -56,10 +57,6 @@ $config = array(
 				//'enableCsrfValidation'=>true,
 				//'csrfTokenName'=>'csrf-mkr'
 		),
-		/*'user'=>array(
-			// enable cookie-based authentication
-			'allowAutoLogin'=>true,
-		),*/
 		'session'=>array(
 			'timeout' => 1440,
 		),
@@ -85,10 +82,6 @@ $config = array(
 		'cache' => array(
 			'class' => 'CFileCache',
 		),
-		/*'assetManager' => array(
-			'class' => 'ext.EAssetManagerBoostGz',
-			'minifiedExtensionFlags' => array('min.js', 'minified.js', 'packed.js'),
-		),*/
 		'clientScript'=>array(
 			'packages' => array(
 				'jquery' => array( // jQuery CDN - provided by (mt) Media Temple
@@ -97,7 +90,7 @@ $config = array(
 				),
                 'chosen' => array(
                     'baseUrl' => 'theme/ace/assets/',
-                    'css' => array('css/chosen.css'),
+                    'css' => array('css/chosen.min.css'),
                     'js' => array('js/uncompressed/chosen.jquery.js'),
 					//'css' => array('chosen.min.css'),
 					//'js' => array('chosen.jquery.min.js'),
@@ -120,12 +113,12 @@ $config = array(
                     'js' => array('js/spin.min.js'),
                     'depends' => array('jquery')
                 ),
-                'jqgrid' => array(
+                /*'jqgrid' => array(
                     'baseUrl' => 'theme/ace/assets/',
                     'css' => array('css/ui.jqgrid.css'),
                     'js' => array('js/jqGrid/jquery.jqGrid.min.js'),
                     'depends' => array('jquery')
-                ),
+                ),*/
                 'dataTables' => array(
                     'baseUrl' => 'theme/ace/assets/',
                     'js' => array('js/jquery.dataTables.min1.js', 'js/jquery.dataTables.bootstrap.js'),
@@ -161,7 +154,7 @@ $config = array(
                     'js' => array('js/jquery-ui-1.10.3.full.min.js'),
                     'depends'=>array('jquery'),
                 ),
-                'jqplot' => array(
+                /*'jqplot' => array(
                     'baseUrl' => 'theme/ace/assets/',
                     'css' => array('css/jquery.jqplot.css'),
                     'js' => array(
@@ -171,7 +164,7 @@ $config = array(
                         'js/jqplot/jqplot.dateAxisRenderer.js',
                     ),
                     'depends'=>array('jquery'),
-                ),
+                ),*/
                 'nestable' => array(
                     'baseUrl' => 'theme/ace/assets/',
                     'js' => array('js/jquery.nestable.min.js'),
@@ -181,7 +174,7 @@ $config = array(
                     'baseUrl' => 'theme/ace/assets/',
                     'js' => array('js/jquery-2.0.3.min.js'),
                 ),
-                'form-wizard' => array(
+                /*'form-wizard' => array(
                     'baseUrl' => 'theme/ace/assets/',
                     'css' => array('css/select2.css'),
                     'js' => array(
@@ -192,30 +185,26 @@ $config = array(
                         'js/select2.min.js'
                     ),
                     'depends'=>array('jquery'),
-                ),
+                ),*/
                 'autocomplete' => array(
                     'baseUrl' => 'js/',
                     'js' => array('jquery.autocomplete.js'),
                     'depends'=>array('jquery'),
                 ),
             ),
-			'behaviors' => array(
-				array(
-					'class' => 'ext.behaviors.localscripts.LocalScriptsBehavior',
-					'publishJs' => !YII_DEBUG,
-					// Uncomment this if your css don't use relative links
-					// 'publishCss' => !YII_DEBUG,
-				),
-			),
 		),
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
 		),
-		'Smtpmail'=>array(
+		'Smtpmail'=>array_merge(
+		    array(
 				'class'=>'application.extensions.smtpmail.PHPMailer',
 				'SMTPAuth'=>true,
-		)+require(dirname(__FILE__).'/mail.php'),
+                'Mailer' => 'smtp',
+		    ),
+            getSettingsArrayFromFile(dirname(__FILE__) .'/mail.inc')
+        ),
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
@@ -223,12 +212,6 @@ $config = array(
 					'class'=>'CFileLogRoute',
 					'levels'=>'error, warning',
 				),
-				/*array(
-					'class'=>'application.extensions.yii-debug-toolbar.YiiDebugToolbarRoute',
-					//'ipFilters'=>array('77.121.11.10'),
-					//'ipFilters'=>array('109.87.233.112'),
-					//'ipFilters'=>array('93.78.170.140'),
-				),*/
 			),
 		),
 		'mobileDetect' => array(

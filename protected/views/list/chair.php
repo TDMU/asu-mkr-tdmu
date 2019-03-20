@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 );
 
 Yii::app()->clientScript->registerPackage('dataTables');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/workPlan/main.js', CClientScript::POS_HEAD);
+Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/list/chair.js', CClientScript::POS_HEAD);
 $attr = array('class'=>'chosen-select', 'autocomplete' => 'off', 'empty' => '&nbsp;');
 $form=$this->beginWidget('CActiveForm', array(
     'id'=>'timeTable-form',
@@ -20,8 +20,6 @@ $form=$this->beginWidget('CActiveForm', array(
 
 $html = '<div>';
     $html .= '<fieldset>';
-    //$filials = CHtml::listData(Ks::model()->findAllByAttributes(array('ks12'=>null,'ks13'=>0)), 'ks1', 'ks2');
-    //$filials = CHtml::listData(Ks::model()->findAllByAttributes(array('ks12'=>null,'ks13'=>0)), 'ks1', Ks::getFieldByLanguage(false));
     $filials = Ks::getListDataForKsFilter();
     if (count($filials) > 1) {
         $html .= '<div class="span2 ace-select">';

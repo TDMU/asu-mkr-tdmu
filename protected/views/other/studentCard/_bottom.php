@@ -163,7 +163,7 @@ HTML;
     if(PortalSettings::model()->getSettingFor(48)==1)
         array_push($tabs,array('label'=>tt('Текущая задолженость (журнал)'), 'content'=>$this->renderPartial('studentCard/_retake', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==1));
     if(PortalSettings::model()->getSettingFor(49)==1)
-        array_push($tabs,array('label'=>tt('Модульный контроль'), 'content'=>$this->renderPartial((PortalSettings::model()->findByPk(76)->ps2==1)?'studentCard/_module':'studentCard/_module_pmk', $params,true), 'active'=>$ps50==2));
+        array_push($tabs,array('label'=>tt('Модульный контроль'), 'content'=>$this->renderPartial('studentCard/_module_pmk', $params,true), 'active'=>$ps50==2));
     if(PortalSettings::model()->getSettingFor(51)==1)
         array_push($tabs,array('label'=>tt('Екзаменационная сессия'), 'content'=>$this->renderPartial('studentCard/_exam'.$_pref, $params,true), 'active'=>$ps50==3));
     if(PortalSettings::model()->getSettingFor(52)==1)
@@ -174,12 +174,8 @@ HTML;
         array_push($tabs,array('label'=>tt('Сводный электронный журнал'), 'content'=>$this->renderPartial('studentCard/_itog_progress', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==6));
     if(PortalSettings::model()->getSettingFor(PortalSettings::SHOW_REGISTRATION_PASS_TAB)==1)
         array_push($tabs,array('label'=>tt('Регистрация пропусков'), 'content'=>$this->renderPartial('studentCard/_registration_pass', $params+array('disciplines'=>$disciplines),true), 'active'=>$ps50==7));
-
-    /*array('label'=>Yii::t('main', 'Текущая задолженость'), 'content'=>$this->renderPartial('studentCard/_retake',$params,true), 'active'=>$ps50==1,'visible'=>PortalSettings::model()->findByPk(48)->ps2==1);
-    array('label'=>Yii::t('main', 'Модульный контроль'), 'content'=>$this->renderPartial('studentCard/_module', $params,true), 'active'=>$ps50==2,'visible'=>PortalSettings::model()->findByPk(49)->ps2==1);
-    array('label'=>Yii::t('main', 'Екзаменационная сессия'), 'content'=>$this->renderPartial('studentCard/_exam', $params,true), 'active'=>$ps50==3,'visible'=>PortalSettings::model()->findByPk(51)->ps2==1);
-    array('label'=>Yii::t('main', 'Диплом'), 'content'=>$this->renderPartial('studentCard/_diplom', $params,true), 'active'=>$ps50==4,'visible'=>PortalSettings::model()->findByPk(52)->ps2==1);
-    */
+    if(PortalSettings::model()->getSettingFor(PortalSettings::SHOW_GOSTEM_TAB)==1)
+        array_push($tabs,array('label'=>tt('Гос. экзамены'), 'content'=>$this->renderPartial('studentCard/_gostem', $params,true), 'active'=>$ps50==8));
 
     $this->widget('bootstrap.widgets.TbTabs', array(
         'type'=>'tabs',

@@ -270,46 +270,6 @@ class Users extends CActiveRecord
         }
     }*/
 
-    public function renderPhoto($foto1, $type)
-    {
-        try {
-            $sql = <<<SQL
-        SELECT foto3 as foto
-        FROM foto
-        WHERE foto1 = {$foto1} AND foto2 = {$type}
-SQL;
-
-            $string = Yii::app()->db->connectionString;
-            $parts = explode('=', $string);
-
-            $host = str_replace(';role', '', $parts[1]);
-
-            $host = trim($host . 'd');
-
-            $login = Yii::app()->db->username;
-            $password = Yii::app()->db->password;
-            $dbh = ibase_connect($host, $login, $password);
-
-            $result = ibase_query($dbh, $sql);
-            $data = ibase_fetch_object($result);
-
-            if (empty($data->FOTO)) {
-                header("Content-type: image/png");
-                $defaultImg = imagecreatefrompng(Yii::app()->basePath . '/../theme/ace/assets/avatars/avatar2.png');
-                imagepng($defaultImg);
-            } else {
-                header("Content-type: image/jpeg");
-                ibase_blob_echo($data->FOTO);
-            }
-
-            ibase_free_result($result);
-        }catch (Exception $error){
-            header("Content-type: image/png");
-            $defaultImg = imagecreatefrompng(Yii::app()->basePath.'/../theme/ace/assets/avatars/avatar2.png');
-            imagepng($defaultImg);
-        }
-    }
-
 	public function getU8Type(){
 		if($this->getIsBlock()){
 			return tt('Заблокирован');
@@ -622,7 +582,8 @@ HTML;
         }else if($this->isTeacher){
 	        $p = P::model()->findByPk($this->u6);
             $chair = $p->getChair();
-            $name=$name.' ('.tt('каф.').$chair->k2.')';
+            $chairName = $chair == null ? '' : ' ('.tt('каф.').$chair->k2.')';
+            $name=$name.$chairName;
         }
 
 	    return $name;

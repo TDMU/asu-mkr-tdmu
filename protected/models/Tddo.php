@@ -355,15 +355,7 @@ class Tddo extends CActiveRecord
 	}
 
 	public function getFiles(){
-		$files = array();
-
-		$dbh = SH::getGrafConnection();
-
-		try{
-			$dbh->active = true;
-		}catch(Exception $error) {
-			throw new Exception("Ошибка подключения к графической базе, с ошибкой: " . $error->getMessage());
-		}
+		/*$dbh = Yii::app()->db2;
 
 		$sql = <<<SQL
 			SELECT fpdd1,fpdd4
@@ -374,42 +366,8 @@ SQL;
 		$dataReader=$command->query();
 		$files=$dataReader->readAll();
 
-		$dbh->active = false;
+		$dbh->active = false;*/
 
-		return $files;
-	}
-
-	/**
-	 * Являеться ли пикрепленый файл изображением
-	 * @param $nameFile string название_файла
-	 * @return bool
-	 */
-	public function isImage($nameFile){
-		$ext=$this->getExtByName($nameFile);
-
-		$result = false;
-		switch($ext){
-			case 'doc':
-			case 'docx':
-            case 'xls':
-            case 'xlsx':
-			case 'pdf':
-				$result = false;
-				break;
-			default:
-				$result = true;
-				break;
-		}
-		return $result;
-	}
-
-	/**
-	 * расширение прикрепленого файла по имени
-	 * @param $fileName
-	 * @return mixed
-	 */
-	public function getExtByName($fileName){
-		$ext = explode(".",$fileName);
-		return strtolower(end($ext));
+		return Fpdd::model()->findAllByAttributes(array('fpdd2'=>$this->tddo1));
 	}
 }

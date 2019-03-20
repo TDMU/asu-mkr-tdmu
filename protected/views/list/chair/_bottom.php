@@ -1,6 +1,6 @@
 <?php
 /**
- * @var WorkPlanController $this
+ * @var ListController $this
  * @var FilterForm $model
  */
 	

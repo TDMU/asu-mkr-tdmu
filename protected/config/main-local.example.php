@@ -17,14 +17,6 @@ $group = array_merge($group, array(
     'password' => '',
 ));
 
-if (YII_DEBUG)
-    $config['components']['log']['routes'][] = array(
-        'class'=>'ext.yii-debug-toolbar.YiiDebugToolbarRoute',
-        'levels'=>'error, warning, trace, profile, info',
-        'enabled' => YII_DEBUG,
-        'ipFilters'=>array('*'),
-    );
-
 $config['components']['log']['routes'][] = array(
     'class'=>'CWebLogRoute',
     'categories'=>'system.db.CDbCommand',
@@ -33,15 +25,3 @@ $config['components']['log']['routes'][] = array(
 );
 $config['components']['db']['enableProfiling'] = true;
 $config['components']['db']['enableParamLogging'] = true;
-
-if (YII_DEBUG)
-    $config['modules']['gii'] =
-        array(
-            'class'=>'system.gii.GiiModule',
-            'password'=>'123',
-            'generatorPaths'=>array(
-                'bootstrap.gii',
-            ),
-        );
-
-$config['params']['code'] = '';

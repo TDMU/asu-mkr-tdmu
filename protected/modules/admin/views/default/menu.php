@@ -44,29 +44,12 @@
                                 $studentStr
                             )
                         ),
-                        'gostem' => array(
-                            'name'=>'Запись на гос. экзамены',
-                            'authOnly' => $studentStr
-                        ),
                         'subscription' => array(
                             'name'=>'Запись на выборочные дисциплины',
                             'authOnly' => $studentStr
                         ),
-                        'orderLesson' => array(
-                            'name'=>'Заказ переноса занятия',
-                            'authOnly' => $teacherStr
-                        ),
                         'studentInfo' => 'Данные студенты',
                         'studentCard' => 'Карточка студента',
-                    ),
-                ),
-                array(
-                    'name'       => 'Абитуриент',
-                    'controller' => 'entrance',
-                    'items' => array(
-                        'documentReception' => 'Ход приема документов',
-                        'rating'            => 'Рейтинговый список',
-                        'registration'      => 'Регистрация',
                     ),
                 ),
                 array(
@@ -143,13 +126,6 @@
                     ),
                 ),
                 array(
-                    'name'       => 'Для моб.',
-                    'controller' => 'mobile',
-                    'items' => array(
-                        'journal' => 'Эл. журнал (моб.)',
-                    ),
-                ),
-                array(
                     'name'       => 'Успеваемость',
                     'controller' => 'progress',
                     'items' => array(
@@ -158,14 +134,6 @@
                             'name'=>'Тестирование',
                             'authOnly' => $studentStr
                         ),
-                        'modules' =>  array(
-                            'name'=>'Ведение модулей',
-                            'authOnly' => $teacherStr
-                        ),
-                        'examSession'=>array(
-                            'name'=>'Экз. сессия',
-                            'authOnly' => $teacherStr
-                        )
                     ),
                 ),
 				array(
@@ -176,6 +144,8 @@
                         'stream'      => 'Потока',
                         'chair'      => 'Кафедры',
                         'virtualGroup' => 'Группы по выборочным дисциплинам',
+                        'contactStudents' => 'Контакты академ.группы',
+                        'contactTeachers' => 'Контакты кафедры'
                         'students2moodle' => 'Students2Moodle',
                     ),
                 ),
@@ -270,18 +240,9 @@
                     'controller' => 'other',
                     'items' => array(
                         'phones' => 'Телефонный справочник',
-                        'gostem' => array(
-                            'name'=>'Запись на гос. экзамены',
-                            'authOnly' => $studentStr
-                        ),
-                        'employment' => 'Трудоустройство',
                         'subscription' => array(
                             'name'=>'Запись на выборочные дисциплины',
                             'authOnly' => $studentStr
-                        ),
-                        'orderLesson' => array(
-                            'name'=>'Заказ переноса занятия',
-                            'authOnly' => $teacherStr
                         ),
                         'studentInfo' => 'Данные студенты',
                         'studentCard' => 'Карточка студента',

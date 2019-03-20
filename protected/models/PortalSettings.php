@@ -10,6 +10,10 @@
 class PortalSettings extends CActiveRecord
 {
     /**
+     * Отображать паспорта в списке группы
+     */
+    const SHOW_PASSPORT_IN_LIST_OG_GROUP = 35;
+    /**
      * Количетво дней на редектированеи мин макс
      */
     const IRPEN_COUNT_DAYS_FOR_MIN_MAX = 24999999;
@@ -38,11 +42,6 @@ class PortalSettings extends CActiveRecord
      * @var int ошибка записи на дисциплины сообщение
      */
     const ERROR_SUBCRIPTION_MESSAGE = 126;
-    /**
-     * @var int мобильное приложение через авторизацию
-     * Не используется
-     */
-    //const MOBILE_APP_NEED_AUTH = 128;
     /**
      * @var int Письмо о ригитсрации в дист. образовании
      */
@@ -101,9 +100,9 @@ class PortalSettings extends CActiveRecord
     const STUDENT_SEND_IN_ALERT = 140;
 
     /**
-     * @var int дефолтный акшен
+     * @var int ОТобразить таб "Гос.экзамены" в карточке студента
      */
-    const DEFAULT_ACTION = 142;
+    const SHOW_GOSTEM_TAB = 142;
 
     /**
      * Для хранения настро

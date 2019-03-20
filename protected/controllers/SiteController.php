@@ -1,7 +1,5 @@
 <?php
 
-// Grab the Apostle namespace
-use Apostle\Mail;
 
 class SiteController extends Controller
 {
@@ -420,44 +418,6 @@ HTML
 		}
 	}
 
-    public function actionClose()
-    {
-        $this->layout='//layouts/clear';
-        if($error=Yii::app()->errorHandler->error)
-        {
-            if(Yii::app()->request->isAjaxRequest)
-                echo $error['message'];
-            else
-                $this->render('close', $error);
-        }
-    }
-
-	/**
-	 * Displays the contact page
-	 */
-	/*public function actionContact()
-	{
-		$model=new ContactForm;
-		if(isset($_POST['ContactForm']))
-		{
-			$model->attributes=$_POST['ContactForm'];
-			if($model->validate())
-			{
-				$name='=?UTF-8?B?'.base64_encode($model->name).'?=';
-				$subject='=?UTF-8?B?'.base64_encode($model->subject).'?=';
-				$headers="From: $name <{$model->email}>\r\n".
-					"Reply-To: {$model->email}\r\n".
-					"MIME-Version: 1.0\r\n".
-					"Content-type: text/plain; charset=UTF-8";
-
-				mail(Yii::app()->params['adminEmail'],$subject,$model->body,$headers);
-				Yii::app()->user->setFlash('contact','Thank you for contacting us. We will respond to you as soon as possible.');
-				$this->refresh();
-			}
-		}
-		$this->render('contact',array('model'=>$model));
-	}*/
-
 	private function servicesLogin(){
         if(Yii::app()->params['enableEAuth']!==true)
             return;
@@ -752,14 +712,6 @@ HTML
 				if($user===null)
 					throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
-                /*Apostle::setup("a596c9f9cb4066dd716911ef92be9bd040b0664d");
-                $mail = new Mail( "forgot-password", array( "email" => $user->u4 ) );
-                $mail->name = $user->name;
-                $mail->url  = Yii::app()->createAbsoluteUrl('site/index');
-                $mail->login    = $user->u2;
-                $mail->password = $user->u3;
-                $t = $mail->deliver();*/
-
 				$user->generatePasswordResetToken();
 				$key = $user->getValidationKey();
 				if($user->saveAttributes(array('u10'=>$user->u10))) {
@@ -822,6 +774,10 @@ HTML;
 		$this->render('resetPassword',array('model'=>$model));
 	}
 
+    /**
+     * Отрисовка автара пользователя
+     * @throws CHttpException
+     */
     public function actionUserPhoto()
     {
         $id   = Yii::app()->request->getParam('_id', null);
@@ -830,7 +786,7 @@ HTML;
         if (is_null($id) || is_null($type))
             throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
-        Users::model()->renderPhoto($id, $type);
+        Foto::renderFoto($id, $type);
     }
 
 	public function actionStudentBarcode()
@@ -840,9 +796,13 @@ HTML;
 		if (is_null($id))
 			throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
-		St::model()->getShortCodesImageRender($id);
+		Foto::renderStudentBarcode($id);
 	}
 
+    /**
+     * Отрисовка паспорта
+     * @throws CHttpException
+     */
 	public function actionStudentPassport()
 	{
 		if(!Yii::app()->user->isAdmin)
@@ -854,7 +814,7 @@ HTML;
 		if (is_null($id) || is_null($type))
 			throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 
-		St::model()->renderPassport($id, $type);
+		Passport::renderPassport($id, $type);
 	}
 
 	public function actionIFrame($id)

@@ -14,6 +14,7 @@
  * @property EYiiPdf $ePdf
  * @property CFirebirdConnection $db
  * @property CFirebirdConnection $db2
+ * @property EAuth $eauth
  */
 class CApplication
 {}

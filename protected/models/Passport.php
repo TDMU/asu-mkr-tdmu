@@ -1,22 +1,22 @@
 <?php
 
 /**
- * This is the model class for table "fpdd".
+ * This is the model class for table "passport".
  *
- * The followings are the available columns in table 'fpdd':
- * @property integer $fpdd1
- * @property integer $fpdd2
- * @property string $fpdd3
- * @property string $fpdd4
+ * The followings are the available columns in table 'passport':
+ * @property integer $passport1
+ * @property integer $passport2
+ * @property integer $passport3
+ * @property string $passport4
  */
-class Fpdd extends CGraficActiveRecord
+class Passport extends CGraficActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'fpdd';
+		return 'passport';
 	}
 
 	/**
@@ -27,13 +27,12 @@ class Fpdd extends CGraficActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('fpdd1, fpdd2, fpdd3, fpdd4', 'required'),
-			array('fpdd1, fpdd2', 'numerical', 'integerOnly'=>true),
-			//array('fpdd3', 'length', 'max'=>8),
-			array('fpdd4', 'length', 'max'=>200),
+			array('passport2', 'required'),
+			array('passport1, passport2, passport3', 'numerical', 'integerOnly'=>true),
+			array('passport4', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('fpdd1, fpdd2, fpdd3, fpdd4', 'safe', 'on'=>'search'),
+			array('passport1, passport2, passport3, passport4', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,10 +53,10 @@ class Fpdd extends CGraficActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'fpdd1' => 'Fpdd1',
-			'fpdd2' => 'Fpdd2',
-			'fpdd3' => 'Fpdd3',
-			'fpdd4' => 'Fpdd4',
+			'passport1' => 'Passport1',
+			'passport2' => 'Passport2',
+			'passport3' => 'Passport3',
+			'passport4' => 'Passport4',
 		);
 	}
 
@@ -79,20 +78,21 @@ class Fpdd extends CGraficActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('fpdd1',$this->fpdd1);
-		$criteria->compare('fpdd2',$this->fpdd2);
-		$criteria->compare('fpdd3',$this->fpdd3,true);
-		$criteria->compare('fpdd4',$this->fpdd4,true);
+		$criteria->compare('passport1',$this->passport1);
+		$criteria->compare('passport2',$this->passport2);
+		$criteria->compare('passport3',$this->passport3);
+		$criteria->compare('passport4',$this->passport4,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Fpdd the static model class
+	 * @return Passport the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -100,34 +100,33 @@ class Fpdd extends CGraficActiveRecord
 	}
 
     /**
-     * Являеться ли пикрепленый файл изображением
-     * @return bool
+     * Рендер фото пользователя
+     * @param $id
+     * @param $type
+     * @throws CHttpException
      */
-    public function isImage(){
-        $ext=$this->getExtension();
+    public static function renderPassport($id, $type){
+        $model = Passport::model()->findByAttributes(array(
+            'passport2' => $id,
+            'passport3' => $type
+        ));
 
-        switch($ext){
-            case 'doc':
-            case 'docx':
-            case 'xls':
-            case 'xlsx':
-            case 'pdf':
-                $result = false;
-                break;
-            default:
-                $result = true;
-                break;
+        if($model==null)
+        {
+            throw new CHttpException(500, 'Невозможно отобразить');
+        }else{
+            if(!empty($model->passport4)) {
+                $im = imagecreatefromstring($model->passport4);
+                if ($im !== false) {
+                    header('Content-Type: image/jpeg');
+                    imagejpeg($im);
+                    imagedestroy($im);
+                }else
+                    throw new CHttpException(500, 'Невозможно отобразить');
+            }else {
+                throw new CHttpException(500, 'Невозможно отобразить');
+            }
         }
-        return $result;
-    }
 
-    /**
-     * расширение прикрепленого файла по имени
-     * @param $fileName
-     * @return mixed
-     */
-    public function getExtension(){
-        $ext = explode(".",$this->fpdd4);
-        return strtolower(end($ext));
     }
 }

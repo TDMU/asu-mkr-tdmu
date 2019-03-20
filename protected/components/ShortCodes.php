@@ -118,38 +118,6 @@ SQL;
         return $result;
     }
 
-    /*private static function getNameByUs4AndUs6($sql){
-        $command = Yii::app()->db->createCommand($sql);
-        $val = $command->queryScalar();
-
-        if (empty($val))
-            return "-";
-
-        return $val;
-    }*/
-
-    /*public static function convertUS4ByUS6($us4,$us6)
-    {
-        if($us4!==null){
-            if($us4>=5&&$us4<=8&&$us6!=0){
-                switch($us4){
-                    case 5:	$type = SH::getNameByUs4AndUs6("SELECT e2 FROM e WHERE e1="+$us6); break;
-                    case 6:
-                            if($us6==1)
-                                $type = tt('Зач');
-                            else
-                                $type = tt('Диф');
-                        break;
-                    case 7:	$type = SH::getNameByUs4AndUs6("SELECT y2 FROM y WHERE y1="+$us6); break;
-                    case 8:	$type = SH::getNameByUs4AndUs6("SELECT w2 FROM w WHERE w1="+$us6); break;
-                    default: $type=SH::convertUS4($us4);
-                }
-            }else
-                $type = SH::convertUS4($us4);
-        } else
-            $type = '-';
-        return $type;
-    }*/
     public static function convertTypeJournal($_type)
     {
         if($_type!==null) {

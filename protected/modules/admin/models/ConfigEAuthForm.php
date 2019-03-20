@@ -10,10 +10,6 @@ class ConfigEAuthForm extends CFormModel
     public $enable;
 	public $popup = 0;
 
-	/*public $enableWargaming;*/
-
-    public $enableYahoo;
-
     // register your app here: https://dev.twitter.com/apps/new
     public $enableTwitter;
     public $keyTwitter;
@@ -30,12 +26,6 @@ class ConfigEAuthForm extends CFormModel
     public $enableMailru;
     public $clientIdMailru;
     public $clientSecretMailru;
-// register your app here: http://dev.odnoklassniki.ru/wiki/pages/viewpage.action?pageId=13992188
-    // ... or here: http://www.odnoklassniki.ru/dk?st.cmd=appsInfoMyDevList&st._aid=Apps_Info_MyDev
-    public $enableOdnoklassniki;
-    public $clientIdOdnoklassniki;
-    public $clientSecretOdnoklassniki;
-    public $clientPublicOdnoklassniki;
     // register your app here: https://www.dropbox.com/developers/apps/create
     public $enableDropbox;
     public $clientIdDropbox;
@@ -59,13 +49,12 @@ class ConfigEAuthForm extends CFormModel
 
     public function rules()
     {
-        $boolProps = 'enable, enableGithub, enableTwitter, enableYahoo, enableVkontakte, '.
-            'enableMailru, enableOdnoklassniki, enableDropbox, enableFacebook, enableGoogle, enableYandex, enableLinkedin';
+        $boolProps = 'enable, enableGithub, enableTwitter, enableVkontakte, '.
+            'enableMailru, enableDropbox, enableFacebook, enableGoogle, enableYandex, enableLinkedin';
 
         $keys = 'keyTwitter, secretTwitter, clientIdFacebook, clientSecretFacebook, clientIdGithub, clientSecretGithub, '.
             'clientIdGoogle, clientSecretGoogle, clientIdYandex, clientSecretYandex, keyLinkedin, secretLinkedin, '.
-            'clientIdVkontakte, clientSecretVkontakte, clientIdDropbox, clientSecretDropbox, clientIdMailru, clientSecretMailru, '.
-            'clientPublicOdnoklassniki, clientSecretOdnoklassniki, clientIdOdnoklassniki';
+            'clientIdVkontakte, clientSecretVkontakte, clientIdDropbox, clientSecretDropbox, clientIdMailru, clientSecretMailru';
 
         return array(
 			array($boolProps, 'numerical', 'integerOnly'=>true),
@@ -86,7 +75,6 @@ class ConfigEAuthForm extends CFormModel
             'enableYahoo' => tt('Авторизация через Yahoo'),
             'enableVkontakte' => tt('Авторизация через Vkontakte'),
             'enableMailru' => tt('Авторизация через Mailru'),
-            'enableOdnoklassniki' => tt('Авторизация через Odnoklassniki'),
             'enableDropbox' => tt('Авторизация через Dropbox'),
             'enableFacebook' => tt('Авторизация через Facebook'),
             'enableGoogle' => tt('Авторизация через Google'),
@@ -108,16 +96,6 @@ class ConfigEAuthForm extends CFormModel
      */
     public function getServicesArr(){
         $services = array();
-
-        /*if($this->enableWargaming == 1)
-            $services['wargaming'] = array(
-                'class' => 'WargamingOpenIDService'
-            );*/
-
-        if($this->enableYahoo == 1)
-            $services['yahoo'] = array(
-                'class' => 'YahooOpenIDService',
-            );
 
         if($this->enableLinkedin == 1)
             $services['linkedin'] = array(
@@ -184,15 +162,6 @@ class ConfigEAuthForm extends CFormModel
                 'client_secret' => $this->clientSecretDropbox,
             );
 
-        if($this->enableOdnoklassniki == 1)
-            $services['odnoklassniki'] = array(
-                'class' => 'OdnoklassnikiOAuthService',
-                'client_id' => $this->clientIdOdnoklassniki,
-                'client_public' => $this->clientPublicOdnoklassniki,
-                'client_secret' => $this->clientSecretOdnoklassniki,
-                'title' => 'Odnokl.',
-            );
-
         return $services;
     }
 
@@ -200,10 +169,6 @@ class ConfigEAuthForm extends CFormModel
 
         if(empty($services))
             return;
-
-        //$this->enableWargaming = isset($services['wargaming']);
-
-        $this->enableYahoo = isset($services['yahoo']);
 
         if(isset($services['linkedin'])) {
             $this->enableLinkedin = true;
@@ -275,15 +240,6 @@ class ConfigEAuthForm extends CFormModel
             $this->clientSecretDropbox = $this->getValueByArrayKey($services['dropbox'],'client_secret','');
         }else {
             $this->enableDropbox = false;
-        }
-
-        if(isset($services['odnoklassniki'])) {
-            $this->enableOdnoklassniki= true;
-            $this->clientIdOdnoklassniki  = $this->getValueByArrayKey($services['odnoklassniki'],'client_id','');
-            $this->clientPublicOdnoklassniki = $this->getValueByArrayKey($services['odnoklassniki'],'client_public','');
-            $this->clientSecretOdnoklassniki = $this->getValueByArrayKey($services['odnoklassniki'],'client_secret','');
-        }else {
-            $this->enableOdnoklassniki = false;
         }
     }
 

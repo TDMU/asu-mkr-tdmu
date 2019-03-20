@@ -34,8 +34,6 @@
 
 			<?php echo $form->passwordFieldRow($model, 'Password'); ?>
 
-			<?php echo $form->textFieldRow($model, 'Mailer'); ?>
-
 			<?php echo $form->labelEx($model,'Port'); ?>
 			<?php echo $form->numberField($model, 'Port',array('min'=>'1','max'=>'65535')); ?>
 			<?php //echo $form->textFieldRow($model, 'Port',array('type'=>'number')); ?>

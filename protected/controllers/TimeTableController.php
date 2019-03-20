@@ -58,19 +58,13 @@ class TimeTableController extends Controller
                     'selfExcel'
                 ),
                 'expression' => 'Yii::app()->user->isStd || Yii::app()->user->isTch',
-            ),
-            /*array('deny',
-                'users' => array('*'),
-            ),*/
+            )
         );
     }
 
     public  function actionSelf()
     {
-        /*if($this->mobileCheck())
-            $this->redirect('/mobile/timeTableSelf');*/
         $model = new TimeTableForm;
-        //$model->scenario = 'self';
         if (isset($_REQUEST['TimeTableForm']))
             $model->attributes=$_REQUEST['TimeTableForm'];
         $model->date1 = Yii::app()->session['date1'];
@@ -113,7 +107,6 @@ class TimeTableController extends Controller
     public function actionSelfExcel()
     {
         $model = new TimeTableForm;
-        //$model->scenario = 'self';
         if (isset($_REQUEST['TimeTableForm']))
             $model->attributes=$_REQUEST['TimeTableForm'];
         $model->date1 = Yii::app()->session['date1'];
@@ -232,9 +225,6 @@ class TimeTableController extends Controller
 
     public function actionTeacher()
     {
-        /*if($this->mobileCheck())
-            $this->redirect('/mobile/timeTableTeacher');*/
-
         $model = new TimeTableForm;
         $model->scenario = 'teacher';
 
@@ -251,11 +241,12 @@ class TimeTableController extends Controller
         $model->date2 = Yii::app()->session['date2'];
 
         $timeTable = $minMax = $maxLessons = array();
-        if (! empty($model->teacher))
-			if($type==0)
-				list($minMax, $timeTable, $maxLessons) = $model->generateTeacherTimeTable();
-			else
-				$timeTable=Gr::getTimeTable($model->teacher, $model->date1, $model->date2, 2);
+        if (!empty($model->teacher)) {
+            if ($type == 0)
+                list($minMax, $timeTable, $maxLessons) = $model->generateTeacherTimeTable();
+            else
+                $timeTable = Gr::getTimeTable($model->teacher, $model->date1, $model->date2, 2);
+        }
 
 		$teacher = new P;
         $teacher->unsetAttributes();
@@ -347,8 +338,6 @@ class TimeTableController extends Controller
         Yii::app()->session['printAttr'] = $model->printAttr;
 
         $timeTable = $minMax = $maxLessons = array();
-        /*if ($model->validate())
-            list($minMax, $timeTable) = $model->generateClassroomTimeTable();*/
 
         if ($model->validate())
         {
@@ -549,7 +538,7 @@ class TimeTableController extends Controller
         $model->date2 = Yii::app()->session['date2'];
 		
         $timeTable = $minMax = $maxLessons = array();
-        if (! empty($model->group))
+        if (!empty($model->group))
         {
             if($type==0)
                list($minMax, $timeTable, $maxLessons) = $model->generateGroupTimeTable();
@@ -570,9 +559,6 @@ class TimeTableController extends Controller
 
     public function actionStudent()
     {
-        /*if($this->mobileCheck())
-            $this->redirect('/mobile/timeTableStudent');*/
-
         $model = new TimeTableForm;
         $model->scenario = 'student';
 		
@@ -589,11 +575,12 @@ class TimeTableController extends Controller
         $model->date2 = Yii::app()->session['date2'];
 
         $timeTable = $minMax = $maxLessons = array();
-        if (! empty($model->student))
-			if($type==0)
-				list($minMax, $timeTable, $maxLessons) = $model->generateStudentTimeTable();
-			else
-				$timeTable=Gr::getTimeTable($model->student, $model->date1, $model->date2, 1);
+        if (! empty($model->student)) {
+            if ($type == 0)
+                list($minMax, $timeTable, $maxLessons) = $model->generateStudentTimeTable();
+            else
+                $timeTable = Gr::getTimeTable($model->student, $model->date1, $model->date2, 1);
+        }
 
 		$student = new St;
         $student->unsetAttributes();

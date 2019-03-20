@@ -27,15 +27,6 @@
         'settings' => $settings,
         'blocks' => array(
             array(
-                'name'       => 'Абитуриент',
-                'controller' => 'entrance',
-                'items' => array(
-                    'documentReception' => 'Ход приема документов',
-                    'rating'            => 'Рейтинговый список',
-                    'registration'      => 'Регистрация',
-                ),
-            ),
-            array(
                 'name'       => 'Расписание',
                 'controller' => 'timeTable',
                 'items' => array(
@@ -72,20 +63,11 @@
                 ),
             ),
             array(
-                'name'       => 'Для моб.',
-                'controller' => 'mobile',
-                'items' => array(
-                    'journal' => 'Эл. журнал (моб.)',
-                ),
-            ),
-            array(
                 'name'       => 'Успеваемость',
                 'controller' => 'progress',
                 'items' => array(
                     'rating'      => 'Рейтинг',
-                    'test'=>'Тестирование',
-                    'modules'      => 'Ведение модулей',
-                    'examSession'=>'Экз. сессия'
+                    'test'=>'Тестирование'
                 ),
             ),
             array(
@@ -129,10 +111,7 @@
                 'controller' => 'other',
                 'items' => array(
                     'phones' => 'Телефонный справочник',
-                    'gostem' => 'Запись на гос. экзамены',
-                    'employment' => 'Трудоустройство',
                     'subscription' => 'Запись на дисциплины',
-                    'orderLesson' => 'Заказ переноса заняти',
                     'studentInfo' => 'Данные студенты',
                     'studentCard' => 'Карточка студента',
                     'antiplagiat' => 'Антиплагиат'

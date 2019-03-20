@@ -2,7 +2,7 @@
 
 $mainConfig = include dirname(__FILE__) . '/main.php';
 
-return array(
+$config = array(
 	'basePath' => $mainConfig['basePath'],
 	'name'     => $mainConfig['name'],
 	'import'   => $mainConfig['import'],
@@ -12,6 +12,7 @@ return array(
 	'components' => array(
 		'cache' => $mainConfig['components']['cache'],
 		'db'    => $mainConfig['components']['db'],
+        'db2'    => $mainConfig['components']['db2'],
 		'log'   => $mainConfig['components']['log'],
         	'shortcodes'   => $mainConfig['components']['shortcodes'],
 		'Smtpmail'=>array(
@@ -38,3 +39,8 @@ return array(
 
 	'params' => $mainConfig['params'],
 );
+
+$config['components']['db']['connectionString'] .= ';role=RDB$ADMIN';
+$config['components']['db2']['connectionString'] .= ';role=RDB$ADMIN';
+
+return $config;

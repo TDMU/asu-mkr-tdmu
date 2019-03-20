@@ -459,146 +459,19 @@ class St extends CActiveRecord implements IPerson
         );
     }
 
-    public function checkPassport($dbh,$id,$type)
+    public function checkPassport($id,$type)
     {
-        $sql = <<<SQL
-                    SELECT passport4 as foto
-                    FROM passport
-                    WHERE passport2 = {$id} AND passport3 = {$type}
-SQL;
-        $result = ibase_query($dbh, $sql);
-        $data   = ibase_fetch_object($result);
-        if (empty($data))
-            return false;
-        else
-            return true;
+        return Passport::model()->countByAttributes(array(
+            'passport2' => $id,
+            'passport3' => $type
+        )) > 0;
     }
-
-	public function renderPassport($id, $type)
-	{
-		$sql = <<<SQL
-			SELECT passport4 as passport
-			FROM passport
-			WHERE passport2 = {$id} AND passport3 = {$type}
-SQL;
-
-		$string = Yii::app()->db->connectionString;
-		$parts  = explode('=', $string);
-
-		$host     = trim($parts[1].'d');
-		$login    = Yii::app()->db->username;
-		$password = Yii::app()->db->password;
-		$dbh      = ibase_connect($host, $login, $password);
-
-		$result = ibase_query($dbh, $sql);
-		$data   = ibase_fetch_object($result);
-
-		if (empty($data->PASSPORT)) {
-			$defaultImg = imagecreatefrompng(Yii::app()->basePath.'/../theme/ace/assets/avatars/avatar2.png');
-			imagepng($defaultImg);
-		} else {
-			header("Content-type: image/jpeg");
-			ibase_blob_echo($data->PASSPORT);
-		}
-
-		ibase_free_result($result);
-	}
-
-	public function getFoto($st1)
-	{
-		$sql = <<<SQL
-        SELECT foto3 as foto
-        FROM foto
-        WHERE foto1 = {$st1} AND foto2 = 1
-SQL;
-
-		$string = Yii::app()->db->connectionString;
-		$parts  = explode('=', $string);
-
-		$host = str_replace(';role', '', $parts[1]);
-
-		$host     = trim($host.'d');
-		$login    = Yii::app()->db->username;
-		$password = Yii::app()->db->password;
-		$dbh      = ibase_connect($host, $login, $password);
-
-		$result = ibase_query($dbh, $sql);
-		$data   = ibase_fetch_object($result);
-		$foto=null;
-		if (!empty($data->FOTO)) {
-			$blob_data = ibase_blob_info($data->FOTO);
-			$blob_hndl = ibase_blob_open($data->FOTO);
-			$foto=ibase_blob_get($blob_hndl, $blob_data[0]);
-		}
-
-		ibase_free_result($result);
-		return $foto;
-	}
-
-    public function getShortCodesImage($st1)
-    {
-        $sql = <<<SQL
-        SELECT foto4 as foto
-        FROM foto
-        WHERE foto1 = {$st1} AND foto2 = 1
-SQL;
-
-        $string = Yii::app()->db->connectionString;
-        $parts  = explode('=', $string);
-
-        $host     = trim($parts[1].'d');
-        $login    = Yii::app()->db->username;
-        $password = Yii::app()->db->password;
-        $dbh      = ibase_connect($host, $login, $password);
-
-        $result = ibase_query($dbh, $sql);
-        $data   = ibase_fetch_object($result);
-        $foto=null;
-        if (!empty($data->FOTO)) {
-			$blob_data = ibase_blob_info($data->FOTO);
-			$blob_hndl = ibase_blob_open($data->FOTO);
-            $foto=ibase_blob_get($blob_hndl, $blob_data[0]);
-        }
-
-        ibase_free_result($result);
-        return $foto;
-    }
-
-	public function getShortCodesImageRender($st1)
-	{
-		$sql = <<<SQL
-        SELECT foto4 as foto
-        FROM foto
-        WHERE foto1 = {$st1} AND foto2 = 1
-SQL;
-
-		$string = Yii::app()->db->connectionString;
-		$parts  = explode('=', $string);
-
-		$host     = trim($parts[1].'d');
-		$login    = Yii::app()->db->username;
-		$password = Yii::app()->db->password;
-		$dbh      = ibase_connect($host, $login, $password);
-
-		$result = ibase_query($dbh, $sql);
-		$data   = ibase_fetch_object($result);
-
-		if (!empty($data->FOTO)) {
-			header("Content-type: image/jpeg");
-			ibase_blob_echo($data->FOTO);
-		}
-
-		ibase_free_result($result);
-	}
 
     public function getInfoForStudentInfoExcel($st1)
     {
         if (empty($st1))
             return array();
         list($sg40, $sg41) =D::model()->getSg40Sg41($st1);
-        //$sg40=2014;
-        //$sg41=1;
-
 
         $sql = <<<SQL
         SELECT gr1,gr3,sem4,sg4,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,f2,f3 FROM std
@@ -1114,11 +987,17 @@ SQL;
         return $students;
     }
 
+    /**
+     * список группы
+     * @param $gr1
+     * @return array
+     * @throws CException
+     */
 	public function getListGroup($gr1)
     {
 
         $sql=<<<SQL
-            SELECT st1,st2,st3,st4,st5,sk3, st74, st75, st76
+            SELECT st1,st2,st3,st4,st5,sk3, st74, st75, st76, st107
 			 FROM ST
 			   LEFT JOIN SK ON (SK.SK2 = ST.ST1)
 			   LEFT JOIN STD ON (ST.ST1 = STD.STD2)
@@ -1279,67 +1158,6 @@ SQL;
         return $amount;
     }
 
-    public function getStudentsForEmployment(FilterForm $model, $type)
-    {
-        $sg1 = intval($model->group);
-
-        if ($type == 0) {
-            $sql = <<<SQL
-                SELECT sum(stus8) as s, st1,st2,st3,st4, st56, st74, st75, st76, st117, st118, st119, st120, st121, st122, st123, st124, st125,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28
-                FROM STUS_AN({$sg1}, 3, 0, 1, 99)
-                WHERE stus19<>6
-                GROUP BY st1, st2, st3, st4, st56, st74, st75, st76, st117, st118, st119, st120, st121, st122,st123,st124,st125,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28
-                ORDER BY s DESC
-SQL;
-        } elseif ($type == 1) {
-            $sql = <<<SQL
-                SELECT stus8 as s, stus19, st1,st2,st3,st4, st56, st74, st75, st76, st117, st118, st119, st120, st121, st122, st123, st124, st125,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28
-                FROM STUS_AN({$sg1}, 3, 0, 1, 99)
-                WHERE stus19<>6
-                GROUP BY s, stus19,st1, st2, st3, st4, st56, st74, st75, st76, st117, st118, st119, st120, st121, st122,st123,st124,st125,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28
-SQL;
-        }
-
-        $command  = Yii::app()->db->createCommand($sql);
-        $students = $command->queryAll();
-
-        foreach ($students as $key => $student) {
-            $students[$key]['gr'] = Gr::model()->getGroupName($student['st56'], $student);
-        }
-
-        // counting avg stus8 manually because AVG function returns inappropriate results {{{
-        if ($type == 1) {
-            $data = array();
-            foreach ($students as $student) {
-
-                $gr  = $student['gr'];
-                $st1 = $student['st1'];
-
-                if (! isset($data[$gr][$st1]))
-                    $data[$gr][$st1] = $student;
-
-                $data[$gr][$st1]['marks'][] = $student['s'];
-
-                $marks = $data[$gr][$st1]['marks'];
-                $count = count($marks);
-                $sum   = array_sum($marks);
-                $avg   = $count > 0 ? round($sum/$count, 2) : 0;
-
-                $data[$gr][$st1]['avg'] = $avg;
-            }
-
-            foreach ($data as $group => $students) {
-                $sortedStudents = $students;
-                usort($sortedStudents, array($this, "sortByAvg"));
-                $data[$group] = $sortedStudents;
-            }
-            $students = $data;
-        }
-        // }}}
-
-        return $students;
-    }
-
     public function getFullName()
     {
         $parts = array(
@@ -1455,70 +1273,6 @@ SQL;
         }
         return ($a['avg'] > $b['avg']) ? -1 : 1;
     }
-
-    public function getStudentsForExamSession($params)
-    {
-        extract($params);
-
-        /*$sql = <<<SQL
-            select stus.*, st1,st2,st3,st4
-            from gr
-            inner join std on (gr.gr1 = std.std3)
-            inner join st on (std.std2 = st.st1)
-            inner join stus on (st.st1 = stus.stus1)
-            where gr1=:GR1 and std7 is null and std11 in (0,5,6,8) and stus18 = :STUS18 AND stus19 = :STUS19 AND stus20 = :STUS20 AND stus21 = :STUS21
-            order by st2 collate UNICODE
-SQL;*/
-		$sql = <<<SQL
-			select stus.stus0,stus.stus1,stus.stus3,stus.stus6,stus.stus7,stus.stus19, st1,st2,st3,st4
-			from ucgn
-			   inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-			   inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
-			   inner join st on (ucsn.ucsn2 = st.st1)
-			   inner join stus on (st.st1 = stus.stus1)
-			where st101!=7 and ucgn2=:GR1 and stus18 = :STUS18 AND stus19 =:STUS19 AND stus20 = :STUS20 /*AND stus21 = :STUS21 */
-			GROUP BY stus.stus0,stus.stus1,stus.stus3,stus.stus6,stus.stus7,stus.stus19,st1,st2,st3,st4 order by st2 collate UNICODE
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':GR1', $gr1);
-        $command->bindValue(':STUS18', $stus18);
-        $command->bindValue(':STUS19', $stus19);
-        $command->bindValue(':STUS20', $stus20);
-        //$command->bindValue(':STUS21', $stus21);
-        $students = $command->queryAll();
-
-        return $students;
-    }
-	/*старая процедура времено используеться в карточке стдента, до перехода на стусв, новая в стусв*/
-	public function getDisciplineExam($st1,$gr1)
-	{
-		$sql = <<<SQL
-		select d2,stus19,stus20,stus8,stus6,stus7,STUS11,STUS3
-			from st
-			   inner join stus on (st.st1 = stus.stus1)
-			   inner join d on (stus.stus18 = d.d1)
-			   inner join stusa on (stus.stus18 = stusa.stusa18) and (stus.stus19 = stusa.stusa19) and (stus.stus20 = stusa.stusa20)
-			where st1=:ST1 and stus20 in
-					 (select sem7
-					 from gr
-						inner join std on (gr.gr1 = std.std3)
-						inner join st on (std.std2 = st.st1)
-						inner join sg on (gr.gr2 = sg.sg1)
-						inner join sem on (sg.sg1 = sem.sem2)
-					 where st1={$st1} and std11<>1 and std7 is null and sem3=:YEAR and sem5=:SEM
-					 group by sem7)
-			group by d2,stus19,stus20,stus8,stus6,stus7,STUS11,STUS3
-			order by d2 COLLATE UNICODE
-SQL;
-		$command = Yii::app()->db->createCommand($sql);
-		$command->bindValue(':GR1', $gr1);
-		$command->bindValue(':ST1', $st1);
-		$command->bindValue(':YEAR', Yii::app()->session['year']);
-		$command->bindValue(':SEM', Yii::app()->session['sem']);
-		$disciplines = $command->queryAll();
-
-		return $disciplines;
-	}
 
     /**
      * получить код потока по студенту
@@ -1886,6 +1640,23 @@ SQL;
         $command->bindValue(':QUERY4', $query);
         $command->bindValue(':QUERY5', $query);
         $command->bindValue(':f1', $faculty);
+        return $command->queryAll();
+    }
+
+    public function getGostem(){
+        $sql = <<<SQL
+            select stusvst1, d2, STUSVST6, sem3, sem4, sem5, sem7
+                from sem
+                   inner join us on (sem.sem1 = us.us3)
+                   inner join stusv on (us.us1 = stusv.stusv1)
+                   inner join stusvst on (stusv.stusv0 = stusvst.stusvst1)
+                   inner join uo on (us.us2 = uo.uo1)
+                   inner join d on (uo.uo3 = d.d1)
+                WHERE d8=2 and STUSVST3=:st1
+                ORDER BY sem7, d2
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':st1',  $this->st1);
         return $command->queryAll();
     }
 }

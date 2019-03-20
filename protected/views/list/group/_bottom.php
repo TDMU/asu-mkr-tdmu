@@ -7,16 +7,18 @@ function getPassportLabel($id,$type, $pattern, $patternAdmin){
     }
 }
 /**
- * @var WorkPlanController $this
+ * @var ListController $this
  * @var FilterForm $model
+ * @var $ps35 int
  */
 	$students=St::model()->getListGroup($model->group);
 	Yii::app()->clientScript->registerScript('list-group', "
 		initDataTable('list-group');
 	");
     $ps34=PortalSettings::model()->findByPk(34)->ps2;
+
     $visible_passport=false;
-    if($ps35==1&&Yii::app()->user->isAdmin&&$dbh!=null)
+    if($ps35==1&&Yii::app()->user->isAdmin)
         $visible_passport=true;
 
     $modelStForm = new StInfoForm();
@@ -96,28 +98,28 @@ function getPassportLabel($id,$type, $pattern, $patternAdmin){
 
 		echo '<td>'.$name.'</td>';
         if($visible_passport){
-            if(St::model()->checkPassport($dbh,$student['st1'],1)){
+            if(St::model()->checkPassport($student['st1'],1)){
                 getPassportLabel($student['st1'],1,$pattern, $patternAdmin);
             }else
             {
                 echo sprintf($pattern,'important','-');
             }
 
-            if(St::model()->checkPassport($dbh,$student['st1'],2)){
+            if(St::model()->checkPassport($student['st1'],2)){
                 getPassportLabel($student['st1'],2,$pattern, $patternAdmin);
             }else
             {
                 echo sprintf($pattern,'important','-');
             }
 
-            if(St::model()->checkPassport($dbh,$student['st1'],3)){
+            if(St::model()->checkPassport($student['st1'],3)){
                 getPassportLabel($student['st1'],3,$pattern, $patternAdmin);
             }else
             {
                 echo sprintf($pattern,'important','-');
             }
 
-            if(St::model()->checkPassport($dbh,$student['st1'],4)){
+            if(St::model()->checkPassport($student['st1'],4)){
                 getPassportLabel($student['st1'],41,$pattern, $patternAdmin);
             }else
             {
