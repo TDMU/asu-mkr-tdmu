@@ -103,7 +103,7 @@ class GSuiteDirectoryModel extends CModel
             }
         }
         if (strlen($tmpFname)<2) {
-            if (strlen($tmpFname)>2){
+            if (strlen($tmpLastName)>2){
                 $tmpFname = substr($tmpLastName,0,3);
             } elseif (strlen($tmpMname)>2) {
                 $tmpFname = substr($tmpMname,0,3);
@@ -114,7 +114,7 @@ class GSuiteDirectoryModel extends CModel
             $tmpFname = substr($tmpFname,0,3);
         }
         if (strlen($tmpMname)<2) {
-            if (strlen($tmpFname)>2){
+            if (strlen($tmpLastName)>2){
                 $tmpMname = substr($tmpLastName,0,3);
             } elseif (strlen($tmpFname)>2) {
                 $tmpMname = substr($tmpFname,0,3);
@@ -393,6 +393,16 @@ class GSuiteDirectoryModel extends CModel
                 $tmpUDG->tmpLastName = ($_card->st74!=null?$_card->st74:$_card->st2);
             }
         }
+        //Set Fname or Mname in place of LastName - if it not exist - to meet Google requirements
+        if (strlen($tmpUDG->tmpLastName)<2) {
+            if (strlen($tmpUDG->tmpFname)>2){
+                $tmpUDG->tmpLastName = $tmpUDG->tmpFname;
+            } elseif (strlen($tmpUDG->tmpMname)>2) {
+                $tmpUDG->tmpLastName = $tmpUDG->tmpMname;
+            } else {
+                $tmpLastName = 'noLN';
+            }
+        }        
         $tmpUDG->tmpSuspended = boolval($user->u8);
 
         return $tmpUDG;
