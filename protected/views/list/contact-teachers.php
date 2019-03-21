@@ -10,6 +10,8 @@ $this->breadcrumbs=array(
     tt('Контакты кафедры'),
 );
 
+Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/list/chair.js', CClientScript::POS_HEAD);
+
 $attr = array('class'=>'chosen-select', 'autocomplete' => 'off', 'empty' => '&nbsp;');
 $form=$this->beginWidget('CActiveForm', array(
     'id'=>'timeTable-form',
