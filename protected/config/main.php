@@ -92,8 +92,6 @@ $config = array(
                     'baseUrl' => 'theme/ace/assets/',
                     'css' => array('css/chosen.min.css'),
                     'js' => array('js/uncompressed/chosen.jquery.js'),
-					//'css' => array('chosen.min.css'),
-					//'js' => array('chosen.jquery.min.js'),
                     'depends' => array('jquery')
                 ),
                 'gritter' => array(
@@ -105,7 +103,7 @@ $config = array(
 				'noty' => array(
 						'baseUrl' => '',
 						'css' => array('css/mobile/animate.css','css/mobile/buttons.css'),
-						'js' => array('js/mobile/noty/packaged/jquery.noty.packaged.min.js','js/mobile/notification_html.js'),
+						'js' => array('js/mobile/noty/packaged/jquery.noty.packaged.min.js'),
 						'depends' => array('jquery')
 				),
                 'spin' => array(
@@ -113,16 +111,9 @@ $config = array(
                     'js' => array('js/spin.min.js'),
                     'depends' => array('jquery')
                 ),
-                /*'jqgrid' => array(
-                    'baseUrl' => 'theme/ace/assets/',
-                    'css' => array('css/ui.jqgrid.css'),
-                    'js' => array('js/jqGrid/jquery.jqGrid.min.js'),
-                    'depends' => array('jquery')
-                ),*/
                 'dataTables' => array(
                     'baseUrl' => 'theme/ace/assets/',
                     'js' => array('js/jquery.dataTables.min1.js', 'js/jquery.dataTables.bootstrap.js'),
-                    //'css' => array('css/jquery.dataTables2.css'),
                     'depends' => array('jquery')
                 ),
                 'daterangepicker' => array(
@@ -154,17 +145,6 @@ $config = array(
                     'js' => array('js/jquery-ui-1.10.3.full.min.js'),
                     'depends'=>array('jquery'),
                 ),
-                /*'jqplot' => array(
-                    'baseUrl' => 'theme/ace/assets/',
-                    'css' => array('css/jquery.jqplot.css'),
-                    'js' => array(
-                        'js/jqplot/jquery.jqplot.js',
-                        'js/jqplot/jqplot.highlighter.js',
-                        'js/jqplot/jqplot.cursor.js',
-                        'js/jqplot/jqplot.dateAxisRenderer.js',
-                    ),
-                    'depends'=>array('jquery'),
-                ),*/
                 'nestable' => array(
                     'baseUrl' => 'theme/ace/assets/',
                     'js' => array('js/jquery.nestable.min.js'),
@@ -174,18 +154,6 @@ $config = array(
                     'baseUrl' => 'theme/ace/assets/',
                     'js' => array('js/jquery-2.0.3.min.js'),
                 ),
-                /*'form-wizard' => array(
-                    'baseUrl' => 'theme/ace/assets/',
-                    'css' => array('css/select2.css'),
-                    'js' => array(
-                        'js/fuelux/fuelux.wizard.min.js',
-                        'js/jquery.validate.min.js',
-                        'js/additional-methods.min.js',
-                        'js/bootbox.min.js',
-                        'js/select2.min.js'
-                    ),
-                    'depends'=>array('jquery'),
-                ),*/
                 'autocomplete' => array(
                     'baseUrl' => 'js/',
                     'js' => array('jquery.autocomplete.js'),
