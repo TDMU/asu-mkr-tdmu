@@ -145,7 +145,7 @@
                         'chair'      => 'Кафедры',
                         'virtualGroup' => 'Группы по выборочным дисциплинам',
                         'contactStudents' => 'Контакты академ.группы',
-                        'contactTeachers' => 'Контакты кафедры'
+                        'contactTeachers' => 'Контакты кафедры',
                         'students2moodle' => 'Students2Moodle',
                     ),
                 ),

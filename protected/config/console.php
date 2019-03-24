@@ -15,10 +15,14 @@ $config = array(
         'db2'    => $mainConfig['components']['db2'],
 		'log'   => $mainConfig['components']['log'],
         	'shortcodes'   => $mainConfig['components']['shortcodes'],
-		'Smtpmail'=>array(
+		'Smtpmail'=>array_merge(
+		    array(
 				'class'=>'application.extensions.smtpmail.PHPMailer',
 				'SMTPAuth'=>true,
-				)+require(dirname(__FILE__).'/mail.php'),
+                'Mailer' => 'smtp',
+		    ),
+            getSettingsArrayFromFile(dirname(__FILE__) .'/mail.inc')
+        ),
 	),
 	
 	'commandMap' => array(
