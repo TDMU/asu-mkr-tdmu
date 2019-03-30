@@ -550,13 +550,13 @@ $this->widget('zii.widgets.CMenu', array(
                 array(
                     'label'   => $_l2. tt('Эл. журнал'),
                     'url'     => _u('/journal/journal'),
-                    'visible' => _ch('journal', 'journal') && $isTch && $this->universityCode == U_ZSMU,
+                    'visible' => _ch('journal', 'journal') && $isTch,
                     'active'  => $_c=='journal' && $_a=='journal'
                 ),
                 array(
                     'label'   => $_l2. tt('Эл. журнал (моб.)'),
                     'url'     => _u('/mobile/journal'),
-                    'visible' => _ch('mobile', 'journal') && $isTch,
+                    'visible' => _ch('mobile', 'journal') && $isTch && $this->universityCode == U_ZSMU,
                     'active'  => $_c=='mobile' && $_a=='journal'
                 ),
                 array(
