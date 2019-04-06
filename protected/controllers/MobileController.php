@@ -31,8 +31,8 @@ class MobileController extends Controller
      */
     public function actionJournal()
     {
-        if($this->universityCode != U_ZSMU)
-            throw new CHttpException(403, tt('Доступ запрещен'));
+        /*if($this->universityCode != U_ZSMU)
+            throw new CHttpException(403, tt('Доступ запрещен'));*/
 
         $model = new FilterForm;
         $model->scenario = 'journal';

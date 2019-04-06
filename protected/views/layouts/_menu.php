@@ -556,7 +556,7 @@ $this->widget('zii.widgets.CMenu', array(
                 array(
                     'label'   => $_l2. tt('Эл. журнал (моб.)'),
                     'url'     => _u('/mobile/journal'),
-                    'visible' => _ch('mobile', 'journal') && $isTch && $this->universityCode == U_ZSMU,
+                    'visible' => _ch('mobile', 'journal') && $isTch /*&& $this->universityCode == U_ZSMU*/,
                     'active'  => $_c=='mobile' && $_a=='journal'
                 ),
                 array(

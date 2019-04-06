@@ -22,6 +22,10 @@ class PortalSettings extends CActiveRecord
      * Количевто дней ра редактированеи инд работы
      */
     const IRPEN_COUNT_DAYS_FOR_IND = 24999998;
+	/**
+     * Количевто дней на просталение типа пропуска
+     */
+    const IRPEN_COUNT_DAYS_FOR_PASS_TYPE = 24999997;
 
     const ENABLE_DIST_EDUCATION = 122;
     const HOST_DIST_EDUCATION = 123;
