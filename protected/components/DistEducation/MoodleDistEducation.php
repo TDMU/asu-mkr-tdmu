@@ -317,6 +317,33 @@ class MoodleDistEducation extends DistEducation
     }
 
     /**
+     * Get Moodle group
+     * @param string $grName
+     * @param string $courseId
+     * @return array
+     */
+    protected function _getGroup($grName, $courseId){
+
+        $body = $this->_sendQuery('core_group_get_course_groups','POST', array(
+            'courseid'=>$courseId
+        ));
+
+        $array = json_decode($body);
+
+        if(isset($array->errorcode)){
+            return array(false, 'Ошибка '.$array->message, null);
+        }else {
+            //Moodle groups found, search for particular
+            foreach ($array as $key=>$moodleGroup){
+                if ($moodleGroup->name == $grName) {
+                    return array(true, '', $moodleGroup->id);
+                }
+            }
+            return array(false, 'Error - group with such name not found in Moodle', null);
+        }
+    }
+
+    /**
      * Создать группу
      * @param string $grName
      * @param string $courseId
@@ -394,10 +421,14 @@ class MoodleDistEducation extends DistEducation
         if(isset($array->errorcode)){
             return array(false, 'Ошибка '.$array->message);
         }else {
-            if ($array[0]->roles[0]->roleid==5) {
-                return array(true, 'OK: already enrolled as student ');
+            if (!empty($array[0]->roles[0]->roleid)) {
+                if ($array[0]->roles[0]->roleid==5) {
+                    return array(true, 'OK: already enrolled as student ');
+                } else {
+                    return array(false, 'Warning: already enrolled as '.$array[0]->roles[0]->shortname);
+                }
             } else {
-                return array(false, 'Warning: already enrolled as '.$array[0]->roles[0]->shortname);
+                return array(false, 'Error: '.' No role in course id='.$courseId.' for student stdist3='.$st->stdist3);
             }
         }
     }
@@ -477,16 +508,22 @@ class MoodleDistEducation extends DistEducation
 
         $id = $model->dispdist3;
 
-        ///Ищем группу в модле
+        ///Ищем группу в ASU
         $distGroup = Distgr::model()->findByAttributes(array('distgr1' => $dispInfo['gr1'], 'distgr2' => $dispInfo['uo1']));
         if($distGroup==null)
         {
-            //если группы нет, пытаемся создать
-            $log .= '<br> Не найдина группа в MOODLE, создаем...';
+            $log .= '<br> Looking for ASU group '.$dispInfo['grName']. 'in Moodle...';
+            list($result, $message, $idGroup) = $this->_getGroup($dispInfo['grName'],$id);
+            if (!$result) {
+                //если группы нет, пытаемся создать
+                $log .= '<br> Не найдена группа в MOODLE, создаем...';
+                $descriptionGroup = '';
+                //создаем группу
+                list($result, $message, $idGroup) = $this->_createGroup($dispInfo['grName'],$id, $descriptionGroup);
+            } else {
+                $log .= '<br> ASU group '.$dispInfo['grName']. 'FOUND in Moodle with ID='.$idGroup . ' - will be used...';
+            }
 
-            $descriptionGroup = '';
-            //создаем группу
-            list($result, $message, $idGroup) = $this->_createGroup($dispInfo['grName'],$id, $descriptionGroup);
             if($result) {
                 //если получилось создать
                 $distGroup = new Distgr();
@@ -502,7 +539,7 @@ class MoodleDistEducation extends DistEducation
                     return array($globalResult, $log);
                 } else {
                     //если удачно охранили
-                    $log .= '<br> Создана группа в MOODLE с id: ' . $distGroup->distgr3;
+                    $log .= '<br> Збережена в АСУ группа MOODLE с id: ' . $distGroup->distgr3;
                 }
             }else{
                 //если ошибка созданя в моодле
