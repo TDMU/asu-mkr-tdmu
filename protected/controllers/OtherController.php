@@ -81,7 +81,7 @@ class OtherController extends Controller
 
     public function actionDeleteRequestPayment($id)
     {
-        if(Yii::app()->request->isPostRequest)
+        if(!Yii::app()->request->isPostRequest)
             throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 
         if (!Yii::app()->user->isStd)
