@@ -542,12 +542,14 @@ SQL;
                 list($result, $error) = $connector->subscribeToCourse(Yii::app()->user->model, $code['ucgns1_vib']);
                 Yii::app()->user->setFlash($result ? 'success' : 'error' , $error);
                 if(!$result)
-                    throw new CHttpException('400',tt('Ошибка записи ' . $error));
+                    throw new CHttpException('400',tt('Ошибка записи {error}', array(
+                        '{error}' => $error
+                    )));
             }
 
             $sql = <<<SQL
-UPDATE or INSERT INTO ucsn (ucsn1,ucsn2,ucsn3,ucsn4,ucsn5)
-VALUES (:UCGNS1_VIB,:ST1,:GR1_KOD,current_timestamp,0) MATCHING(ucsn1,ucsn2)
+UPDATE or INSERT INTO ucsn (ucsn1,ucsn2,ucsn4,ucsn5)
+VALUES (:UCGNS1_VIB,:ST1,current_timestamp,0) MATCHING(ucsn1,ucsn2)
 SQL;
             $params = array(
                 ':UCGNS1_VIB' => $code['ucgns1_vib'],

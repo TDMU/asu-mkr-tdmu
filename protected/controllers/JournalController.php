@@ -3755,7 +3755,7 @@ SQL;
                 if($timeR2>$now)
                     continue;
 
-                $type = $key['prop']==2 ? tt('уваж.') :tt('неув.');
+                $type = $key['propusk']==2 ? tt('уваж.') :tt('неув.');
 
                 $sheet->setCellValueByColumnAndRow(0,$i,$i-7);
                 $sheet->setCellValueByColumnAndRow(1,$i,date('d.m.Y',strtotime($key['r2'])));

@@ -27,7 +27,7 @@
 		    if($timeR2>$now)
 		        continue;
 
-			if($key['prop']==2){
+			if($key['propusk']==2){
 				$table.= '<tr class="success">';
 			}
 			else

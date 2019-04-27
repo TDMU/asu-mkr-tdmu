@@ -777,7 +777,7 @@ SQL;
 SQL;*/
         $sql = <<<SQL
        select t.st1,st.st2,st.st3,st.st4,st.st45,st.st71,st.st163,st.st167, elgvst2, elgvst3
-        from (select listst.st1,listst.gr1,listst.std11,ucx1 from listst(:DATE_1,:YEAR,:SEM,0) where (listst.gr1=:GR1 or listst.gr1_virt=:GR1_VIRT) and listst.std11 in (0,6,8) ) t
+        from (select listst.st1,listst.gr1,listst.std11,ucx1 from listst(:DATE_1,:YEAR,:SEM,0,0,0,0,0,0) where (listst.gr1=:GR1 or listst.gr1_virt=:GR1_VIRT) and listst.std11 in (0,6,8) ) t
             inner join st on (t.st1 = st.st1)
             inner join ucx on (t.ucx1 = ucx.ucx1)
             inner join uo on (ucx.ucx1 = uo19)
@@ -804,9 +804,9 @@ SQL;
 
 		$sql=<<<SQL
                 SELECT proc.*, rz8
-                FROM STAT_PROP(:ST1,:DATE1, :DATE2) proc
+                FROM el_gurnal_info(0,0, :DATE1, :DATE2, 0, 0, :ST1,0,0) proc
                  INNER JOIN rz on (r4 = rz1)
-                 WHERE prop>0 ORDER by r2 DESC
+                 WHERE propusk in (1,2) ORDER by r2 DESC
 SQL;
 
 		$command = Yii::app()->db->createCommand($sql);
@@ -1037,15 +1037,17 @@ SQL
 
 		$sql=<<<SQL
             SELECT st1,st2,st3,st4,st5,sk3,gr3, gr19,gr20,gr21,gr22,gr23,gr24,gr28, st74, st75, st76
-			from ucgn
-			   inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-			   inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
-			   inner join st on (ucsn.ucsn2 = st.st1)
-			   inner join gr on (ucsn.ucsn3 = gr.gr1)
-			   LEFT JOIN SK ON (SK.SK2 = ST.ST1)
-			where ucgns5=:YEAR and ucgns6=:SEM and ucgn2=:GR1
-			group by st1,st2,st3,st4,st5,sk3,gr3, gr19,gr20,gr21,gr22,gr23,gr24,gr28, st74, st75, st76
-			order by st2 collate UNICODE
+            from ucxg
+               inner join ucgn on (ucxg.ucxg2 = ucgn.ucgn1)
+               inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
+               inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
+               inner join st on (ucsn.ucsn2 = st.st1)
+               inner join std on (st.st1 = std.std2)
+               inner join gr on (std.std3 = gr.gr1)
+               inner JOIN SK ON (SK.SK2 = ST.ST1 and sk5 is null)
+            where ucgns5=:YEAR and ucgns6=:SEM and ucgn2=:GR1 and UCXG3=0 and std11<>1 and std4<=current_timestamp and (std7 is null or std7>=current_timestamp)
+            group by st1,st2,st3,st4,st5,sk3,gr3, gr19,gr20,gr21,gr22,gr23,gr24,gr28, st74, st75, st76
+            order by st2 collate UNICODE
 SQL;
 
 		$command = Yii::app()->db->createCommand($sql);
@@ -1062,7 +1064,7 @@ SQL;
 		if (empty($uo1))
 			return array();
 
-		$sql=<<<SQL
+		/*$sql=<<<SQL
             select
                 gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56,gr7
             from gr
@@ -1076,7 +1078,19 @@ SQL;
             where us2=:uo1 and ucgns5=:sem3 and ucgns6=:sem5 and st101!=7
             GROUP BY gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2,st3,st4,st56,gr7
             ORDER BY gr7,gr3,st2 collate UNICODE
+SQL;*/
+
+		$sql = <<<SQL
+          select gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56,gr7
+            from LISTST(current_timestamp,:sem3,:sem5,5,0,0,0,:uo1,0)
+               inner join uo on (LISTST.uo1 = uo.uo1)
+               inner join st on (LISTST.st1 = st.st1)
+               inner join gr on (LISTST.gr1 = gr.gr1)
+            where st101!=7
+            GROUP BY gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2,st3,st4,st56,gr7
+            ORDER BY gr7,gr3,st2 collate UNICODE
 SQL;
+
 
 		$command = Yii::app()->db->createCommand($sql);
 		$command->bindValue(':uo1', $uo1);
@@ -1087,12 +1101,12 @@ SQL;
 		return $students;
 	}
 
-	public function getStudentsOfNr($nr1,$year,$sem)
+	public function getStudentsOfNr($nr1/*,$year,$sem*/)
     {
         if (empty($nr1))
             return array();
 
-        $sql=<<<SQL
+        /*$sql=<<<SQL
             select
 				gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56
 			from gr
@@ -1105,12 +1119,22 @@ SQL;
 			   inner join nr on (ug.ug3 = nr.nr1)
 			where nr1=:nr1 and ucgns5=:sem3 and ucgns6=:sem5 and std7 is null and std11 in (0,5,6,8) and st101!=7
 			ORDER BY gr7,gr3,st2 collate UNICODE
+SQL;*/
+
+        $sql = <<<SQL
+            select LISTST.gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56
+            from LISTST(current_timestamp,0,0,6,0,0,0,0,:nr1)
+               inner join st on (LISTST.st1 = st.st1)
+               inner join gr on (LISTST.gr1 = gr.gr1)
+            where std11 in (0,5,6,8) and st101!=7
+            ORDER BY gr7,gr3,st2 collate UNICODE
 SQL;
+
 
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':nr1', $nr1);
-		$command->bindValue(':sem3', $year);
-		$command->bindValue(':sem5', $sem);
+		/*$command->bindValue(':sem3', $year);
+		$command->bindValue(':sem5', $sem);*/
         $students = $command->queryAll();
 
         return $students;
@@ -1140,9 +1164,9 @@ SQL;
         return $timeTable;
     }
 
-    public function getStudentsAmountFor($gr1)
+    public function getStudentsAmountFor($gr1, $nr1)
     {
-       $sql = <<<SQL
+       /*$sql = <<<SQL
            SELECT count(distinct st1)
 			FROM ucgn
 			   inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
@@ -1150,9 +1174,16 @@ SQL;
 			   inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
 			   INNER JOIN st ON (ucsn2 = st1)
 			 where ucgn2=:GR1
+SQL;*/
+
+        $sql = <<<SQL
+          SELECT count(distinct st1)
+            from LISTST(current_timestamp,0,0,6,0,0,0,0,:NR1)
 SQL;
+
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':GR1', $gr1);
+        $command->bindValue(':NR1', $nr1);
         $amount = $command->queryScalar();
 
         return $amount;
@@ -1216,7 +1247,7 @@ SQL;
 	 * @param $sem {int} семестр
 	 */
 	public function getGroupByStudent($st1,$uo19,$year,$sem){
-		$sql = <<<SQL
+		/*$sql = <<<SQL
 			select first 1 ucgn2, gr3
 			  from ucsn
 				 inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
@@ -1224,7 +1255,19 @@ SQL;
 				 inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
 				 inner join gr on (ucgn.ucgn2=gr.gr1)
 			  where ucxg3=0 and ucxg1=:UO19 and ucsn2=:ST1 and ucgns5=:YEAR and ucgns6=:SEM
+SQL;*/
+		$sql = <<<SQL
+		select first 1 LISTST.gr1, gr3
+        from LISTST(current_timestamp,0,0,7,0,:ST1,0,0,0)
+           inner join gr on (LISTST.gr1_virt = gr.gr1)
+           inner join ug on (gr.gr1 = ug.ug2)
+           inner join nr on (ug.ug1 = nr.nr1)
+           inner join us on (nr.nr2 = us.us1)
+           inner join uo on (us.us2 = uo.uo1)
+           inner join sem on (us.us3 = sem.sem1)
+        where uo19=:UO19 and sem3=:YEAR and sem5=:SEM
 SQL;
+
 		$command= Yii::app()->db->createCommand($sql);
 		$command->bindValue(':ST1', $st1);
 		$command->bindValue(':UO19', $uo19);
@@ -1339,7 +1382,7 @@ SQL;
      * @return bool
      */
     public function isSstByGroup($gr1){
-        $sql = <<<SQL
+        /*$sql = <<<SQL
 		select st1
         from sst
            inner join gr on (sst.sst3 = gr.gr1)
@@ -1349,7 +1392,15 @@ SQL;
            inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
            inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
         where std11 in (0,5,6,8) and std7 is null and sst2=:ST1 and ucgn2=:GR1 and sst6 is null
+SQL;*/
+
+        $sql = <<<SQL
+            select st1
+                from LISTST(current_timestamp,0,0,7,0,:ST1,0,0,0)
+                   inner join sst on (LISTST.gr1 = sst.sst3)
+                where sst.sst2 = :ST1 and sst6 is null and LISTST.gr1_virt=:GR1
 SQL;
+
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':ST1', $this->st1);
         $command->bindValue(':GR1', $gr1);
@@ -1621,7 +1672,8 @@ SQL;
 				INNER JOIN gr ON(std3=gr1)
 				INNER JOIN sg ON(sg1=gr2)
 				INNER JOIN sp ON(sp1=sg2)
-				where st2<>'' and sp5=:f1 and std11 in (0,5,6,8) and std7 is null
+				INNER JOIN f ON(sp5=f1)
+				where st2<>'' and sp5=:f1 and std11 in (0,5,6,8) and std7 is null and f32=0
 				and
 				(
 					st2 CONTAINING :QUERY1

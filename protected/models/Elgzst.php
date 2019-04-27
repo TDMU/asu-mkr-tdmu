@@ -576,12 +576,12 @@ SQL;
         if(empty($d2))
             $sql=<<<SQL
                 SELECT *
-                FROM STAT_PROP(:ST1,:DATE1, :DATE2)
+                FROM el_gurnal_info(0,0, :DATE1, :DATE2, 0, 0, :ST1,0,0) 
 SQL;
         else
             $sql=<<<SQL
                 SELECT *
-                FROM STAT_PROP(:ST1,:DATE1, :DATE2) WHERE d2 = :D2
+                FROM el_gurnal_info(0,0, :DATE1, :DATE2, 0, 0, :ST1,0,0)  WHERE d2 = :D2
 SQL;
 
         $command = Yii::app()->db->createCommand($sql);
@@ -613,7 +613,7 @@ SQL;
 
                 $r2 = $row['r2'];
                 $timeR2 = strtotime($r2);
-                $elgzst3 = $row['prop'];
+                $elgzst3 = $row['propusk'];
 
                 $condition = $monthStatistic
                     ? date('Y-m-d', $start) == date('Y-m-d', $timeR2)

@@ -123,40 +123,6 @@ class Elgp extends CActiveRecord
     {
         if (empty($st1) || empty($date1) || empty($date2) || empty($gr1)||empty($sem1))
             return array();
-		/* $sql=<<<SQL
-				 /*SELECT elgp.*,d2,us4,r2,elgzst3,elgzst0
-                FROM elgzst
-                    LEFT JOIN elgp on (elgzst.elgzst0 = elgp.elgp1)
-                    INNER JOIN elgz on (elgzst.elgzst2 = elgz.elgz1)
-                    INNER JOIN elg on (elgz.elgz2 = elg.elg1)
-                    INNER JOIN uo on (elg.elg2 = uo.uo1)
-                    INNER JOIN d on (d.d1 = uo.uo3)
-                    INNER JOIN EL_GURNAL_ZAN(uo.uo1,:GR1,:SEM1, elg.elg4) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
-                    LEFT JOIN ustem ON (ustem.ustem1=elgz.elgz7 AND ustem.ustem4= elgz.elgz3)
-                WHERE elgzst1=:ST1 and r2 >= :DATE1 and r2 <= :DATE2 and  elgzst3!=0 and d1 in (select d1 FROM  EL_GURNAL(:P1,:YEAR,:SEM,0,0,0,0,3,0))*/
-/*
-		SELECT elgp.*,d2,us4,elgzst3,elgzst0,elgz1,
-                (select first 1
-						r2
-					from gr
-					   inner join ucgn on (gr.gr1 = ucgn.ucgn2)
-					   inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-					   inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
-					   inner join ug on (ucgn.ucgn1 = ug.ug4)
-					   inner join nr on (ug.ug1 = nr.nr1)
-					   inner join r on (nr.nr1 = r.r1)
-					where r8 = elgz1 and ucsn2 = :ST1 and r2 >= :DATE1 and r2 <= :DATE2
-			  	)
-                FROM elgzst
-                    LEFT JOIN elgp on (elgzst.elgzst0 = elgp.elgp1)
-                    INNER JOIN elgz on (elgzst.elgzst2 = elgz.elgz1)
-                    INNER JOIN elg on (elgz.elgz2 = elg.elg1)
-                    INNER JOIN uo on (elg.elg2 = uo.uo1)
-                    INNER JOIN d on (d.d1 = uo.uo3)
-                    LEFT JOIN ustem ON (ustem.ustem1=elgz.elgz7 AND ustem.ustem4= elgz.elgz3)
-                    left JOIN us on (ustem.ustem2 = us.us1)
-                WHERE elgzst1=:ST1_  and elgzst3!=0 and d1 in (select d1 FROM  EL_GURNAL(:P1,:YEAR,:SEM,0,0,0,0,3,0))
-SQL;*/
 
         $sql=<<<SQL
         select elgp.*,d2,elgzst3,elgzst0,elgz3,uo1,elg4,elg2
@@ -173,9 +139,6 @@ SQL;
 
         $command = Yii::app()->db->createCommand($sql);
        	$command->bindValue(':ST1', $st1);
-		//$command->bindValue(':GR1', $gr1);
-        //$command->bindValue(':DATE1', $date1);
-        //$command->bindValue(':DATE2', $date2);
         $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
         $command->bindValue(':YEAR', Yii::app()->session['year']);
         $command->bindValue(':SEM', Yii::app()->session['sem']);

@@ -174,30 +174,6 @@ SQL;
 		return $statements;
 	}
 	
-	public function getStatement($gr1,$vmpv1)
-	{
-		if (empty($gr1)||empty($vmpv1))
-            return array();
-		$sql=<<<SQL
-          select st2,st3,st4,st1,st5,vmp4
-                   from ucgn
-                   inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-                   inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
-                   inner join st on (ucsn.ucsn2 = st.st1)
-                   inner join std on (st1=std2)
-                   inner join vmp ON (st1=vmp2 AND vmp1=:vmpv1)
-                   where st1>0 AND std11 in (0,5,6,8) and std7 is null AND ucgn2=:gr1 AND ucgns6=:SEM 
-                   GROUP BY st2,st3,st4,st1,st5,vmp4
-                   ORDER BY st2 collate UNICODE
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':vmpv1', $vmpv1);
-        $command->bindValue(':gr1', $gr1);
-		$command->bindValue(':SEM', Yii::app()->session['sem']);
-        $statements = $command->queryAll();
-		return $statements;
-	}
-	
 	public function getGroupsByModule($uo1,$vvmp1)
 	{
 		if (empty($uo1)||empty($vvmp1))
@@ -279,7 +255,7 @@ SQL;
     {
         if (empty($st1))
             return array();
-        $sql = <<<SQL
+        /*$sql = <<<SQL
              select st56, gr13,gr1, gr3, gr7,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28
                 from std
                    inner join sst on (std.std3 = sst.sst3)
@@ -291,7 +267,19 @@ SQL;
                 where std11 in (0,5,6,8) and std7 is null and sst2=:ST1 and sst6 is null and ucgns5=:YEAR and ucgns6=:SEM
                 group by st56, gr13, gr1, gr3, gr7,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28
                 ORDER by gr13, gr7 DESC, gr3 ASC;
+SQL;*/
+
+        $sql = /** @lang text */
+            <<<SQL
+            select LISTST.sem4 as st56, gr13,gr.gr1, gr3, gr7,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28
+                from LISTST(current_timestamp,:YEAR,:SEM,3,0,:ST1,0,0,0)
+                   inner join sst on (LISTST.gr1 = sst.sst3)
+                   inner join gr on (LISTST.gr1 = gr.gr1)
+                where sst.sst2 = :ST1 and sst6 is null
+                group by LISTST.sem4, gr13, gr1, gr3, gr7,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28
+                ORDER by gr13, gr7 DESC, gr3 ASC;
 SQL;
+
 
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':ST1', $st1);
@@ -1093,7 +1081,7 @@ SQL;
         }
 
         $sql = <<<SQL
-            SELECT d1, gr1, ug2, sem4, gr3, gr19, gr20, gr21, gr22, gr23, gr24, gr28 {$fields}
+            SELECT d1, gr1, ug2, sem4, gr3, gr19, gr20, gr21, gr22, gr23, gr24, gr28, ug3 {$fields}
             FROM sem
             INNER JOIN us ON (sem.sem1 = us.us12)
             INNER JOIN nr ON (us.us1 = nr.nr2)
@@ -1103,7 +1091,7 @@ SQL;
             INNER JOIN d ON (uo.uo3 = d.d1)
             INNER JOIN gr ON (ug.ug2 = gr.gr1)
             WHERE pd1=:PD1 and sem3=:SEM3 and sem5=:SEM5 and d1 = :D1 {$condition}
-            GROUP BY  d1, d2, gr1, ug2, sem4, gr3, gr19, gr20, gr21, gr22, gr23, gr24, gr28 {$fields}
+            GROUP BY  d1, d2, gr1, ug2, sem4, gr3, gr19, gr20, gr21, gr22, gr23, gr24, gr28, ug3 {$fields}
 SQL;
 
         $command = Yii::app()->db->createCommand($sql);
@@ -1118,7 +1106,7 @@ SQL;
 
         foreach ($groups as $group) {
             $groupNames[] = Gr::model()->getGroupName($group['sem4'], $group);
-            $studentsAmount += St::model()->getStudentsAmountFor($group['gr1']);
+            $studentsAmount += St::model()->getStudentsAmountFor($group['gr1'], $group['ug3']);
         }
 
         return array($groupNames, $studentsAmount);

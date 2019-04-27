@@ -18,7 +18,7 @@ $this->breadcrumbs=array(
     <?php
         echo CHtml::label(tt('Подразделение'), 'department');
         $departments = CHtml::listData(Tsg::model()->findAll('tsg1 > 0 order by tsg3'), 'tsg1', 'tsg2');
-        echo CHtml::dropDownList('department', $department, $departments, array('empty' => 'Все'));
+        echo CHtml::dropDownList('department', $department, $departments, array('empty' => tt('Все')));
     ?>
 </form>
 
@@ -72,4 +72,45 @@ HTML;
 
     </tbody>
 </table>
+
+<?php
+    $searchStr = tt('Поиск');
+    $nextStr = tt('След');
+    $prevStr = tt('Пред');
+    $allStr = tt('Все');
+
+    $menuStr = tt('Показать _MENU_ записей');
+    $summaryStr = tt('Общее кол-во записей _TOTAL_ отображено (_START_ - _END_)');
+    $filteredStr = tt(' - отсортировано _MAX_ записей');
+
+    $emptyStr = tt('Ничего не найдено');
+
+    Yii::app()->clientScript->registerScript('init-datatables', <<<JS
+        initDataTableOprions('phones', {
+            aaSorting: [],
+            "iDisplayLength": 50,
+            "aLengthMenu": [[25, 50, 100, 200, 1000, -1], [25, 50, 100,200, 1000, "{$allStr}"]],
+            bPaginate: true,
+            "bFilter": true,
+            oLanguage: {
+                sSearch: '{$searchStr}',
+                oPaginate: {
+                    sNext: '{$nextStr}',
+                    sPrevious: '{$prevStr}'
+                },
+                sLengthMenu: '{$menuStr}',
+                sInfo: '{$summaryStr}',
+                sInfoEmpty: '{$emptyStr}',
+                sInfoFiltered: '{$filteredStr}',
+                sZeroRecords: '{$emptyStr}',
+                responsive: true,
+                columnDefs: [
+                    { targets: [-1, -3], className: 'dt-body-right' }
+                ]
+            }
+        });
+        $('#phones_filter input:text').AddXbutton({ img: '../images/x.gif' });
+        $('#phones_filter input:text').focus();
+JS
+    );
 

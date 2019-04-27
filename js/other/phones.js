@@ -28,30 +28,4 @@ $(document).ready(function(){
     $('#department').change(function(){
         $(this).closest('form').submit();
     });
-    initDataTableOprions('phones', {
-        aaSorting: [],
-        "iDisplayLength": 50,
-        "aLengthMenu": [[25, 50, 100, 200, 1000, -1], [25, 50, 100,200, 1000, "Все"]],
-        bPaginate: true,
-        "bFilter": true,
-        oLanguage: {
-            sSearch: 'Поиск',
-            oPaginate: {
-                sNext: 'След',
-                sPrevious: 'Пред'
-            },
-            sLengthMenu: 'Показать _MENU_ записей',
-            sInfo: 'Общее кол-во записей _TOTAL_ отображено (_START_ - _END_)',
-            sInfoEmpty: 'Ничего не найдено',
-            sInfoFiltered: ' - отсортировано _MAX_ записей',
-            sZeroRecords: 'Ничего не найдено',
-            responsive: true,
-            columnDefs: [
-                { targets: [-1, -3], className: 'dt-body-right' }
-            ]
-        }
-    });
-    $('#phones_filter input:text').AddXbutton({ img: '../images/x.gif' });
-    $('#phones_filter input:text').focus();
-
 });

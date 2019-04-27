@@ -187,7 +187,7 @@ class PortfolioController extends Controller
         $fileName = PortalSettings::model()->getSettingFor(PortalSettings::PORTFOLIO_PATH).'/'.$id.'.'.$model->zrst8;
 
         if(!file_exists($fileName))
-            throw new CHttpException(400,tt('Файл не существует или удален.'.$fileName));
+            throw new CHttpException(400,tt('Файл не существует или удален.'));
 
         try {
             if ($model->delete()) {

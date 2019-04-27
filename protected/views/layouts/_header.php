@@ -54,8 +54,9 @@
                             ?>
                             <img alt="photo" src="<?=$url?>" class="nav-user-photo">
                             <span class="user-info">
-                                <small>Welcome,</small>
-                                <?=Yii::app()->user->name?>
+                                <?=tt('<small>Добро пожаловать,</small> {username}', array(
+                                    '{username}' => Yii::app()->user->name
+                                ))?>
                             </span>
                         <?php endif; ?>
                         <i class="icon-caret-down"></i>

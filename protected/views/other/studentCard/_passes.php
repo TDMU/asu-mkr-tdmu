@@ -115,10 +115,13 @@ $this->widget('bootstrap.widgets.TbGridView', array(
             'type' => 'raw',
             'value'=>'$data["otrabotal"] == 0 ? "<label class=\'label label-warning\'>-</label>" : "<label class=\'label label-success\'>+</label>"',
         ),
-
         array(
             'header'=>tt('Номер справки'),
             'value'=>'$data["rpspr4"]',
+        ),
+        array(
+            'header'=>tt('Дней на отработку'),
+            'value'=>'$data["elgp9"]',
         ),
     ),
 ));

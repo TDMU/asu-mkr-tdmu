@@ -193,7 +193,7 @@ SQL;
             $sheet->getColumnDimension('A')->setWidth(20);
             $sheet->getColumnDimension('B')->setWidth(40);
 
-            $students = St::model()->getStudentsOfNr($type, $year, $sem);
+            $students = St::model()->getStudentsOfNr($type/*, $year, $sem*/);
 
             $gr1=-1;
             $i=0;

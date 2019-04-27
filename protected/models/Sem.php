@@ -425,25 +425,6 @@ SQL;
 
         return $months;
     }
-
-    public function getSemestersForSt($st1)
-    {
-        $sql = <<<SQL
-            SELECT sem7
-				from gr
-				   inner join ucsn on (gr.gr1 = ucsn.ucsn3)
-				   inner join sg on (gr.gr2 = sg.sg1)
-				   inner join sem on (sg.sg1 = sem.sem2)
-				WHERE ucsn2 = :ST1
-				GROUP BY sem7
-SQL;
-
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':ST1', $st1);
-        $semesters = $command->queryColumn();
-
-        return $semesters;
-    }
 	
 	public function getModule($uo1)
 	{
