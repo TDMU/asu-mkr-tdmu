@@ -711,7 +711,7 @@ SQL;
 
     public function getStudentInfoForPortfolio(){
         $sql = <<<SQL
-		 select first 1 sg1,sg2,sg4,gr1,gr3,sp1,sp2,sem4,f2,f3,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28,sgr2,spc4,sp4
+		 select first 1 sg1,sg2,sg4,gr1,gr3,sp1,sp2,sem4,f2,f3,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28,sgr2,spc4,sp4, st56
 		   from sem
 			   inner join sg on (sem.sem2 = sg.sg1)
 			   inner join gr on (sg.sg1 = gr.gr2)
@@ -833,6 +833,34 @@ SQL;
         $command->bindValue(':st1', $st1);
         $student = $command->queryAll();
         return $student;
+    }
+
+    public function getStudentsOfGroupForPortfolio($gr1)
+    {
+        if (empty($gr1))
+            return array();
+
+        $sql=<<<SQL
+            SELECT ST1,ST2,ST3,ST4,sgr2, ST117, ST118, ST119, ST120, ST121, ST122, ST123, ST124,ST125,ST139, st74, st75, st76
+            FROM st
+            INNER JOIN std on (st.st1 = std.std2)
+            INNER JOIN sgr on (st.st32 = sgr.sgr1)
+            WHERE st101<>7 and STD3=:GR1 and STD11 in (0,4,5,6,8) and (STD7 is null)
+            ORDER BY ST2 collate UNICODE
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':GR1', $gr1);
+        $students = $command->queryAll();
+
+        foreach($students as $key => $student) {
+            if(Yii::app()->language=='en'&&!empty($student['st74']))
+                $students[$key]['name'] = SH::getShortName($student['st74'], $student['st75'], $student['st76']);
+            else
+                $students[$key]['name'] = SH::getShortName($student['st2'], $student['st3'], $student['st4']);
+        }
+
+        return $students;
     }
 	
     public function getStudentsOfGroup($gr1)
@@ -1710,5 +1738,28 @@ SQL;
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':st1',  $this->st1);
         return $command->queryAll();
+    }
+
+    /**
+     * @return array
+     * @throws CException
+     */
+    public function getSredniyBall(){
+        $sql = <<<SQL
+            select AVG(BAL_5)
+                from DISC_VKL_ST_IT(
+                   (
+                      select first 1 sg1 from sg 
+                      inner join gr on (sg.sg1 = gr.gr2)
+                      inner join std on (gr.gr1 = std.std3)
+                      where std2=:st1_ and std7 is null and std11 in (0,5,6,8)
+                   )
+                )
+                WHERE st1=:st1 and BAL_5>=0
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':st1',  $this->st1);
+        $command->bindValue(':st1_',  $this->st1);
+        return $command->queryScalar();
     }
 }

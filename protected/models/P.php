@@ -999,7 +999,7 @@ SQL;
         from dol
         inner join pd on (dol.dol1 = pd.pd45)
         inner join p on (pd.pd2 = p.p1)
-        where P1=:P1
+        where pd3=0 and pd28 in (0,2,5,9) and (pd13 is null or pd13>current_timestamp) and P1=:P1
 SQL;
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':P1', $p1);

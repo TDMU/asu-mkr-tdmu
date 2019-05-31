@@ -15,10 +15,10 @@ $this->breadcrumbs=array(
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/timetable/timetable.js', CClientScript::POS_HEAD);
 
 if(Yii::app()->user->isAdmin) {
-    $this->renderPartial('/filter_form/timeTable/student', array(
-        'model' => $model,
-        'showDateRangePicker' => false,
-        'showCheckBoxCalendar' => false
+    $this->renderPartial('/filter_form/default/year_sem');
+
+    $this->renderPartial('student/_student', array(
+        'model' => $model
     ));
 }
 

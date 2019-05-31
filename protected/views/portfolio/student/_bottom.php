@@ -48,13 +48,13 @@ HTML;
 
 echo sprintf($infoHtml,
     tt('ФИО'),$student->fullName,
-    tt('Средний балл'), 0,
+    tt('Средний балл'), $student->getSredniyBall(),
 
     tt('Факультет'), $studentInfo['f3'],
     tt('Специальность, шифр'), $studentInfo['sp2'] . ', '. $studentInfo['sp4'],
 
     tt('Форма обучения'),SH::convertEducationType($studentInfo['sg4']),
-    tt('Курс'), $studentInfo['sem4'],
+    tt('Курс'), $studentInfo['st56'],
 
     tt('Группа'), Gr::model()->getGroupName($studentInfo['sem4'], $studentInfo),
     tt('Профиль'), $studentInfo['spc4']
@@ -70,7 +70,7 @@ $this->renderPartial('student/_table1', array(
 
 
 echo '<div class="page-header">';
-echo CHtml::tag('h3', array(), tt('Документы подтверждающие в научно-иследовательской деятельности'));
+echo CHtml::tag('h3', array(), tt('Документы, подтверждающие участие в научно-исследовательской деятельности'));
 echo '</div>';
 $this->widget(
     'bootstrap.widgets.TbButton',

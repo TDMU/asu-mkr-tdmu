@@ -513,7 +513,6 @@ SQL;
         $uch_god  = $_SESSION['uch_god'];
         $semester = $_SESSION['semester'];
         $st1      = $_SESSION['st1'];
-        $gr1_kod  = $_SESSION['gr1_kod'];
 
         $sql = <<<SQL
             SELECT ucgns1 as UCGNS1_VIB,ucgns5,ucgns6
@@ -548,15 +547,17 @@ SQL;
             }
 
             $sql = <<<SQL
-UPDATE or INSERT INTO ucsn (ucsn1,ucsn2,ucsn4,ucsn5)
-VALUES (:UCGNS1_VIB,:ST1,current_timestamp,0) MATCHING(ucsn1,ucsn2)
+UPDATE or INSERT INTO ucsn (ucsn1,ucsn2,ucsn4,ucsn5, ucsn6)
+VALUES (:UCGNS1_VIB,:ST1,current_timestamp,0, 0) MATCHING(ucsn1,ucsn2)
 SQL;
             $params = array(
                 ':UCGNS1_VIB' => $code['ucgns1_vib'],
-                ':ST1' => $st1,
-                ':GR1_KOD' => $gr1_kod
+                ':ST1' => $st1
             );
-            Yii::app()->db->createCommand($sql)->execute($params);
+
+            $command = Yii::app()->db->createCommand($sql);
+            $command->bindValues($params);
+            $command->execute();
 
             // записываю количество бюджетников и контрактников
             $sql = <<<SQL
@@ -578,7 +579,9 @@ SQL;
                 ':UCGNS1_VIB2' => $code['ucgns1_vib'],
                 ':UCGNS1_VIB3' => $code['ucgns1_vib'],
             );
-            Yii::app()->db->createCommand($sql)->execute($params);
+            $command = Yii::app()->db->createCommand($sql);
+            $command->bindValues($params);
+            $command->execute();
         }
 
     }
