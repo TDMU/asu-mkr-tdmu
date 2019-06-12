@@ -22,6 +22,8 @@ if(count($sem1List)!=1) {
 {
     $elem =  current($sem1List);
     $model->sem1 = $elem['sem1'];
+
+    //var_dump($model->sem1);
 }
 
 if (!empty($model->sem1)):

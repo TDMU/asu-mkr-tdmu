@@ -15,6 +15,7 @@ function getSelect($type,$i)
     return CHtml::dropDownList($name,$type,$data,$options);
 
 }
+///Возможный баг если есть триметсры
 $sem1 = Sem::model()->getSem1ByGr1($model->group);
 $omissions = Elgp::model()->getOmissions($model->student,$model->date1,$model->date2,$model->group,$sem1);
 

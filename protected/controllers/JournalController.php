@@ -1494,7 +1494,7 @@ SQL;
         $nom = Yii::app()->request->getParam('nom', null);
         $date = Yii::app()->request->getParam('date', null);
         $gr1 = Yii::app()->request->getParam('gr1', null);
-        $sem1 = Sem::model()->getSem1ByGr1($gr1);
+        //$sem1 = Sem::model()->getSem1ByGr1($gr1);
 
         if($st1==null || $elgz1==null || $r1==null || $nom==null || $date==null || $gr1==null)
         {
@@ -1524,12 +1524,12 @@ SQL;
                         $command=Yii::app()->db->createCommand($sql);
                         $command->bindValue(':NOM', $elgz->elgz3);
                         $command->bindValue(':GR1', $gr1);
-                        $command->bindValue(':SEM1', $sem1);
+                        $command->bindValue(':SEM1', $elg['elg3']);
                         $command->bindValue(':UO1', $elg['elg2']);
                         $command->bindValue(':ELG4', $elg['elg4']);
                         $us4 = $command->queryRow();
                         //print_r($elgz->elgz3.' /'.$gr1.'/'.$sem1.'/'.$elg['elg2'].'/'.$elg['elg4']);
-                        $info=$elgzst->getInfoByElgzst0($elg['elg2'],$sem1,$gr1,$elg['elg4']);
+                        $info=$elgzst->getInfoByElgzst0($elg['elg2'],$elg['elg2'],$gr1,$elg['elg4']);
 
                         if(!empty($info))
                             $title.=' '.SH::getShortName($info['st2'],$info['st3'],$info['st4']).' '.date('d.m.Y', strtotime($info['r2'])).' '.$info['d3'];
@@ -1689,7 +1689,7 @@ SQL;
 
                             $elg = Elg::model()->getElgByElgzst0($elgzst->elgzst0);
 
-                            $sem1 = Sem::model()->getSem1ByGr1($gr1);
+                            //$sem1 = Sem::model()->getSem1ByGr1($gr1);
 
                             $sql = <<<SQL
                 select first 1 us4 from EL_GURNAL_ZAN(:UO1,:GR1,:SEM1, :ELG4) where EL_GURNAL_ZAN.nom = :NOM
@@ -1697,7 +1697,7 @@ SQL;
                             $command = Yii::app()->db->createCommand($sql);
                             $command->bindValue(':NOM', $elgz->elgz3);
                             $command->bindValue(':GR1', $gr1);
-                            $command->bindValue(':SEM1', $sem1);
+                            $command->bindValue(':SEM1', $elg['elg3']);
                             $command->bindValue(':UO1', $elg['elg2']);
                             $command->bindValue(':ELG4', $elg['elg4']);
                             //print_r($elgz->elgz3.' /'.$gr1.'/'.$sem1.'/'.$elg['elg2'].'/'.$elg['elg4']);
