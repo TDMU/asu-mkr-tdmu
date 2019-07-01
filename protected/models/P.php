@@ -1022,7 +1022,7 @@ SQL;
     public function getArrayPd($p1)
     {
         $sql = <<<SQL
-            SELECT pd1,pd6,pd7,pd5 FROM pd WHERE pd2=:p1 AND pd13 is null AND pd28 in (0,2,5,9) ORDER by pd7
+            SELECT pd1,pd6,pd7,pd5 FROM pd WHERE pd2=:p1 AND (pd13 is null or pd13>=current_timestamp) AND pd28 in (0,2,5,9) ORDER by pd7
 SQL;
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':p1', $p1);
