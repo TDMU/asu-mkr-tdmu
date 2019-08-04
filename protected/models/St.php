@@ -117,7 +117,6 @@
  * @property string $st168
  *
  * @property string fullName
- * @property Person $person
  *
  * From ShortNameBehaviour:
  * @method string getShortName() Returns default truncated name.
@@ -178,8 +177,7 @@ class St extends CActiveRecord implements IPerson
 		// class name for the relations automatically generated below.
 		return array(
             'account' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u6=st1 AND u5=0'),
-            'parentsAccount' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u6=st1 AND u5=2'),
-            'person' => array(self::BELONGS_TO, 'Pe', 'st200'),
+            'parentsAccount' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u6=st1 AND u5=2')
 		);
 	}
 

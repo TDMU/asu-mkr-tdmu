@@ -112,7 +112,7 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/a
                 'header'=>CHtml::dropDownList(
                     'pageSize',
                     $pageSize,
-                    $this->getPageSizeArray(),
+                    SH::getPageSizeArray(),
                     array('class'=>'change-pageSize','style'=>'max-width:70px')
                 ),
                 'buttons'=>array(
