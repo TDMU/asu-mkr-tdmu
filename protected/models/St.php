@@ -117,6 +117,7 @@
  * @property string $st168
  *
  * @property string fullName
+ * @property Person $person
  *
  * From ShortNameBehaviour:
  * @method string getShortName() Returns default truncated name.
@@ -177,7 +178,8 @@ class St extends CActiveRecord implements IPerson
 		// class name for the relations automatically generated below.
 		return array(
             'account' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u6=st1 AND u5=0'),
-            'parentsAccount' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u6=st1 AND u5=2')
+            'parentsAccount' => array(self::HAS_ONE, 'Users', 'u6', 'on' => 'u6=st1 AND u5=2'),
+            'person' => array(self::BELONGS_TO, 'Pe', 'st200'),
 		);
 	}
 
@@ -500,7 +502,7 @@ SQL;
 		list($year, $sem) = SH::getCurrentYearAndSem();
 
 		$where="";
-		if(SH::getUniversityCod()==U_NULAU)
+		if(Yii::app()->core->universityCode==U_NULAU)
             $where = "AND f1!=5";
 
 		$sql = <<<SQL
@@ -760,21 +762,7 @@ SQL;
         $year = Yii::app()->session['year'];
         $sem = Yii::app()->session['sem'];
         $date = $sem == 1 ? '31.05.'.($year+1) : '20.01.'.($year+1);
-        /*$sql = <<<SQL
-       select st1,st2,st3,st4,st45,st71,st163,st167, elgvst2, elgvst3
-        from st
-           left join elgvst on (st.st1 = elgvst1)
-           inner join ucsn on (st.st1 = ucsn.ucsn2)
-           inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
-           inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
-           inner join ug on (ucgn.ucgn1 = ug.ug4)
-           inner join nr on (ug.ug1 = nr.nr1) 
-           inner join us on (nr.nr2 = us.us1)
-           inner join std on (st1 = std2) 
-        where UCGNS5=:YEAR and UCGNS6=:SEM and us2=:UO1 and ug2=:GR1 and std11 in (0,6,8) and (std7 is null) and st101!=7
-        group by st1,st2,st3,st4,st45,st71,st163,st167, elgvst2, elgvst3
-        order by st2 collate UNICODE
-SQL;*/
+
         $sql = <<<SQL
        select t.st1,st.st2,st.st3,st.st4,st.st45,st.st71,st.st163,st.st167, elgvst2, elgvst3
         from (select listst.st1,listst.gr1,listst.std11,ucx1 from listst(:DATE_1,:YEAR,:SEM,0,0,0,0,0,0) where (listst.gr1=:GR1 or listst.gr1_virt=:GR1_VIRT) and listst.std11 in (0,6,8) ) t
@@ -868,9 +856,6 @@ SQL;
         if (empty($gr1))
             return array();
 
-        //$date1 = date("d.m.Y", strtotime("+ 20 days"));
-        //$date2 = date('d.m.Y 00:00:00');
-
         $sql=<<<SQL
             SELECT ST1,ST2,ST3,ST4,sgr2, ST117, ST118, ST119, ST120, ST121, ST122, ST123, ST124,ST125,ST139, st74, st75, st76
             FROM st
@@ -940,12 +925,6 @@ SQL;
             WHERE st101<>7 and STDISTSUB2=:COURSE and STD11 in (0,5,6,8) and (STD7 is null)
             ORDER BY ST2 collate UNICODE
 SQL;
-
-        /*$students = self::findAllBySql($sql, array(
-            ':COURSE' => $courseId,
-            ':YEAR' => Yii::app()->session['year'],
-            ':SEM' => Yii::app()->session['sem']
-        ));*/
 
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':COURSE', $courseId);
@@ -1060,6 +1039,12 @@ SQL
         return $students;
     }
 
+    /**
+     * Список виртуальной группы
+     * @param $gr1
+     * @return array
+     * @throws CException
+     */
 	public function getListVirtualGroup($gr1)
 	{
 
@@ -1092,30 +1077,13 @@ SQL;
 		if (empty($uo1))
 			return array();
 
-		/*$sql=<<<SQL
-            select
-                gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56,gr7
-            from gr
-               inner join ug on (gr.gr1 = ug.ug2)
-               inner join ucgn on (ug.ug4 = ucgn.ucgn1)
-               inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-               inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
-               inner join st on (ucsn.ucsn2 = st.st1)
-               inner join nr on (ug.ug3 = nr.nr1)
-               inner join us on (nr.nr2 = us.us1)
-            where us2=:uo1 and ucgns5=:sem3 and ucgns6=:sem5 and st101!=7
-            GROUP BY gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2,st3,st4,st56,gr7
-            ORDER BY gr7,gr3,st2 collate UNICODE
-SQL;*/
-
 		$sql = <<<SQL
-          select gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56,gr7
+          select gr.gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56,gr7
             from LISTST(current_timestamp,:sem3,:sem5,5,0,0,0,:uo1,0)
-               inner join uo on (LISTST.uo1 = uo.uo1)
                inner join st on (LISTST.st1 = st.st1)
                inner join gr on (LISTST.gr1 = gr.gr1)
             where st101!=7
-            GROUP BY gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2,st3,st4,st56,gr7
+            GROUP BY gr.gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2,st3,st4,st56,gr7
             ORDER BY gr7,gr3,st2 collate UNICODE
 SQL;
 
@@ -1129,25 +1097,10 @@ SQL;
 		return $students;
 	}
 
-	public function getStudentsOfNr($nr1/*,$year,$sem*/)
+	public function getStudentsOfNr($nr1)
     {
         if (empty($nr1))
             return array();
-
-        /*$sql=<<<SQL
-            select
-				gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56
-			from gr
-			   inner join ug on (gr.gr1 = ug.ug2)
-			   inner join ucgn on (ug.ug4 = ucgn.ucgn1)
-			   inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-			   inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
-			   inner join st on (ucsn.ucsn2 = st.st1)
-			   inner join std on (st1=std2)
-			   inner join nr on (ug.ug3 = nr.nr1)
-			where nr1=:nr1 and ucgns5=:sem3 and ucgns6=:sem5 and std7 is null and std11 in (0,5,6,8) and st101!=7
-			ORDER BY gr7,gr3,st2 collate UNICODE
-SQL;*/
 
         $sql = <<<SQL
             select LISTST.gr1,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st2||' '||st3||' '||st4||' ' as stud,st56
@@ -1161,13 +1114,19 @@ SQL;
 
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':nr1', $nr1);
-		/*$command->bindValue(':sem3', $year);
-		$command->bindValue(':sem5', $sem);*/
         $students = $command->queryAll();
 
         return $students;
     }
 
+    /**
+     * Пасписание студента
+     * @param $st1
+     * @param $date1
+     * @param $date2
+     * @return array
+     * @throws CException
+     */
     public static function getTimeTable($st1, $date1, $date2)
     {
         if (empty($st1))
@@ -1175,7 +1134,7 @@ SQL;
 
         $sql = <<<SQL
         SELECT *
-        FROM RAGRST(:LANG, 0, :ST1, 0, 0, 0, :DATE_1, :DATE_2)
+        FROM RASP(:LANG, 0, :ST1, 0, 0, 0, :DATE_1, :DATE_2, 1)
         ORDER BY r2,r3,rz2, d3
 SQL;
 
@@ -1194,16 +1153,6 @@ SQL;
 
     public function getStudentsAmountFor($gr1, $nr1)
     {
-       /*$sql = <<<SQL
-           SELECT count(distinct st1)
-			FROM ucgn
-			   inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-			   inner join ucsn on (ucgns.ucgns1 = ucsn.ucsn1)
-			   inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
-			   INNER JOIN st ON (ucsn2 = st1)
-			 where ucgn2=:GR1
-SQL;*/
-
         $sql = <<<SQL
           SELECT count(distinct st1)
             from LISTST(current_timestamp,0,0,6,0,0,0,0,:NR1)
@@ -1228,45 +1177,6 @@ SQL;
         return implode(' ', $parts);
     }
 
-    public function getSpecialityGroupCourse($st1 = null)
-    {
-        if (empty($st1))
-            $st1 = $this->st1;
-
-        /*$sql = <<<SQL
-            SELECT pnsp2,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st56,pnsp13,PNSP17, PNSP18, PNSP19,PNSP20
-            FROM pnsp
-            INNER JOIN sp on (pnsp.pnsp1 = sp.sp11)
-            INNER JOIN sg on (sp.sp1 = sg.sg2)
-            INNER JOIN gr on (sg.sg1 = gr.gr2)
-            INNER JOIN std on (gr.gr1 = std.std3)
-            INNER JOIN st on (std.std2 = st.st1)
-            WHERE std2 = :ST1
-            GROUP BY pnsp2 collate UNICODE,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st56,pnsp13,PNSP17, PNSP18, PNSP19,PNSP20
-SQL;*/
-		
-		$sql = <<<SQL
-		SELECT pnsp2,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st56,pnsp13,PNSP17, PNSP18, PNSP19,PNSP20
-            FROM pnsp
-            INNER JOIN sp on (pnsp.pnsp1 = sp.sp11)
-            INNER JOIN sg on (sp.sp1 = sg.sg2)
-            INNER JOIN gr on (sg.sg1 = gr.gr2)
-            INNER JOIN std on (gr.gr1 = std.std3)
-            INNER JOIN st on (std.std2 = st.st1)
-            WHERE std2 = :ST1
-            GROUP BY pnsp2,gr3,gr19,gr20,gr21,gr22,gr23,gr24,gr28,st56,pnsp13,PNSP17, PNSP18, PNSP19,PNSP20
-            ORDER BY pnsp2 collate UNICODE
-SQL;
-
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':ST1', $st1);
-        $info = $command->queryRow();
-
-        $info['gr'] = Gr::model()->getGroupName($info['st56'], $info);
-
-        return $info;
-    }
-
 	/**
 	 * Получение кода группы(возможно вирутальной) по студенту по году сметсру и дисциплине
 	 * @param $st1 {int} код студента
@@ -1277,15 +1187,6 @@ SQL;
 	public function getGroupByStudent($st1,$uo19,$year,$sem){
         $date = $sem == 1 ? '31.05.'.($year+1) : '20.01.'.($year+1);
 
-		/*$sql = <<<SQL
-			select first 1 ucgn2, gr3
-			  from ucsn
-				 inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
-				 inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
-				 inner join ucxg on (ucgn.ucgn1 = ucxg.ucxg2)
-				 inner join gr on (ucgn.ucgn2=gr.gr1)
-			  where ucxg3=0 and ucxg1=:UO19 and ucsn2=:ST1 and ucgns5=:YEAR and ucgns6=:SEM
-SQL;*/
 		$sql = <<<SQL
 		select first 1 LISTST.gr1, gr3, listst.GR1_VIRT
         from LISTST(:DATE_1,0,0,7,0,:ST1,0,0,0)
@@ -1415,18 +1316,6 @@ SQL;
      * @return bool
      */
     public function isSstByGroup($gr1){
-        /*$sql = <<<SQL
-		select st1
-        from sst
-           inner join gr on (sst.sst3 = gr.gr1)
-           inner join std on (gr.gr1 = std.std3)
-           inner join st on (std.std2 = st.st1)
-           inner join ucsn on (st.st1 = ucsn.ucsn2)
-           inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
-           inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
-        where std11 in (0,5,6,8) and std7 is null and sst2=:ST1 and ucgn2=:GR1 and sst6 is null
-SQL;*/
-
         $sql = <<<SQL
             select st1
                 from LISTST(current_timestamp,0,0,7,0,:ST1,0,0,0)

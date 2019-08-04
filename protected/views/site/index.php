@@ -18,7 +18,7 @@ switch (Yii::app()->language){
         default: $id=62; break;
 }
 echo '<div style="margin-top: 50px">';
-$univeristyCod = SH::getUniversityCod();
+$univeristyCod = Yii::app()->core->universityCode;
 if($univeristyCod==7) {
         if ($_SERVER['SERVER_NAME'] == 'tt.audit.msu.ru') {
                 //echo '<h1 style="text-align: center;"><strong>При возникновении проблем писать на почту tatyana_voloskova@mail.ru</strong></h1>';

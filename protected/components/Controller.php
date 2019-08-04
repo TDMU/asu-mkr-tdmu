@@ -24,27 +24,9 @@ class Controller extends CController
 
     public $pageHeader = '';
 
-    public function getPageSizeArray()
-    {
-        return array(5=>5,10=>10,20=>20,50=>50,100=>100);
-    }
-
     public function init()
     {
-        $ps58 = PortalSettings::model()->findByPk(58)->ps2;
-        Yii::app()->params['defaultLanguage'] = $ps58;
-        ELangPick::setLanguage();
         parent::init();
-    }
-
-    public function mobileCheck(){
-        $detect = Yii::app()->mobileDetect;
-
-        //$detect->isMobile();
-        //$detect->isTablet();
-        //$detect->isIphone();
-
-        return $detect->isMobile()||$detect->isTablet();
     }
 
     public function beforeAction($action)
@@ -63,10 +45,6 @@ class Controller extends CController
 
         $this->checkBlockUser($action);
 
-        $this->checkClosePortal($action);
-
-        $this->checkCloseChair($action);
-
         $this->processAccess($action);
 
         $this->processYearAndSem();
@@ -74,10 +52,6 @@ class Controller extends CController
         $this->processDate1AndDate2();
 
         $this->processDateLesson();
-
-        $this->mobileCheck();
-
-        $this->setCode();
 
         return parent::beforeAction($action);
     }
@@ -113,18 +87,20 @@ class Controller extends CController
         return $logout;
     }
 
+    /**
+     * Проверка пользователя на блокировку
+     * @param $action
+     * @throws CHttpException
+     */
     private function checkBlockUser($action){
 
         $enable_close=true;
 
         if(Yii::app()->controller->id=='site'&&($action->id=='index'||$action->id=='logout'||$action->id=='error'))
             $enable_close=false;
-        //var_dump(2);
         if(!Yii::app()->user->isAdmin) {
             if (!Yii::app()->user->isGuest && !Yii::app()->user->isBlock) {
-                //var_dump(1);
                 if (Yii::app()->user->dbModel->checkBlocked()) {
-                    //Yii::app()->user->model->saveAttributes(array('u8' => 1));
                     throw new CHttpException(403, tt('Доступ закрыт! Учетная запись заблокирована!'));
                 }
             }
@@ -165,57 +141,6 @@ class Controller extends CController
                         break;
                 }
             }
-
-        /*if (! SH::checkServiceFor(MENU_ELEMENT_VISIBLE, Yii::app()->controller->id, $action->id, true))
-            throw new CHttpException(404, tt('Сервис закрыт!'));*/
-    }
-
-    private function checkCloseChair($action)
-    {
-        if(Yii::app()->user->isTch&&Yii::app()->controller->id=='journal')
-        {
-            $today = date('d.m.Y 00:00');
-            $sql = <<<SQL
-            SELECT PD4
-            FROM P
-                INNER JOIN PD ON (P1=PD2)
-            WHERE P1 = :P1 and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}')
-            group by PD4
-SQL;
-            $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
-            $chairs = $command->queryAll();
-            $close = false;
-            $text = PortalSettings::model()->findByPk(43)->ps2;
-            if(empty($text))
-                $text = tt('Сервис закрыт!');
-            foreach($chairs as $chair) {
-                $close = Kcp::model()->findByAttributes(array('kcp2' => $chair['pd4']))!=null;
-                if($close){
-                    throw new CHttpException(403,$text);
-                    break;
-                }
-            }
-        }
-    }
-
-    private function checkClosePortal($action)
-    {
-        $enable_close=true;
-        if(Yii::app()->user->isAdmin)
-            return;
-
-        if(Yii::app()->controller->id=='site'&&$action->id!='index')
-            return;
-
-        $close=PortalSettings::model()->findByPk(38)->ps2;
-        $text_close=PortalSettings::model()->findByPk(39)->ps2;
-        if(empty($text_close))
-            $text_close=tt('Портал закрыт на тех. обслуживание');
-        if($close&&$enable_close)
-        {
-            throw new CHttpException(403,$text_close);
-        }
     }
 
     private function processYearAndSem()
@@ -337,15 +262,9 @@ SQL;
         $mail->SetFrom($mail->Username,$_SERVER['HTTP_HOST']);
         $mail->Subject = $subject;
         $mail->MsgHTML($message);
-        //var_dump($to);
         if(is_array($to)){
-            //$first = true;
             foreach ($to as $email=>$name) {
-                //if($first)
-                    $mail->AddAddress($email, $name);
-                /*else
-                    $mail->AddReplyTo($mail,$name);
-                $first = false;*/
+                $mail->AddAddress($email, $name);
             }
         }else
             $mail->AddAddress($to, "");
@@ -365,13 +284,10 @@ SQL;
         return $result;
     }
 
-    private function setCode(){
-        $this->_universityCode=SH::getUniversityCod();
-    }
-    /*Код вуза*/
-    private $_universityCode;
-
+    /**
+     * @return int
+     */
     public function getUniversityCode(){
-        return $this->_universityCode;
+        return Yii::app()->core->universityCode;
     }
 }

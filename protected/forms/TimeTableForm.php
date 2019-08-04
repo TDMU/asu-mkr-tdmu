@@ -61,7 +61,7 @@ class TimeTableForm extends CFormModel
     {
         $this->r11 = PortalSettings::model()->getSettingFor(108);
 
-        $this->_universityId = SH::getUniversityCod();
+        $this->_universityId = Yii::app()->core->universityCode;
 
         parent::__construct($scenario='');
     }
@@ -475,17 +475,6 @@ HTML;
                 $res[$r2]['timeTable'][$r3]['day'] = $day;
 
             } else {
-                /*if($day['fio']!=$res[$r2]['timeTable'][$r3]['day']['fio'] || $day['rz2']!=$res[$r2]['timeTable'][$r3]['day']['rz2']) {
-                    $res[$r2]['timeTable'][$r3]['shortText'] .= $this->cellShortTextFor($day, $type);
-                    $res[$r2]['timeTable'][$r3]['fullText'] .= $this->cellFullTextFor($day, $type);
-                    $res[$r2]['timeTable'][$r3]['printText'] .= "\n".$this->cellPrintTextFor($day, $type);
-
-                    $res[$r2]['timeTable'][$r3][] = $day;
-                    $res[$r2]['timeTable'][$r3]['day'] = $day;
-                }else
-                {
-
-                }*/
 
                 $res[$r2]['timeTable'][$r3]['shortText'] .= $this->cellShortTextFor($day, $type);
                 $res[$r2]['timeTable'][$r3]['fullText'] .= "<br>".$this->cellFullTextFor($day, $type);
@@ -525,9 +514,6 @@ HTML;
 
         return $res;
     }
-
-
-
 
     public function generateGroupTimeTable()
     {

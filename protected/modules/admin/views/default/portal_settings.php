@@ -94,12 +94,6 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
                 </div>
 
                 <div class="control-group">
-                    <?=CHtml::checkBox('', PortalSettings::model()->findByPk(38)->ps2, $checkboxStyle)?>
-                    <span class="lbl"> <?=tt('Закрыть портал на тех.Обслуживание')?></span>
-                    <?=CHtml::hiddenField('settings[38]', PortalSettings::model()->findByPk(38)->ps2)?>
-                </div>
-
-                <div class="control-group">
                     <?=CHtml::checkBox('', PortalSettings::model()->findByPk(98)->ps2, $checkboxStyle)?>
                     <span class="lbl"> <?=tt('Скрывать регистрацию для иностранцев')?></span>
                     <?=CHtml::hiddenField('settings[98]', PortalSettings::model()->findByPk(98)->ps2)?>
@@ -133,16 +127,6 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
                     <?=CHtml::checkBox('', PortalSettings::model()->findByPk(105)->ps2, $checkboxStyle)?>
                     <span class="lbl"> <?=tt('Скрывть хлебные крошки')?></span>
                     <?=CHtml::hiddenField('settings[105]', PortalSettings::model()->findByPk(105)->ps2)?>
-                </div>
-
-                <div class="control-group">
-                    <span class="lbl"> <?=tt('Текст тех. обслуживания')?>:</span>
-                    <?=CHtml::textField('settings[39]', PortalSettings::model()->findByPk(39)->ps2)?>
-                </div>
-
-                <div class="control-group">
-                    <span class="lbl"> <?=tt('Текст закрытия журнала для кафедр')?>:</span>
-                    <?=CHtml::textField('settings[43]', PortalSettings::model()->findByPk(43)->ps2)?>
                 </div>
 
                 <div class="control-group">

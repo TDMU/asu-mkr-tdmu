@@ -5,7 +5,7 @@ class TimeTableController extends Controller
     public function beforeAction($action){
 
         $result = parent::beforeAction($action);
-        if($this->mobileCheck())
+        if(Yii::app()->core->isMobile)
             if(in_array($action->id, array(
                 'group', 'student', 'teacher', 'self'
             ))) {

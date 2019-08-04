@@ -85,8 +85,13 @@
         Yii::app()->clientScript->registerPackage('chosen');
         Yii::app()->clientScript->registerPackage('spin');
     ?>
-    <?php if(!empty(Yii::app()->params['analytics']))
-        echo '<script>'.Yii::app()->params['analytics'].'</script>';
+    <?php if(!empty(Yii::app()->params['analytics'])){
+
+        if(strpos(Yii::app()->params['analytics'], '<script') === false)
+            Yii::app()->clientScript->registerScript('google-analitics', Yii::app()->params['analytics'], CClientScript::POS_HEAD);
+        else
+           echo  Yii::app()->params['analytics'];
+    }
     ?>
 </head>
 

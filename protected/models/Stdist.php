@@ -33,7 +33,7 @@ class Stdist extends CActiveRecord
 			array('stdist1, stdist3', 'numerical', 'integerOnly'=>true),
 			array('stdist2', 'length', 'max'=>200),
 			array('stdist2', 'unique'),
-            array('stdist2', 'application.validators.EmailValidator', 'validateDomen'=> true, 'universityCode' => SH::getUniversityCod()),
+            array('stdist2', 'application.validators.EmailValidator', 'validateDomen'=> true, 'universityCode' => Yii::app()->core->universityCode),
             // The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('stdist1, stdist2, stdist3', 'safe', 'on'=>'search'),
@@ -53,7 +53,7 @@ class Stdist extends CActiveRecord
 
             $validator = new EmailValidator();
             $validator->validateDomen = true;
-            $validator->universityCode = SH::getUniversityCod();
+            $validator->universityCode = Yii::app()->core->universityCode;
 
             if (!$validator->validateDomen($this->$attribute)){
 

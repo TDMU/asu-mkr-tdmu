@@ -18,17 +18,6 @@ class ShortCodes extends CApplicationComponent
         return $res;
     }
 
-    public static function getUniversityCod(){
-        $sql=<<<SQL
-			select b15 from b where b1=0
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $id=$command->queryScalar();
-        if(!empty($id))
-            return $id;
-        else
-            return 0;
-    }
     public static function truncateText($text)
     {
         if (empty($text))
@@ -122,7 +111,7 @@ SQL;
     {
         if($_type!==null) {
 
-            $arr = FilterForm::getTypesForJournal();
+            $arr = static::getTypesForJournal();
             switch ($_type) {
                 case 0:
                 case 1:
@@ -321,38 +310,13 @@ SQL;
         return $color;
     }
 
+    /**
+     * Текуши1 год и семестр
+     * @return array
+     */
     public static function getCurrentYearAndSem()
     {
-        $month=8;
-        if(isset(Yii::app()->params['month'])&&Yii::app()->params['month']!='')
-            $month=(int)Yii::app()->params['month'];
-        if (date('n') >= $month) {
-            $year = date('Y');
-            $sem  = 0;
-        } else {
-            $ps53 = PortalSettings::model()->findByPk(53)->ps2;
-            if(!empty($ps53)){
-                if(date('m-d')>=$ps53)
-                {
-                    $sem = 1;
-                }else
-                {
-                    $sem  = 0;
-                    $arr=explode('-',$ps53);
-                    if(count($arr)==2) {
-                        list($month,$day)=$arr;
-                        if ((int)$month > 8)
-                            $sem = 1;
-                    }
-                }
-                $year = date('Y', strtotime('-1 year'));
-            }else {
-                $year = date('Y', strtotime('-1 year'));
-                $sem = 1;
-            }
-        }
-
-        return array($year, $sem);
+        return array(Yii::app()->core->currentYear, Yii::app()->core->currentSemester);
     }
 
     public static function convertEducationType($sg4)
@@ -376,27 +340,6 @@ SQL;
             default: $type='';
         }
         return $type;
-    }
-
-    public static function showIcon($val)
-    {
-        $isPrint = stristr(Yii::app()->controller->action->id, 'print');
-        if ($val == 1) {
-            $symbol = ! $isPrint
-                        ? '<i class="icon-ok green"></i>'
-                        : '+';
-        } else {
-            $symbol = ! $isPrint
-                        ? '<i class="icon-remove red"></i>'
-                        : '-';
-        }
-
-        return $symbol;
-    }
-
-    public static function is($code)
-    {
-        return Yii::app()->params['code'] == $code;
     }
 
     public static function getServiceSeoSettings($controller, $action, $language)
@@ -470,15 +413,6 @@ SQL;
         return $this->_seoSettings;
     }
 
-    /*public static function getBal()
-    {
-        $file     = Yii::getPathOfAlias('application') . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'bal.php';
-        $arr=array();
-        if(file_exists($file))
-            $arr=require($file);
-        return $arr;
-    }*/
-
     public static function russianMonthName($month)
     {
         switch($month){
@@ -498,6 +432,14 @@ SQL;
         }
         return $name;
     }
+
+    public static function getTypesForJournal()
+    {
+        return array(
+            '0'=>static::convertUS4(1),
+            '1'=>tt('пз/лб/сем')
+        );
+    }
     
     public static function russianDayName($month)
     {
@@ -513,6 +455,11 @@ SQL;
             default: $name='';
         }
         return $name;
+    }
+
+    public static function getPageSizeArray()
+    {
+        return array(5=>5,10=>10,20=>20,50=>50,100=>100);
     }
 }
 
@@ -556,31 +503,6 @@ class SH extends ShortCodes
         if ($browser == 'Version') return 'Safari '.$version;
         if (!$browser && strpos($agent, 'Gecko')) return 'Browser based on Gecko';
         return $browser.' '.$version;
-    }
-
-    /**
-     * Конект к гарфической базе
-     * @return CDbConnection
-     */
-    public static function getGrafConnection(){
-        $string = Yii::app()->db->connectionString;
-        $parts  = explode('=', $string);
-
-        if(!isset($parts[1]))
-            return null;
-
-        $path = explode(';',$parts[1]);
-
-        $host = trim($path[0]).'D';
-
-        $newString = str_replace($path[0],$host,$string);
-        //var_dump($newString);
-        $login    = Yii::app()->db->username;
-        $password = Yii::app()->db->password;
-
-        $dbh = new CDbConnection($newString, $login, $password);
-
-        return $dbh;
     }
 
     /**
@@ -686,18 +608,4 @@ class SH extends ShortCodes
     }
 }
 
-
-
-
-/**
- * Translates string to current language.
- * @see Yii::t()
- * @param string $str
- * @param array $params
- * @return string
- */
-function tt($str, $params = array())
-{
-	return Yii::t('main', $str, $params);
-}
 

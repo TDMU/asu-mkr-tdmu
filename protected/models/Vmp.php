@@ -451,7 +451,7 @@ SQL;
         $ps57 = PortalSettings::model()->getSettingFor(57);
         if($ps57!=1)
             return;
-        $universityCode = SH::getUniversityCod();
+        $universityCode = Yii::app()->core->universityCode;
 
         if($universityCode!=U_ZSMU)
             return;
@@ -844,7 +844,7 @@ SQL;
      */
     public function recalculate($st1,$elgz,$gr1){
 
-        $universityCode = SH::getUniversityCod();
+        $universityCode = Yii::app()->core->universityCode;
 
         $ps57 = PortalSettings::model()->getSettingFor(57);
         if($ps57!=1)
@@ -981,7 +981,7 @@ SQL;
 
                 }elseif($_elgz->elgz4==3||$_elgz->elgz4==4){
 
-                    if($_elgz->elgz4==3&&SH::getUniversityCod()==32){
+                    if($_elgz->elgz4==3&&Yii::app()->core->universityCode==32){
                         $val = $count>0 ? $_tek/$count : 0;
                         //print_r($val);
                         $_tek = round($val,2);

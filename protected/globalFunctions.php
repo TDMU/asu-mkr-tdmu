@@ -24,3 +24,15 @@ function getSettingsArrayFromFile($fileName){
     }
     return $arr;
 }
+
+/**
+ * Translates string to current language.
+ * @see Yii::t()
+ * @param string $str
+ * @param array $params
+ * @return string
+ */
+function tt($str, $params = array())
+{
+    return Yii::t('main', $str, $params);
+}

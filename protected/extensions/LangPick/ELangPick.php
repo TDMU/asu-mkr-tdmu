@@ -143,8 +143,8 @@
             else
             {
 
-                if (! empty(Yii::app()->params['defaultLanguage']) && in_array(Yii::app()->params['defaultLanguage'], array('ru', 'en', 'uk')))
-                    Yii::app()->setLanguage(Yii::app()->params['defaultLanguage']);
+                if (! empty(Yii::app()->core->defaultLanguage) && in_array(Yii::app()->core->defaultLanguage, array('ru', 'en', 'uk')))
+                    Yii::app()->setLanguage(Yii::app()->core->defaultLanguage);
                 else {
                     $preferredLang = explode('_', Yii::app()->getRequest()->getPreferredLanguage());
                     if (in_array($preferredLang[0], self::getLanguages(), true))

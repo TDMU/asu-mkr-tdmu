@@ -17,7 +17,7 @@ $this->breadcrumbs=array(
 
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/timetable/timetable.js', CClientScript::POS_HEAD);
 
-if($this->mobileCheck()) {
+if(Yii::app()->core->isMobile) {
 	?>
 	<div class="pull-right">
 		<?=

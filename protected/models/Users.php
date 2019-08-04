@@ -69,7 +69,7 @@ class Users extends CActiveRecord
             //array('u2', 'length', 'min'=>5, 'max'=>30),
             // Логин должен соответствовать шаблону
             array('u2', 'match', 'pattern'=>'/^[a-zA-Z][a-zA-Z0-9-_.]{7,30}$/','message'=>tt('В login могут быть только латинские символы и цифры, а так же символы "." и "_",  длиной от 8 до 30 символов. Также логин должен начинаться с латинской буквы')),
-            //array('u4', 'application.validators.EmailValidator', 'validateDomen'=> true, 'universityCode' => SH::getUniversityCod()),
+            //array('u4', 'application.validators.EmailValidator', 'validateDomen'=> true, 'universityCode' => Yii::app()->core->universityCode),
             array('u2, u3, u4, password', 'required', 'on'=>'admin-create,admin-update'),
 			array('u2,u4 ,u3, password', 'safe', 'on'=>'change-password'),
 			array('u8', 'unsafe', 'on'=>'change-password'),
@@ -258,7 +258,7 @@ class Users extends CActiveRecord
 
             $validator = new EmailValidator();
             $validator->validateDomen = true;
-            $validator->universityCode = SH::getUniversityCod();
+            $validator->universityCode = Yii::app()->core->universityCode;
 
             if (!$validator->validateDomen($this->$attribute)){
 
@@ -395,12 +395,12 @@ HTML;
 	 * доп ключ для востановления пароля
 	 */
 	public function getValidationKey(){
-		$uCod = SH::getUniversityCod();
+		$uCod = Yii::app()->core->universityCode;
 		return md5(crypt($uCod.'mkp'.$uCod.$this->u2.'mkr',$this->u1.$uCod.$this->u10));
 	}
 
 	public function isValidKey($key){
-		$uCod = SH::getUniversityCod();
+		$uCod = Yii::app()->core->universityCode;
 		return $key===md5(crypt($uCod.'mkp'.$uCod.$this->u2.'mkr',$this->u1.$uCod.$this->u10));
 	}
 
@@ -474,7 +474,7 @@ HTML;
         if(!empty($message))
             Yii::app()->user->setFlash('info', $message);
 
-        $universityCode = SH::getUniversityCod();
+        $universityCode = Yii::app()->core->universityCode;
 
         if(empty($this->u4)) {
             Yii::app()->user->setFlash('warning', '<strong>' . tt('Внимание!') . '</strong> ' . tt('Заполните Email!'));
@@ -505,7 +505,7 @@ HTML;
 		if(Yii::app()->session[self::SESSION_NAME_AUTH_KEY1]!==$this->_getSessionKey1($key))
 			return false;
 
-        if(SH::getUniversityCod()==U_NULAU){
+        if(Yii::app()->core->universityCode==U_NULAU){
             if(!isset(Yii::app()->session['timeUserLogin']))
                 return false;
 

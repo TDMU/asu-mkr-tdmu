@@ -8,7 +8,8 @@
         "ext-mbstring": "*",
         "ext-PDO": "*",
         "ext-PDO_Firebird": "*",
-        "google/apiclient": "2.0"
+        "google/apiclient": "2.0",
+        "yiisoft/yii": "*"
     },
     "autoload": {
         "files": [

@@ -474,8 +474,6 @@ HTML
             $this->redirect('index');
 
         $this->servicesLogin();
-		/*if (! Yii::app()->request->isAjaxRequest)
-            $this->redirect('index');*/
 
 		$model=new LoginForm;
 
@@ -492,22 +490,11 @@ HTML
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
 			if($model->validate()&&$model->login()) {
-				$message = '';
 				$user = Users::model()->findByPk(Yii::app()->user->id);
 				$user->afterLogin();
 
-				if($this->universityCode==U_ZSMU){
-					//$sKeySettings = PortalSettings::model()->findByPk(PortalSettings::ZAP_SUPPORT_SECRET_KEY_ID);
-					/*$password ='';
-					if(!empty($sKeySettings))*/
-					$password = crypt($model->password,$user->u9);
-					$image = '<img src="http://'.UniversityCommon::ZAP_SUPPORT_HREF.'/api-login.php?email='.$user->u4.'&pass='.$password.'" style="display:none"/>';
-					Yii::app()->user->setState('api-func-login', $image);
-				}
                 $this->redirect('index');
-				//Yii::app()->end('ok');
 			}
-				//$this->redirect(Yii::app()->user->returnUrl);
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));
@@ -523,11 +510,9 @@ HTML
 
 		$model=Users::model()->findByPk(Yii::app()->user->id);
 
-
 		if($model==null){
 			throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
 		}
-
 
 		$model->password = $model->u3;
 
@@ -544,30 +529,12 @@ HTML
 		{
 			$model->u3=$_POST['Users']['u3'];
 			$model->password=$_POST['Users']['password'];
-			$password = $model->password;
 			$model->u2=$_POST['Users']['u2'];
 			$model->u4=$_POST['Users']['u4'];
-			// validate user input and redirect to the previous page if valid
-			if($model->save()) {
-				if($this->universityCode==U_ZSMU){
-					$message = '"account" : {
-						"email" : "%s",
-						"pass" : "%s",
-						"salt" : "%s"
-					}';
 
-					$message = sprintf($message, $model->u4, $password, $model->u9);
-					if(UniversityCommon::SendZapApiRequest(UniversityCommon::CHANGE_PASSWORD_TYPE, $message)){
-						//Yii::app()->user->setState('info_message', $message);
-					}else{
-						Yii::app()->user->setState('error', tt('Ошибка отправки сообщения на поодержку!'));
-					}
-				}
+			if($model->save()) {
 				Yii::app()->end('ok');
 			}
-			/*else
-				print_r($model->getErrors());*/
-			//$this->redirect(Yii::app()->user->returnUrl);
 		}
 		// display the login form
 		$this->render('changePassword',array('model'=>$model));
@@ -578,14 +545,8 @@ HTML
 	 */
 	public function actionLogout()
 	{
-		$user = Users::model()->findByPk(Yii::app()->user->id);
+        Yii::app()->user->logout();
 
-		if($this->universityCode==U_ZSMU&&!empty($user)){
-			Yii::app()->user->logout(false);
-			Yii::app()->user->setState('api-func-logout', '<img src="http://'.UniversityCommon::ZAP_SUPPORT_HREF.'/api-logout.php?email='.$user->u4.'" style="display:none"/>');
-		}else{
-			Yii::app()->user->logout();
-		}
 		$this->redirect(Yii::app()->homeUrl);
 	}
 
@@ -607,28 +568,6 @@ HTML
             $model->attributes=$_POST['RegistrationForm'];
 
             if ($model->validate() && $model->register()) {
-				if($this->universityCode==U_ZSMU){
-					$message = '"accounts" : {
-							"account": {
-								"name" : "%s",
-								"email" : "%s",
-								"password" : "%s",
-								"salt" : "%s",
-								"timezone" : "Europe\/Kiev",
-								"ip" : "%s",
-								"language" : "%s",
-								"notes" : ""
-							}
-					}';
-
-					$user = Users::model()->findByAttributes(array('u4'=>$model->email));
-					$message = sprintf($message, $model->getFio(), $model->email, $model->password,$user->u9,Yii::app()->request->userHostAddress, Yii::app()->language);
-					if(UniversityCommon::SendZapApiRequest(UniversityCommon::REGISTER_TYPE, $message)){
-						//Yii::app()->user->setState('info_message', $message);
-					}else{
-						Yii::app()->user->setState('error', tt('Ошибка отправки сообщения на поодержку!'));
-					}
-				}
 				Yii::app()->end('registered');
 			}
 
@@ -664,26 +603,6 @@ HTML
 
 			if ($model->scenario == 'step-3'&&$model->validate() && $model->register())
 			{
-				if($this->universityCode==U_ZSMU){
-					$message = '"accounts" : {
-							"account": {
-								"name" : "%s",
-								"email" : "%s",
-								"password" : "%s",
-								"timezone" : "Europe\/Kiev",
-								"ip" : "%s",
-								"language" : "%s",
-								"notes" : ""
-							}
-					}';
-
-					$message = sprintf($message, $model->getFio(), $model->email, $model->password,Yii::app()->request->userHostAddress, Yii::app()->language);
-					if(UniversityCommon::SendZapApiRequest(UniversityCommon::REGISTER_TYPE, $message)){
-						//Yii::app()->user->setState('info_message', $message);
-					}else{
-						Yii::app()->user->setState('error', tt('Ошибка отправки сообщения на поодержку!'));
-					}
-				}
 				return $this->redirect('index');
 			}
 

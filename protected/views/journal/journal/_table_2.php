@@ -334,7 +334,7 @@ function table2TrModule2($date,$gr1,$st,$ps56,$nom,$modules,$sem7,$ps60, $total,
         $vmpv6 = $mark['vmpv6'];
         $vvmp1 = $modules[(int)$nom-1]['vvmp1'];
 
-        /*if($date['elgz4']==3&&SH::getUniversityCod()==32){
+        /*if($date['elgz4']==3&&Yii::app()->core->universityCode==32){
             $total = $total/$_count;
             $total = round($total,2);
             $total= ($total*200)/5;

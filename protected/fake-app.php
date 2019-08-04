@@ -11,6 +11,8 @@
  * @property CFormatter $format
  * @property PHPMailer $Smtpmail
  * @property ShortCodes $shortcodes
+ * @property MobileDetect $mobileDetect
+ * @property Core $core
  * @property EYiiPdf $ePdf
  * @property CFirebirdConnection $db
  * @property CFirebirdConnection $db2

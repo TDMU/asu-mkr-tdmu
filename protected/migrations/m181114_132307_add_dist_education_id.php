@@ -4,7 +4,7 @@ class m181114_132307_add_dist_education_id extends CDbMigration
 {
 	public function safeUp()
 	{
-		$universityCode = SH::getUniversityCod();
+		$universityCode = Yii::app()->core->universityCode;
 
 		if($universityCode != U_IRPEN)
 		    return true;

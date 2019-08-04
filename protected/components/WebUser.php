@@ -50,9 +50,6 @@ class WebUser extends CWebUser
 
     public function getIsTch()
     {
-        //if ($this->isAdmin)
-        //    return true;
-
         return !$this->isGuest && $this->model->isTeacher;
     }
 
@@ -75,7 +72,7 @@ class WebUser extends CWebUser
         elseif ($this->isStd)
             $model = St::model()->findByPk($this->model->u6);
         elseif ($this->isPrnt)
-            $model = St::model()->findByPk($this->model->u6); null;
+            $model = St::model()->findByPk($this->model->u6);
 
         return $model;
     }

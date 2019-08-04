@@ -7,7 +7,7 @@ $config = array(
 	'name'     => $mainConfig['name'],
 	'import'   => $mainConfig['import'],
 	
-	'preload' => array('log', 'shortcodes'),
+	'preload' => $mainConfig['preload'],
 
 	'components' => array(
 		'cache' => $mainConfig['components']['cache'],
@@ -23,6 +23,8 @@ $config = array(
 		    ),
             getSettingsArrayFromFile(dirname(__FILE__) .'/mail.inc')
         ),
+        'core'   => $mainConfig['components']['core'],
+        'mobileDetect'   => $mainConfig['components']['mobileDetect'],
 	),
 	
 	'commandMap' => array(

@@ -340,7 +340,7 @@ SQL;
         $sql = <<<SQL
             select first 1 u8 as NADO_VIBRAT
             from uo
-            inner join us on (uo1 = us2)
+            inner join us on (uo1 = us2  and us4<=12)
             inner join u on (uo22 = u1)
             inner join sem on (us3 = sem1)
             where (uo22 = (:U1_VIB_DISC)) and (sem3 = :UCH_GOD) and (sem5 = :SEMESTER)
@@ -360,7 +360,7 @@ SQL;
             select count(*)  as KOL from
             (select us2
             from uo
-            inner join us on (uo.uo1 = us.us2 and us.us6>0)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0  and us4<=12)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg1)
@@ -391,7 +391,7 @@ SQL;
             inner join uo on (d.d1 = uo.uo3)
             /*inner join u on (uo.uo22 = u.u1)
             inner join c on (u.u15 = c.c1)*/
-            inner join us on (uo.uo1 = us.us2 and us.us6>0)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0  and us4<=12)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1, ucx6 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg1)
@@ -424,7 +424,7 @@ SQL;
             inner join uo on (d.d1 = uo.uo3)
             inner join u on (uo.uo22 = u.u1)
             inner join c on (u.u15 = c.c1)
-            inner join us on (uo.uo1 = us.us2 and us.us6>0)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0  and us4<=12)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1, ucx6 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg1)
@@ -452,7 +452,7 @@ SQL;
      select count(*)  as KOL from
                 (select ucsn2
                 from uo
-                   inner join us on (uo.uo1 = us.us2 and us.us6>0)
+                   inner join us on (uo.uo1 = us.us2 and us.us6>0  and us4<=12)
                    inner join sem on (us.us3 = sem.sem1)
                    inner join (select ucx1 from ucx where ucx5>1) on (uo.uo19 = ucx1)
                    inner join ucxg on (ucx1 = ucxg1)
@@ -477,7 +477,7 @@ SQL;
         $sql = <<<SQL
             select uo3
             from uo
-            inner join us on (uo.uo1 = us.us2 and us.us6>0)
+            inner join us on (uo.uo1 = us.us2 and us.us6>0  and us4<=12)
             inner join sem on (us.us3 = sem.sem1)
             inner join (select ucx1 from ucx where ucx5>1) on (uo.uo19 = ucx1)
             inner join ucxg on (ucx1 = ucxg.ucxg1)
@@ -507,7 +507,7 @@ SQL;
         $connector = null;
         if($enableDistEducation==1&&$enableInSubscriptionDistEducation==1)
             $connector = SH::getDistEducationConnector(
-                SH::getUniversityCod()
+                Yii::app()->core->universityCode
             );
 
         $uch_god  = $_SESSION['uch_god'];
@@ -617,7 +617,7 @@ SQL;
         $connector = null;
         if($enableDistEducation==1&&$enableInSubscriptionDistEducation==1)
             $connector = SH::getDistEducationConnector(
-                SH::getUniversityCod()
+                Yii::app()->core->universityCode
             );
 
         foreach ($codes as $code) {

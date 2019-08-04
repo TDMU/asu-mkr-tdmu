@@ -6,7 +6,7 @@
  * Time: 10:04
  */
 
-$id = SH::getUniversityCod();
+$id = Yii::app()->core->universityCode;
 
 $disciplines  = Stusv::model()->getDisciplineExam($st->st1,$gr1);
 

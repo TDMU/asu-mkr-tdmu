@@ -231,7 +231,7 @@ SQL;
 
 		$res = array();
 		foreach($faculties as $key => $faculty){
-            if($type==1&&SH::getUniversityCod()==U_NULAU&&$faculty['f1']==5)
+            if($type==1&&Yii::app()->core->universityCode==U_NULAU&&$faculty['f1']==5)
                 continue;
 			$name =  $faculty[F::getFieldByLanguage(false)];
 			$res[$key] = $faculty;

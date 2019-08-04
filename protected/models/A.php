@@ -134,7 +134,7 @@ class A extends CActiveRecord
         // `'' as a2` is used only to avoid inconvenience in the code
         $sql = <<<SQL
         SELECT *
-        FROM RAGRST(:LANG, 0, 0, :A1, 0, 0, :DATE_1, :DATE_2)
+        FROM RASP(:LANG, 0, 0, :A1, 0, 0, :DATE_1, :DATE_2, 1)
         ORDER BY r2,r3,rz2, d3
 SQL;
 

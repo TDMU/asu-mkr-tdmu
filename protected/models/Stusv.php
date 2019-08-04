@@ -1254,7 +1254,7 @@ SQL;
 	    if($elg->elg4!=1)
 	        return false;
 
-		$idUniversity = SH::getUniversityCod();
+		$idUniversity = Yii::app()->core->universityCode;
 		//var_dump($idUniversity);
 		if($idUniversity===null)
 			return false;

@@ -365,22 +365,6 @@ class DefaultController extends AdminController
 
         $this->render('mail',array('model'=>$model));
     }
-	
-    public function actionCloseChair()
-    {
-        $model = new Kcp();
-        $model->unsetAttributes();
-        if (isset($_GET['pageSize'])) {
-            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
-            unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
-        }
-        if (isset($_REQUEST['Kcp']))
-            $model->attributes = $_REQUEST['Kcp'];
-
-        $this->render('closeChair', array(
-            'model' => $model,
-        ));
-    }
 
     public function actionUserHistory()
     {
@@ -411,75 +395,6 @@ class DefaultController extends AdminController
         ));
     }
 
-    public function actionUserHistoryExcel()
-    {
-        $model = new UsersHistory();
-        $model->unsetAttributes();  // clear any default values
-
-        $searchParams = Yii::app()->user->getState('SearchParamsUH');
-        if ( isset($searchParams) )
-        {
-            $model->attributes = $searchParams;
-        }
-
-        $dataProvider = $model->search();
-
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
-        $objPHPExcel->getProperties()->setCreator("ACY")
-            ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
-            ->setTitle("USER_HISTORY ".date('Y-m-d H-i'))
-            ->setSubject("USER_HISTORY ".date('Y-m-d H-i'))
-            ->setDescription("USER_HISTORY document, generated using ACY Portal. ".date('Y-m-d H:i:'))
-            ->setKeywords("")
-            ->setCategory("Result file");
-        $objPHPExcel->setActiveSheetIndex(0);
-        $sheet=$objPHPExcel->getActiveSheet();
-
-        $sheet->setCellValue('A1', '#');
-        $sheet->setCellValue('B1', UsersHistory::model()->getAttributeLabel('name'));
-        $sheet->setCellValue('C1', UsersHistory::model()->getAttributeLabel('type'));
-        $sheet->setCellValue('D1', UsersHistory::model()->getAttributeLabel('adm'));
-        $sheet->setCellValue('E1', UsersHistory::model()->getAttributeLabel('uh3'));
-        $sheet->setCellValue('F1', UsersHistory::model()->getAttributeLabel('uh4'));
-        $sheet->setCellValue('G1', UsersHistory::model()->getAttributeLabel('uh5'));
-        $sheet->setCellValue('H1', UsersHistory::model()->getAttributeLabel('uh6'));
-
-        $i = 2;
-        $dataProvider->pagination=false;
-        foreach($dataProvider->getData(true) as $data){
-            $sheet->setCellValueByColumnAndRow(0,$i,$i-1);
-            $sheet->setCellValueByColumnAndRow(1,$i,($data->type==1)?$data->getTchName():$data->getStdName());
-            $sheet->setCellValueByColumnAndRow(2,$i,$data->getType());
-            $sheet->setCellValueByColumnAndRow(3,$i,$data->getAdminType());
-            $sheet->setCellValueByColumnAndRow(4,$i,$data->getDeviceType());
-            $sheet->setCellValueByColumnAndRow(5,$i,$data->uh4);
-            $sheet->setCellValueByColumnAndRow(6,$i,$data->uh5);
-            $sheet->setCellValueByColumnAndRow(7,$i,$data->uh6);
-            $i++;
-        }
-
-        $sheet->getStyleByColumnAndRow(0,1,7,$i-1)->getBorders()->getAllBorders()->applyFromArray(array('style'=>PHPExcel_Style_Border::BORDER_THIN,'color' => array('rgb' => '000000')));
-
-        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
-        $objPHPExcel->setActiveSheetIndex(0);
-
-        // Redirect output to a clientâ€™s web browser (Excel5)
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="ACY_USER_HISTORY_'.date('Y-m-d H-i').'.xls"');
-        header('Cache-Control: max-age=0');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-        // If you're serving to IE over SSL, then the following may be needed
-        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header ('Pragma: public'); // HTTP/1.0
-
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-        $objWriter->save('php://output');
-    }
-
     public function actionDeleteUserHistory($id)
     {
         if(Yii::app()->request->isPostRequest)
@@ -491,39 +406,6 @@ class DefaultController extends AdminController
             // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
             //if(!isset($_GET['ajax']))
                 $this->redirect(array('userHistory'));
-        }
-        else
-            throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-    }
-
-    public function actionCreateCloseChair()
-    {
-        $model=new Kcp();
-        $model->unsetAttributes();
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if(isset($_POST['Kcp']))
-        {
-            $model->attributes=$_POST['Kcp'];
-            $model->kcp1 = $model->getMax()+1;
-            if($model->save())
-                $this->redirect(array('closeChair'));
-        }else
-            throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-    }
-
-    public function actionDeleteCloseChair($id)
-    {
-        if(Yii::app()->request->isPostRequest)
-        {
-            // we only allow deletion via POST request
-            $model = Kcp::model()->findByPk($id);
-            $model->delete();
-
-            // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-            if(!isset($_GET['ajax']))
-                $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('closeChair'));
         }
         else
             throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');

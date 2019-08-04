@@ -11,7 +11,7 @@ JS
         'htmlOptions' => array('class' => 'form-horizontal row')
     ));
         $disciplines = CHtml::listData(D::model()->getDisciplinesForJournalPermition(), 'd1', 'd2');
-        $type_lesson=FilterForm::getTypesForJournal();
+        $type_lesson=SH::getTypesForJournal();
         $groups = CHtml::listData(Gr::model()->getGroupsForJournalPermition($model->discipline,$model->type_lesson), 'group', 'name');
 
         $options =  array('class'=>'cs-select cs-skin-elastic', 'autocomplete' => 'off', 'empty' => '&nbsp;');

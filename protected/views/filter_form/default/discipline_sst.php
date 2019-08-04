@@ -7,7 +7,7 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/f
     ));
         $groups = CHtml::listData(Gr::model()->getGroupsForJournalPermitionSst(Yii::app()->user->dbModel->st1), 'group', 'name');
         $disciplines = CHtml::listData(D::model()->getDisciplinesForSstPermition($model->group), 'discipline', 'd2');
-        $type_lesson=FilterForm::getTypesForJournal();
+        $type_lesson=SH::getTypesForJournal();
 
         $options =  array('class'=>'chosen-select', 'autocomplete' => 'off', 'empty' => '&nbsp;');
         echo '<div>'.

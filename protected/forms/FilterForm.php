@@ -142,13 +142,4 @@ class FilterForm extends CFormModel
 			'type_lesson'=>tt('Тип занять')
 		)+$arr;
 	}
-
-    public static function getTypesForJournal()
-    {
-        return array(
-            //'-1'=>'--Select type-- ',
-            '0'=>SH::convertUS4(1),
-            '1'=>tt('пз/лб/сем')
-        );
-    }
 }

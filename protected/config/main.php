@@ -29,7 +29,7 @@ $config = array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'АСУ',
 
-	'preload'=>array('log', 'shortcodes'),
+	'preload'=>array('log', 'core', 'shortcodes'),
 
 	// autoloading model and component classes
 	'import'=>array(
@@ -190,6 +190,9 @@ $config = array(
         ),
         'shortcodes' => array(
             'class'=>'ShortCodes',
+        ),
+        'core' => array(
+            'class'=>'Core',
         ),
 		'user'=>array(
             'class' => 'WebUser',

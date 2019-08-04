@@ -26,7 +26,7 @@ $form=$this->beginWidget('CActiveForm', array(
     if(count($faculties)==1)
         $model->faculty = key($faculties);
 
-    if($model->faculty==5&&SH::getUniversityCod()==U_NULAU)
+    if($model->faculty==5&&Yii::app()->core->universityCode==U_NULAU)
         $model->faculty = 1;
 
     $html .= '<div class="span2 ace-select">';

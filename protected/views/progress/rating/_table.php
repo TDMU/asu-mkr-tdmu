@@ -74,8 +74,6 @@ if(!empty($rating))
                 '<td>'.$a.'</td>'.
                 '<td>'.$key['stInfo']['group'].'</td>'.
                 '<td>'.$_bal.'</td>'.
-                /*'<td>'.$key['stInfo']['sym100'].'</td>'.
-                '<td>'.$key['stInfo']['count'].'</td>'.*/
                 '</tr>';
 
             $num++;

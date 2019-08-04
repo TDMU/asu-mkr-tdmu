@@ -92,7 +92,7 @@ $form=$this->beginWidget('CActiveForm', array(
 
     $blockTheme = false;
     if(!$blockTheme):
-        $cod = SH::getUniversityCod();
+        $cod = Yii::app()->core->universityCode;
         if($cod==7){
             ?>
             <div class="alert alert-warning">

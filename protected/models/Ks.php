@@ -140,7 +140,7 @@ class Ks extends CActiveRecord
 	public static function getListDataForKsFilter(){
 		$res = array();
 		/*--------------госаудит-----------скрывать все филиалы кроме ихнего*/
-		$univeristyCod = SH::getUniversityCod();
+		$univeristyCod = Yii::app()->core->universityCode;
 		if($univeristyCod==U_URFAK){
 			if($_SERVER['SERVER_NAME']=='tt.audit.msu.ru')
 			{

@@ -762,7 +762,7 @@ SQL;
             return array();
 
         $sql = <<<SQL
-        SELECT * FROM RAGRST(:LANG, 0, 0, 0, :P1, 0, :DATE_1, :DATE_2)
+        SELECT * FROM RASP(:LANG, 0, 0, 0, :P1, 0, :DATE_1, :DATE_2, 1)
         ORDER BY r2,r3,rz2, d3
 SQL;
 

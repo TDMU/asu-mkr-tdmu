@@ -34,7 +34,7 @@ abstract class SingUpOldDistEducationForm extends CFormModel implements ISingUpO
             array('email', 'email'),
 
             //array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements()),
-            array('email', 'application.validators.EmailValidator', 'validateDomen'=> true, 'universityCode' => SH::getUniversityCod()),
+            array('email', 'application.validators.EmailValidator', 'validateDomen'=> true, 'universityCode' => Yii::app()->core->universityCode),
 
             array('email', 'unique', 'className'=>'Stdist', 'attributeName'=>'stdist2'),
 
@@ -48,7 +48,7 @@ abstract class SingUpOldDistEducationForm extends CFormModel implements ISingUpO
     public function validateEmail($attribute,$params)
     {
         if(!$this->hasErrors()) {
-            $connector = SH::getDistEducationConnector(SH::getUniversityCod());
+            $connector = SH::getDistEducationConnector(Yii::app()->core->universityCode);
 
             if($connector == null)
                 $this->addError($attribute, tt('Ошибка создания конектора' ));
