@@ -30,20 +30,11 @@
 </div>
 HTML;
 
-    /*$title = tt('Дополнительные колонки');
-    $html  = $this->renderPartial('journal/_extra_columns', array(), true);
-    echo sprintf($widget, $title, $html);*/
-
-
     $title = tt('Внешний вид журнала');
     $html  = $this->renderPartial('journal/_journal_type', array(), true);
     echo sprintf($widget, $title, $html);
 
     $title = tt('Отработка');
     $html  = $this->renderPartial('journal/_retake', array(), true);
-    echo sprintf($widget, $title, $html);
-
-    $title = tt('Статистика посещаемости');
-    $html  = $this->renderPartial('journal/_statistic', array(), true);
     echo sprintf($widget, $title, $html);
 

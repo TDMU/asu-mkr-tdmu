@@ -120,117 +120,10 @@ class Elgzst extends CActiveRecord
 
     public function searchRetake()
     {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
-        /*if(empty($this->type_lesson)||$this->type_lesson==1)
-            $type_lesson=0;
-        else
-            $type_lesson=1;
-        $sem1 = Sem::model()->getSem1ByUo1($this->uo1);
-
-        $criteria=new CDbCriteria;
-        //$criteria->select = 't.*,gr.gr3 as group_st,elgp2,elgp3,USTEM5 as tema,r2,'.$table.'.st2,elgz.elgz3 as nom,'.$table.'.st3,'.$table.'.st4,(SELECT COUNT(*) FROM elgotr WHERE elgotr.elgotr1=t.elgzst0) as count_elgotr';
-        $criteria->select = 'elg2,elg4,elg3,elgzst0,elgzst1,elgzst3,elgzst5,gr.gr1,gr.gr3 as group_st,elgp2,elgp3,USTEM5 as tema,st2,elgz.elgz3 as nom,st3,st4';
-        //    (SELECT r2 FROM  EL_GURNAL_ZAN('.$this->uo1.',gr.gr1,'.$sem1.','.$type_lesson.') WHERE (elgz.elgz3 = EL_GURNAL_ZAN.nom) )';
-        $criteria->join = 'JOIN st ON (t.elgzst1=st.st1) ';
-        $criteria->join .= 'JOIN std ON (st.st1=std.std2) ';
-        $criteria->join .= 'JOIN gr ON (std.std3=gr.gr1) ';
-        $criteria->join .= 'JOIN elgz ON (t.elgzst2=elgz.elgz1) ';
-        $criteria->join .= 'JOIN elg ON (elgz.elgz2=elg.elg1) ';
-        //$criteria->join .= 'JOIN EL_GURNAL_ZAN('.$this->uo1.',gr.gr1,'.$sem1.','.$type_lesson.') on (elgz.elgz3 = EL_GURNAL_ZAN.nom) ';
-        $criteria->join .= 'LEFT JOIN elgp ON (t.elgzst0=elgp.elgp1) ';
-        $criteria->join .= 'LEFT JOIN ustem ON (ustem.USTEM1=elgz.elgz7 AND ustem.USTEM4= elgz.elgz3) ';
-        $criteria->addCondition("std7 is null and std11 in(0,5,6,8)");
-        $criteria->compare('elgzst1',$this->elgzst1);
-        $criteria->compare('elgzst2',$this->elgzst2);
-        $criteria->compare('elgzst3',$this->elgzst3);
-        $criteria->compare('elgzst4',$this->elgzst4);
-        $criteria->compare('elgzst5',$this->elgzst5);
-        $criteria->compare('elgp2',$this->elgp2);
-        $criteria->compare('elgp3',$this->elgp3);
-        if(!empty($this->st2))
-            $criteria->addCondition("st2 CONTAINING '".$this->st2."'");
-        if(!empty($this->r2))
-            $criteria->compare('r.r2',date_format(date_create_from_format("d.m.Y", $this->r2), "Y-m-d"));
-        if(!empty($this->tema))
-            $criteria->addCondition("ustem5 CONTAINING '".$this->tema."'");
-        if(!empty($this->group_st))
-            $criteria->addCondition("gr3 CONTAINING '".$this->group_st."'");
-        if(!empty($this->status))
-            if($this->status==1)
-                $criteria->addCondition("elgzst5>'".$this->getMin()."' or elgzst5=-1");
-            else
-                $criteria->addCondition("(elgzst5<'".$this->getMin()."' and elgzst5!=-1)");
-        $criteria->addCondition("elg.elg2=".$this->uo1." and elg.elg3=".$sem1." and elg.elg4=".$type_lesson." AND (elgzst3 > 0) OR (elgzst4<=".Stegn::model()->getMin()." and elgzst4>0)");
-        $criteria->group = 'elg2,elg4,elg3,elgzst0,elgzst1,elgzst3,elgzst5,gr.gr1,group_st,elgp2,elgp3,tema,st2,nom,st3,st4';
-        $sort = new CSort();
-        $sort->sortVar = 'sort';
-        $sort->defaultOrder = 'st2 ASC';
-        $sort->attributes = array(
-            'st2'=>array(
-                'asc'=>'st.st2 ASC',
-                'desc'=>'st.st2 DESC',
-                'default'=>'ASC',
-            ),
-            'r2'=>array(
-                'asc'=>'r.r2 ASC',
-                'desc'=>'r.r2 DESC',
-                'default'=>'ASC',
-            ),
-            'elgzst3'=>array(
-                'asc'=>'t.elgzst3 ASC',
-                'desc'=>'t.elgzst3 DESC',
-                'default'=>'ASC',
-            ),*/
-            /*'count_elgotr'=>array(
-                'asc'=>'count_elgotr asc',
-                'desc'=>'count_elgotr DESC',
-                'default'=>'ASC',
-            ),*/
-            /*'tema'=>array(
-                'asc'=>'tema asc',
-                'desc'=>'tema DESC',
-                'default'=>'ASC',
-            ),
-            'group_st'=>array(
-                'asc'=>'group_st asc',
-                'desc'=>'group_st DESC',
-                'default'=>'ASC',
-            ),
-            'nom'=>array(
-                'asc'=>'nom asc',
-                'desc'=>'nom DESC',
-                'default'=>'ASC',
-            ),
-            'elgp2'=>array(
-                'asc'=>'elgp2 asc',
-                'desc'=>'elgp2 DESC',
-                'default'=>'ASC',
-            ),
-            'elgp3'=>array(
-                'asc'=>'elgp3 asc',
-                'desc'=>'elgp3 DESC',
-                'default'=>'ASC',
-            )
-        );
-
-        $pageSize=Yii::app()->user->getState('pageSize',10);
-        if($pageSize==0)
-            $pageSize=10;
-
-        return new CActiveDataProvider($this, array(
-            'criteria'=>$criteria,
-            'sort'=>$sort,
-            'pagination'=>array(
-                'pageSize'=> $pageSize,
-            ),
-        ));*/
-
         if(empty($this->type_lesson)||$this->type_lesson==1)
             $type_lesson=0;
         else
             $type_lesson=1;
-        $sem1 = Sem::model()->getSem1ByUo1($this->uo1);
 
         $fields = ' EL_GURNAL_OTR.*, (select count(*) from elgotr where elgotr1=ELGZST0) as count_elgotr ';
 
@@ -253,7 +146,7 @@ class Elgzst extends CActiveRecord
                 WHERE   elg4='.$type_lesson.' AND
                         ((elgzst3 > 0) '.$dopCondition.' )
         ';
-        //$where = '';
+
         $params = array(
         );
 
@@ -262,8 +155,7 @@ class Elgzst extends CActiveRecord
             $where .= ' AND st2 CONTAINING :ST2 ';
             $params[':ST2'] = $this->st2;
         }
-        /*if(!empty($this->r2))
-            $where .=" AND r2 ='".date_format(date_create_from_format("d.m.Y", $this->r2), "Y-m-d")."'";*/
+
         if(!empty($this->tema)) {
             $where .= ' AND ustem5 CONTAINING :TEMA ';
             $params[':TEMA'] = $this->tema;
@@ -307,10 +199,7 @@ class Elgzst extends CActiveRecord
 
         $command=Yii::app()->db->createCommand($countSQL);
         $command->params = $params;
-        /*foreach ($params as $key => $val)
-        {
-            $command->bindParam($key, $val, PDO::PARAM_STR);
-        }*/
+
         $count = $command->queryScalar();
 
         $sort = new CSort();
@@ -392,20 +281,6 @@ class Elgzst extends CActiveRecord
         if (empty($st1) || empty($date1) || empty($date2))
             return array();
 
-        /*$sql=<<<SQL
-                SELECT elgz1
-                FROM elgzst
-                    LEFT JOIN elgp on (elgzst.elgzst0 = elgp.elgp1)
-                    INNER JOIN elgz on (elgzst.elgzst2 = elgz.elgz1)
-                    INNER JOIN elg on (elgz.elgz2 = elg.elg1)
-                    INNER JOIN uo on (elg.elg2 = uo.uo1)
-                    INNER JOIN d on (d.d1 = uo.uo3)
-                    INNER JOIN r on (elgz.elgz1 = r.r8)
-                    INNER JOIN nr on (r.r1 = nr.nr1)
-                    INNER JOIN us on (nr.nr2 = us.us1)
-                WHERE elgzst1=:ST1 and r2 >= :DATE1 and r2 <= :DATE2 and elgzst3!=0 and d1 in (select d1 FROM  EL_GURNAL(:P1,:YEAR,:SEM,0,0,0,0,3,0))
-SQL;*/
-
         $sql = <<<SQL
         SELECT elgz1 FROM EL_GURNAL_INFO(:YEAR, :SEM, :DATE1, :DATE2, 0, 0, :ST1, 0, 0) 
             where d1 in (select d1 FROM  EL_GURNAL(:P1,:YEAR1,:SEM1,0,0,0,0,3,0)) and elgzst0 is not null and propusk>0
@@ -446,9 +321,7 @@ SQL;
 
     public function checkMinRetakeForGrid()
     {
-        //return $this->count_elgotr==0||($this->elgzst5<=$this->getMin()&&$this->elgzst5!=-1);
         return ($this->elgzst5<=$this->getMin()&&$this->elgzst5!=-1);
-        //return $this->stegn6<=$this->getMin()||$this->stegn6!=-1;
     }
 
     public function getType()

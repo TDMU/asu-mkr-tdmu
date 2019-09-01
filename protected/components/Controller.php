@@ -40,7 +40,6 @@ class Controller extends CController
             );
 
             $this->refresh();
-            //return false;
         }
 
         $this->checkBlockUser($action);
@@ -63,8 +62,6 @@ class Controller extends CController
     private function checkLoginUser(){
         if(Yii::app()->user->isGuest)
             return false;
-
-        $logout = false;
 
         $user = Users::model()->findByPk(Yii::app()->user->id);
         /**
