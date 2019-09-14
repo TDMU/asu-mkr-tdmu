@@ -652,7 +652,7 @@ SQL;
                 INNER JOIN PD ON (P1=PD2)
                 INNER JOIN DOL ON (PD45 = DOL1)
                 INNER JOIN K on (PD4=K1)
-            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}') and k20=0
+            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and pd11<='{$today}'and (PD13 IS NULL or PD13>'{$today}') and k20=0
             group by P1,P3,P4,P5,pd7,DOL2,PD1, p76, p77, p78, dol13
             ORDER BY P3 collate UNICODE, pd7 desc
 SQL;
