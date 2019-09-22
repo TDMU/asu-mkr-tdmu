@@ -28,7 +28,8 @@ class TimeTableController extends Controller
                     U_UMAN,
                     U_RGIIS,
                     U_KNU,
-                    U_HTEI
+                    U_HTEI,
+                    U_SUM_AGR
                 ))){
                         $message = tt(' <br>Новое мобильное приложение для Android : <strong><a href="{url}" target="_blank" style="font-size: 18px">здесь</a></strong>! <br>Новое мобильное приложение для iOs : <strong><a href="{url_apple}" target="_blank" style="font-size: 18px">здесь</a></strong>! <br>Также читайте инструкцию к мобильному приложению: <strong><a href="{url-instruction}" target="_blank" style="font-size: 18px">здесь</a></strong>!', array(
                             '{url}' => SH::MOBILE_URL,

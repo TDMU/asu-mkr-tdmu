@@ -52,6 +52,7 @@ class OtherController extends Controller
             ),
             array('allow',
                 'actions' => array(
+                    'searchStudent',
                     'phones',
                     'studentInfo', //проверка идет в самом методе
 
@@ -68,7 +69,6 @@ class OtherController extends Controller
             ),
             array('allow',
                 'actions' => array(
-                    'searchStudent',
                     'updateNkrs',
                 ),
                 'users' => array('@'),

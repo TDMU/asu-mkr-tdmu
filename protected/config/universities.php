@@ -27,3 +27,4 @@ define('U_UMAN',  37);
 define('U_RGIIS',  21);
 define('U_KNU',  61);
 define('U_HTEI',  59);
+define('U_SUM_AGR',  1);

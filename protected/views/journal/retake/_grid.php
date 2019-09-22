@@ -24,13 +24,13 @@
         'group_st'=>array(
             'name'=>'group_st',
             'header'=>Elgzst::model()->getAttributeLabel('group_st'),
-            'value'=>'$data["gr3"]',
+            'value'=>'!empty($data["virt_grup"]) ? $data["virt_grup"] :$data["gr3"]',
             'htmlOptions'=>array('class'=>'group_st'),
         ),
         'r2'=>array(
             'name'=>'r2',
             'header'=>Elgzst::model()->getAttributeLabel('r2'),
-            'value'=>'Elgzst::getR2Retake($data["elg2"],$data["elg4"] ,$data["nom"],$data["gr1"],$data["sem1"])',
+            'value'=>'date("d.m.Y", strtotime($data["r2"]))',
             'filter'=>'',
             'htmlOptions'=>array('class'=>'date'),
         ),

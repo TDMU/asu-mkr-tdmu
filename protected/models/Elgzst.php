@@ -125,12 +125,16 @@ class Elgzst extends CActiveRecord
         else
             $type_lesson=1;
 
-        $fields = ' EL_GURNAL_OTR.*, (select count(*) from elgotr where elgotr1=ELGZST0) as count_elgotr ';
+        $fields = ' EL_GURNAL_INFO.*, elg4, ustem5, elg2, elg3 as sem1, elgp2, elgp3, elgzst3, elgzst4, elgzst5,(select count(*) from elgotr where elgotr1=EL_GURNAL_INFO.ELGZST0) as count_elgotr ';
 
-        $from = '
-            FROM EL_GURNAL_OTR(0,%s,%s,%s)
-            ';
-        $from = sprintf($from,$this->uo1, Yii::app()->session['year'], Yii::app()->session['sem']);
+        $from = 'FROM EL_GURNAL_INFO(%s,%s, dateadd(-2 year to current_timestamp), current_timestamp, 0,(select first 1 u2 from uo join u on (uo22 = u1) where uo1=%s), 0, 0, 0, 1)';
+        $from = sprintf($from,Yii::app()->session['year'], Yii::app()->session['sem'], $this->uo1);
+
+        $from.= ' INNER JOIN elgz on (elgz.elgz1 = EL_GURNAL_INFO.elgz1)';
+        $from.= ' INNER JOIN elg on (elgz.elgz2 = elg.elg1)';
+        $from.= ' INNER JOIN elgzst on (elgzst.elgzst0 = EL_GURNAL_INFO.elgzst0)';
+        $from.= ' LEFT JOIN elgp on (elgp.elgp1 = EL_GURNAL_INFO.elgzst0)';
+        $from.= ' LEFT JOIN ustem on (ustem.ustem1 = EL_GURNAL_INFO.ustem1)';
 
         $ps55 = PortalSettings::model()->findByPk(55)->ps2;
         if($ps55==0)
@@ -141,7 +145,7 @@ class Elgzst extends CActiveRecord
         $dopCondition = ' OR (elgzst4<='.Elgzst::model()->getMin().' and elgzst4 '.$operation.' 0)';
         if($type_lesson==0)
             $dopCondition = '';
-        
+
         $where = '
                 WHERE   elg4='.$type_lesson.' AND
                         ((elgzst3 > 0) '.$dopCondition.' )
@@ -177,14 +181,18 @@ class Elgzst extends CActiveRecord
             $params[':ELGZST3'] = $this->elgzst3;
         }
         if(!empty($this->group_st)) {
-            $where .= ' AND gr3 CONTAINING :GR3';
+            $where .= ' AND (gr3 CONTAINING :GR3 or virt_grup CONTAINING :GR3_)';
             $params[':GR3'] = $this->group_st;
+            $params[':GR3_'] = $this->group_st;
         }
-        if(!empty($this->status))
-            if($this->status==1)
-                $where .=" AND (elgzst5>'".$this->getMin()."' or elgzst5=-1) ";
+        if(!empty($this->status)) {
+            if ($this->status == 1)
+                $where .= " AND (elgzst5>'" . $this->getMin() . "' or elgzst5=-1) ";
             else
-                $where .=" AND (elgzst5<'".$this->getMin()."' and elgzst5>-1) ";
+                $where .= " AND (elgzst5<'" . $this->getMin() . "' and elgzst5>-1) ";
+        }
+
+        $where.= ' AND uo1='.$this->uo1;
 
         $countSQL =
             'SELECT COUNT(*) ' .
@@ -523,51 +531,10 @@ SQL;
         return $statistic;
     }
 
-    /*public static function getCountLesson($gr1, $sem1, $start, $end){
-        if (empty($gr1) || empty($sem1) || empty($start) || empty($end))
-            return '-';
-
-        $sql = <<<SQL
-			select count(*)
-			from elgz
-			inner join elg on (elgz.elgz2 = elg.elg1 and elg3={$sem1})
-			inner join EL_GURNAL_ZAN(elg.elg2,:GR1,:SEM1, elg.elg4) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
-			WHERE r2 >= :DATA1 and r2 <= :DATA2
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':GR1', $gr1);
-        $command->bindValue(':SEM1', $sem1);
-        $command->bindValue(':DATE1', $start);
-        $command->bindValue(':DATE2', $end);
-
-        $count = $command->queryScalar();
-        return $count;
-    }*/
-
     public static function getElgzst3Reatake($elgzst3)
     {
         $arr=self::model()->getElgzst3s();
         return $arr[$elgzst3];
-    }
-
-    public static function getR2Retake($elg2,$elg4,$nom,$gr1,$elg3)
-    {
-        $sql = <<<SQL
-          SELECT r2 FROM EL_GURNAL_ZAN(:UO1,:GR1,:SEM1, :ELG4) where EL_GURNAL_ZAN.nom = :NOM;
-SQL;
-
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':UO1', $elg2);
-        $command->bindValue(':ELG4', $elg4);
-        $command->bindValue(':NOM', $nom);
-        $command->bindValue(':GR1', $gr1);
-        $command->bindValue(':SEM1', $elg3);
-        $val = $command->queryRow();
-
-        if(!empty($val['r2']))
-            return date_format(date_create_from_format("Y-m-d H:i:s", $val['r2']), "d.m.Y");
-        else
-            return '-';
     }
 
     public function nbSt45($st,$elgz1){
