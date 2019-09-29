@@ -1187,7 +1187,7 @@ SQL;
 
 		$sql = <<<SQL
 		select first 1 LISTST.gr1, gr3, listst.GR1_VIRT
-        from LISTST(:DATE_1,0,0,7,0,:ST1,0,0,0)
+        from LISTST(:DATE_1,:YEAR1,:SEM1,7,0,:ST1,0,0,0)
            inner join gr on (LISTST.gr1_virt = gr.gr1)
            inner join ug on (gr.gr1 = ug.ug2)
            inner join nr on (ug.ug1 = nr.nr1)
@@ -1203,6 +1203,8 @@ SQL;
 		$command->bindValue(':UO19', $uo19);
 		$command->bindValue(':YEAR', $year);
 		$command->bindValue(':SEM', $sem);
+        $command->bindValue(':YEAR1', $year);
+        $command->bindValue(':SEM1', $sem);
 		$row = $command->queryRow();
 
 
