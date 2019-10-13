@@ -102,40 +102,6 @@ $this->breadcrumbs=array(
         </div>
     </div>
 
-    <?php /*
-    <div class="control-group">
-        <?=$form->label($model, 'grants3', array('class' => 'control-label'))?>
-        <div class="controls">
-            <?php
-                $options = array(' '.tt('Дисциплины преподавателя'), ' '.tt('Дисциплины кафедры'));
-                echo $form->radioButtonList($model, 'grants3', $options,
-                    array(
-                        'labelOptions' => array('class' => 'lbl'),
-                        //'template' => '<label>{input}{label}</label>',
-                        'class' => 'ace'
-                    )
-                )
-            ?>
-        </div>
-    </div> */?>
-
-    <div class="control-group">
-        <?=$form->label($model, 'grants5', array('class' => 'control-label'))?>
-        <div class="controls">
-            <label>
-                <?php
-                    echo CHtml::checkBox('Grants[grants5]', $model->grants5,
-                        array(
-                            'class' => 'ace ace-switch',
-                            'uncheckValue' => '0'
-                        )
-                    )
-                ?>
-                <span class="lbl"></span>
-            </label>
-        </div>
-    </div>
-
     <div class="control-group">
         <?=$form->label($model, 'grants7', array('class' => 'control-label'))?>
         <div class="controls">

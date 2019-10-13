@@ -39,20 +39,6 @@ class DocController extends Controller
         );
     }
 
-    public function filterCheckPermission($filterChain)
-    {
-        if(!Yii::app()->user->isAdmin) {
-            $grants = Yii::app()->user->dbModel->grants;
-
-            if (empty($grants))
-                throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
-
-            if ($grants->grants5 != 1)
-                throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
-        }
-        $filterChain->run();
-    }
-
     public function actionIndex()
     {
         $docType = Yii::app()->request->getParam('docType', null);
