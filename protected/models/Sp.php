@@ -172,4 +172,29 @@ SQL;
         $specializations = $command->queryAll();
         return $specializations;
     }
+
+    // TDMU - get back
+    public function getSpecialitiesForFaculty($faculty)
+    {
+        if (empty($faculty))
+            return array();
+
+        $sql=<<<SQL
+            SELECT pnsp2,sp2,sp1
+            FROM sp
+            INNER JOIN pnsp on (sp.sp11 = pnsp.pnsp1)
+            WHERE sp5=:FACULTY and sp7 is null and pnsp9 is null
+            ORDER BY pnsp2
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':FACULTY', $faculty);
+        $specialities = $command->queryAll();
+
+        foreach ($specialities as $key => $speciality) {
+            $specialities[$key]['name'] = $speciality['pnsp2'].' ('.$speciality['sp2'].')';
+        }
+
+        return $specialities;
+    }
 }

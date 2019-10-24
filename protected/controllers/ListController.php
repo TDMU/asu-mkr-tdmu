@@ -18,8 +18,6 @@ class ListController extends Controller
                     'virtualGroupExcel','groupExcel', 'streamExcel',
                     'contactStudents', 'contactTeachers', 'students2moodle', 'students2MoodleExcel'
                 )
-//array('allow',
-//                'actions' => array('stream','group','chair', 'searchStudent','virtualGroup','virtualGroupExcel','groupExcel', 'streamExcel', 'students2MoodleExcel') //TODO - TDMU - need test
             ),
             array('deny',
                 'users' => array('*'),
@@ -47,7 +45,6 @@ class ListController extends Controller
 
         if (isset($_REQUEST['FilterForm']))
             $model->attributes=$_REQUEST['FilterForm'];
-//var_dump($model);
         $this->render('students2moodle', array(
             'model' => $model,
         ));
@@ -422,8 +419,9 @@ class ListController extends Controller
 
         $students=St::model()->getListStream($model->stream);
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        //Yii::import('ext.phpexcel.XPHPExcel');
+        $objPHPExcel= new PHPExcel();
+        //$objPHPExcel= XPHPExcel::createPHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("Export2Moodle ".date('Y-m-d H-i'))
