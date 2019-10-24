@@ -37,9 +37,6 @@ class DispDist extends CActiveRecord
 			array('dispdist1, dispdist4', 'numerical', 'integerOnly'=>true),
 			array('dispdist2, dispdist3', 'length', 'max'=>200),
 			array('dispdist5', 'length', 'max'=>25),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('dispdist1, dispdist2, dispdist3, dispdist4, dispdist5', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,49 +51,6 @@ class DispDist extends CActiveRecord
 			'dispdist10' => array(self::BELONGS_TO, 'Uo', 'dispdist1'),
 			'dispdist40' => array(self::BELONGS_TO, 'P', 'dispdist4'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'dispdist1' => 'Dispdist1',
-			'dispdist2' => 'Dispdist2',
-			'dispdist3' => 'Dispdist3',
-			'dispdist4' => 'Dispdist4',
-			'dispdist5' => 'Dispdist5',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('dispdist1',$this->dispdist1);
-		$criteria->compare('dispdist2',$this->dispdist2,true);
-		$criteria->compare('dispdist3',$this->dispdist3,true);
-		$criteria->compare('dispdist4',$this->dispdist4);
-		$criteria->compare('dispdist5',$this->dispdist5,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

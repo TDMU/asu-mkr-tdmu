@@ -30,8 +30,6 @@ class Dkid extends CActiveRecord
 		return array(
 			array('dkid1, dkid0', 'numerical', 'integerOnly'=>true),
 			array('dkid2, dkid3', 'length', 'max'=>20),
-			// The following rule is used by search().
-			//array('dkid0,dkid1, dkid2, dkid3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -44,19 +42,6 @@ class Dkid extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
             'performens' => array(self::HAS_MANY, 'Ido', 'ido11'),
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-            'dkid0' => 'Dkid0',
-			'dkid1' => 'Dkid1',
-			'dkid2' => 'Dkid2',
-			'dkid3' => 'Dkid3',
 		);
 	}
 

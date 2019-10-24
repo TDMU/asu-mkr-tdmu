@@ -7,14 +7,9 @@
 !/protected/runtime/cache
 /protected/runtime/cache/*
 !/protected/runtime/cache/.gitkeep
-/uploads/*
-!/uploads/.gitkeep
-/uploads/docs/*
-!/uploads/docs/.gitkeep
 /images/uploads/*
 !/images/uploads/.gitkeep
-/css/user/*
-!/css/user/.gitkeep
+css/user.css
 # Local config file
 /protected/config/main-local.php
 # Svn files
@@ -35,11 +30,9 @@ Thumbs.db
 
 /protected/data/*
 !/protected/data/.gitkeep
-/kiosk
 /protected/config/params.inc
 /protected/config/paramsEAuth.inc
 protected/config/mail.inc
-css/user.css
 html/*
 /favicon.ico
 /protected/config/*.json

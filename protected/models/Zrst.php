@@ -38,9 +38,6 @@ class Zrst extends CActiveRecord
 			array('zrst2, zrst3, zrst4, zrst5, zrst6', 'numerical', 'integerOnly'=>true),
             array('zrst7', 'length', 'max'=>100),
             array('zrst8', 'length', 'max'=>10),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('zrst1, zrst2, zrst3, zrst4, zrst5, zrst6', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,42 +61,12 @@ class Zrst extends CActiveRecord
 	{
 		return array(
 			'zrst1' => '#',
-			'zrst2' => 'Студент',
+			'zrst2' => tt('Студент'),
 			'zrst3' => 'Us1',
-			'zrst4' => 'Тип1',
-			'zrst5' => 'Сортировка',
-			'zrst6' => 'Тип',
+			'zrst4' => tt('Тип1'),
+			'zrst5' => tt('Сортировка'),
+			'zrst6' => tt('Тип'),
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('zrst1',$this->zrst1);
-		$criteria->compare('zrst2',$this->zrst2);
-		$criteria->compare('zrst3',$this->zrst3);
-		$criteria->compare('zrst4',$this->zrst4);
-		$criteria->compare('zrst5',$this->zrst5);
-		$criteria->compare('zrst6',$this->zrst6);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

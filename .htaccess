@@ -1,6 +1,5 @@
 AddDefaultCharset UTF-8
 
-Options +FollowSymLinks
 IndexIgnore */*
 
 php_value date.timezone UTC

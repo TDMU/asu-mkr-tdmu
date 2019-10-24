@@ -126,8 +126,7 @@ class JournalController extends Controller
 
         $dataProvider = $model->search();
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel=new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("ST_FIN_BLOCK ".date('Y-m-d H-i'))
@@ -216,36 +215,11 @@ class JournalController extends Controller
     {
         $model = new FilterForm;
         $model->scenario = 'journal';
-        /*if (isset($_REQUEST['showRetake'])) {
-            Yii::app()->user->setState('showRetake',(int)$_REQUEST['showRetake']);
-            unset($_REQUEST['showRetake']);
-        }*/
+
         if (isset($_REQUEST['FilterForm']))
             $model->attributes=$_REQUEST['FilterForm'];
 
         $read_only=false;
-        /*if(!empty($model->group))
-        {
-            list($uo1,$gr1) = explode("/", $model->group);
-
-            $sql = <<<SQL
-                     SELECT * FROM  EL_GURNAL(:P1,:YEAR,:SEM,0,2,:US1,0,0,:TYPE_LESSON);
-SQL;
-            $command = Yii::app()->db->createCommand($sql);
-
-            $command->bindValue(':P1', Yii::app()->user->dbModel->p1);
-            $command->bindValue(':UO1', $uo1);
-            $command->bindValue(':US1', 0);
-            $command->bindValue(':GR1', $gr1);
-            $command->bindValue(':TYPE_LESSON', $model->type_lesson);
-            $command->bindValue(':YEAR', Yii::app()->session['year']);
-            $command->bindValue(':SEM', Yii::app()->session['sem']);
-            $res = $command->queryRow();
-            if(empty($res)||$res['dostup']==0)
-            {
-                $read_only=true;
-            }
-        }*/
 
         $this->render('journal', array(
             'model' => $model,
@@ -287,7 +261,6 @@ SQL;
                 $error = true;
                 $errorType=2;
             }else{
-                $sem7 = Gr::model()->getSem7ByGr1ByDate($gr1,date('d.m.Y'));
                 $students = St::model()->getStudentsForJournal($gr1, $uo1);
                 if(empty($students)){
                     $error = true;
@@ -1324,6 +1297,9 @@ SQL;
         Yii::app()->end(CJSON::encode(array('error' => $error, 'errorType' => $errorType)));
     }
 
+    /**
+     * @throws CHttpException
+     */
     public function actionInsertDopMark()
     {
         if (! Yii::app()->request->isAjaxRequest)
@@ -1886,8 +1862,7 @@ SQL;
             $first_title='%s семестр %s - %s навчальний рік %s курс';
             $second_title='%s факультет %s група';
 
-            Yii::import('ext.phpexcel.XPHPExcel');
-            $objPHPExcel= XPHPExcel::createPHPExcel();
+            $objPHPExcel=new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("ACY")
                 ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
                 ->setTitle("Jornal ".date('Y-m-d H-i'))
@@ -2195,14 +2170,9 @@ SQL;
                 throw new CHttpException(404, 'Elg empty.');
 
             $ps45 = PortalSettings::model()->findByPk(45)->ps2;//вуз
-            $ps46 = PortalSettings::model()->findByPk(46)->ps2;//министерство
-
             $year=(int)Yii::app()->session['year'];
-            $first_title='%s семестр %s - %s навчальний рік %s курс';
-            $second_title='%s факультет %s група';
 
-            Yii::import('ext.phpexcel.XPHPExcel');
-            $objPHPExcel= XPHPExcel::createPHPExcel();
+            $objPHPExcel=new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("ACY")
                 ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
                 ->setTitle("Jornal ".date('Y-m-d H-i'))
@@ -2922,8 +2892,7 @@ SQL;
                 $groups_name=tt('Группы').': '.$groups_name;
             }
 
-            Yii::import('ext.phpexcel.XPHPExcel');
-            $objPHPExcel= XPHPExcel::createPHPExcel();
+            $objPHPExcel=new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("ACY")
                 ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
                 ->setTitle("ThematicPlan ".date('Y-m-d H-i'))
@@ -3452,8 +3421,7 @@ SQL;
         if(empty($model->date1)||empty($model->date2))
             throw new Exception(tt('Введите даты'),400);
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel=new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("Jornal Statistic ".date('Y-m-d H-i'))
@@ -3601,8 +3569,7 @@ SQL;
         if(empty($firstDay))
             throw new CHttpException(400, 'Bad request. Please do not repeat this request again.');
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel=new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("Jornal Statistic ".date('Y-m-d H-i'))

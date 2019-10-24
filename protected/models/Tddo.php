@@ -99,32 +99,10 @@ class Tddo extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'tddo1' => 'Tddo1',
 			'tddo2' => tt('Тип'),
 			'tddo3' => tt('Номер'),
-			'tddo4' => 'Tddo4',
-			'tddo5' => 'Tddo5',
-			'tddo6' => 'Tddo6',
-			'tddo7' => 'Tddo7',
-			'tddo8' => 'Tddo8',
-			'tddo9' => 'Tddo9',
-			'tddo10' => 'Tddo10',
-			'tddo11' => 'Tddo11',
-			'tddo12' => 'Tddo12',
-			'tddo13' => 'Tddo13',
-			'tddo14' => 'Tddo14',
-			'tddo15' => 'Tddo15',
-			'tddo16' => 'Tddo16',
-			'tddo17' => 'Tddo17',
-			'tddo18' => 'Tddo18',
-			'tddo19' => 'Tddo19',
-			'tddo20' => 'Tddo20',
 			'tddo21' => tt('Дата создания'),
-			'tddo22' => 'Tddo22',
 			'tddo23' => tt('Год'),
-            'tddo24' => 'Tddo24',
-            'tddo25' => 'Tddo25',
-            'tddo26' => 'Tddo26',
 		);
 	}
 
@@ -355,19 +333,6 @@ class Tddo extends CActiveRecord
 	}
 
 	public function getFiles(){
-		/*$dbh = Yii::app()->db2;
-
-		$sql = <<<SQL
-			SELECT fpdd1,fpdd4
-			FROM fpdd
-			WHERE fpdd2 = {$this->tddo1}
-SQL;
-		$command=$dbh->createCommand($sql);
-		$dataReader=$command->query();
-		$files=$dataReader->readAll();
-
-		$dbh->active = false;*/
-
 		return Fpdd::model()->findAllByAttributes(array('fpdd2'=>$this->tddo1));
 	}
 }

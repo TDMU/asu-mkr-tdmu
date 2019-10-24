@@ -141,8 +141,7 @@ class ListController extends Controller
 
         $students=St::model()->getListVirtualGroup($model->group);
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel= new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("ListVirtualGroup ".date('Y-m-d H-i'))
@@ -187,11 +186,7 @@ class ListController extends Controller
         )))->getStyle('A3')->getAlignment()-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
         $sheet->mergeCellsByColumnAndRow(0, 4, 2, 4);
-        $sheet->setCellValue('A4', $faculty
-        /*tt('{faculty} факультета', array(
-            '{faculty}' => $faculty
-        ))*/
-        )->getStyle('A4')->getAlignment()-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $sheet->setCellValue('A4', $faculty)->getStyle('A4')->getAlignment()-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
 
         $sheet->mergeCellsByColumnAndRow(0, 5, 2, 5);
@@ -292,8 +287,7 @@ class ListController extends Controller
 
         $students=St::model()->getListStream($model->stream);
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel= new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("ListStream ".date('Y-m-d H-i'))
@@ -547,8 +541,7 @@ class ListController extends Controller
 
         $students=St::model()->getListGroup($model->group);
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel=new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("ListVirtualGroup ".date('Y-m-d H-i'))

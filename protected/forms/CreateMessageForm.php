@@ -78,7 +78,7 @@ class CreateMessageForm extends CFormModel
 	        self::TYPE_STUDENT => tt('Студенту'),
             self::TYPE_GROUP => tt('Группе'),
             self::TYPE_STREAM => tt('Потоку'),
-            self::TYPE_TEACHER => tt('Преподователю')
+            self::TYPE_TEACHER => tt('Преподавателю')
         );
     }
 

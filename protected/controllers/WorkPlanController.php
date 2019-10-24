@@ -94,8 +94,7 @@ SQL;
             $tip=$discipline['us4'];
             $course=$discipline['sem4'];
 
-            Yii::import('ext.phpexcel.XPHPExcel');
-            $objPHPExcel= XPHPExcel::createPHPExcel();
+            $objPHPExcel=new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("ACY")
                 ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
                 ->setTitle("WorkPLAN ".date('Y-m-d H-i'))

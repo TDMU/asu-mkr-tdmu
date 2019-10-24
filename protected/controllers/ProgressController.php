@@ -111,8 +111,7 @@ class ProgressController extends Controller
         if(empty($rating))
             throw new CHttpException(400, tt('Нет данных.'));
 
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel=new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("Jornal ".date('Y-m-d H-i'))

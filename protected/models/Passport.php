@@ -30,62 +30,7 @@ class Passport extends CGraficActiveRecord
 			array('passport2', 'required'),
 			array('passport1, passport2, passport3', 'numerical', 'integerOnly'=>true),
 			array('passport4', 'length', 'max'=>8),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('passport1, passport2, passport3, passport4', 'safe', 'on'=>'search'),
 		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'passport1' => 'Passport1',
-			'passport2' => 'Passport2',
-			'passport3' => 'Passport3',
-			'passport4' => 'Passport4',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('passport1',$this->passport1);
-		$criteria->compare('passport2',$this->passport2);
-		$criteria->compare('passport3',$this->passport3);
-		$criteria->compare('passport4',$this->passport4,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

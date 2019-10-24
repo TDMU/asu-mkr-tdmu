@@ -30,66 +30,7 @@ class Vmp extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('vmp1, vmp2, vmp4, vmp5, vmp6, vmp7', 'numerical'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('vmp1, vmp2, vmp4, vmp5, vmp6, vmp7', 'safe', 'on'=>'search'),
 		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'vmp1' => 'Vmp1',
-			'vmp2' => 'Vmp2',
-			'vmp4' => 'Vmp4',
-			'vmp5' => 'Vmp5',
-			'vmp6' => 'Vmp6',
-			'vmp7' => 'Vmp7',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('vmp1',$this->vmp1);
-		$criteria->compare('vmp2',$this->vmp2);
-		$criteria->compare('vmp4',$this->vmp4);
-		$criteria->compare('vmp5',$this->vmp5);
-		$criteria->compare('vmp6',$this->vmp6);
-		$criteria->compare('vmp7',$this->vmp7);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
@@ -102,53 +43,6 @@ class Vmp extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-
-    public function getMarksForStudent($st1, $vvmp1)
-    {
-        $rows = Yii::app()->db->createCommand()
-                ->select('*')
-                ->from('vmp')
-                ->where('vmp1 = :VVMP1 and vmp2 = :ST1', array(
-                    ':VVMP1' => $vvmp1,
-                    ':ST1' => $st1,
-                ))
-                ->queryAll();
-
-        $res = array();
-        foreach($rows as $row) {
-            $key = $row['vmp3'];
-            $res[$key] = $row;
-        }
-
-        return $res;
-    }
-
-    public function recalculateVmp4()
-    {
-        $array = array(
-            $this->vmp5,
-            $this->vmp6,
-            $this->vmp7
-        );
-
-        $this->saveAttributes(array(
-            'vmp4' => array_sum($array)
-        ));
-    }
-
-    public function isModuleExtended($vvmp1, $module)
-    {
-        $isExtended = Yii::app()->db->createCommand()
-                        ->select('count(*)')
-                        ->from('vmp')
-                        ->where('vmp1 = :VVMP1 AND vmp3 = :MODULE_NUM and (vmp5 <> 0 OR vmp6 <> 0 OR vmp7 <> 0)', array(
-                            ':VVMP1' => $vvmp1,
-                            ':MODULE_NUM' => $module,
-                        ))
-                        ->queryScalar();
-
-        return (bool)$isExtended;
-    }
 
     public function getMarks($vvmp1,$st1,$gr1)
     {

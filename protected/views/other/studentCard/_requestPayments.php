@@ -40,7 +40,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
             'buttons'=>array
             (
                 'delete' => array(
-                    'label'=>tt('Удалить заявку'),
+                    'label'=>tt('Удалить заявление'),
                     'icon'=>'icon-trash bigger-120',
                     'options' => array('class' => 'btn btn-mini btn-danger'),
                 ),

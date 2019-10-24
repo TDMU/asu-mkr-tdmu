@@ -5,9 +5,9 @@
  * @var FilterForm $model
  */
 
-$this->pageHeader=tt('Контакты академической группы');
+$this->pageHeader=tt('Контакты академ. группы');
 $this->breadcrumbs=array(
-    tt('Контакты группы'),
+    tt('Контакты академ. группы'),
 );
 
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/list/group.js', CClientScript::POS_HEAD);

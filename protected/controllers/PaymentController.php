@@ -60,10 +60,16 @@ class PaymentController extends Controller
     /**
      * проверка есть ли дорступ у куратора для просомтра этого студента
      * @param $st1
+     * @throws CException
+     * @throws CHttpException
      */
     private function _checkAccessCuratorForStudent($st1){
         if(empty($st1))
             return;
+        if(Yii::app()->user->isAdmin)
+            return;
+        if(Yii::app()->user->isTch && !Yii::app()->user->dbModel->isKuratorForStudent($st1))
+            throw new CHttpException(403, tt('Вы не являетесь куратором данного студента. Доступ запрещен'));
     }
 
     public function actionEducationCurator()

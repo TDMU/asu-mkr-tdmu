@@ -37,10 +37,7 @@ HTML;
             'lastPageLabel'=>'>>',
             'class'=>'bootstrap.widgets.TbPager',
             'displayFirstAndLast'=>true
-            //'maxButtonCount'=>'10',
-            //'header'=>'<span>Листалка страниц:</span>',
         ),
-        //'enableHistory'=>true,
         'template' => $template,
         'type' => 'striped bordered',
         'ajaxUrl' => Yii::app()->createAbsoluteUrl('/admin/default/teachers'),
@@ -84,7 +81,6 @@ HTML;
             array(
                 'class'=>'CButtonColumn',
                 'template'=>'{grants} {enter} {delete}',
-                //'header' => tt('Права доступа'),
                 'header'=>CHtml::dropDownList(
                         'pageSize',
                         $pageSize,

@@ -45,86 +45,7 @@ class U extends CActiveRecord
 			array('u16', 'length', 'max'=>40),
 			array('u20', 'length', 'max'=>300),
 			array('u25', 'length', 'max'=>8),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('u1, u2, u8, u9, u10, u15, u16, u17, u18, u19, u20, u21, u22, u23, u25, u26', 'safe', 'on'=>'search'),
 		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'u1' => 'U1',
-			'u2' => 'U2',
-			'u8' => 'U8',
-			'u9' => 'U9',
-			'u10' => 'U10',
-			'u15' => 'U15',
-			'u16' => 'U16',
-			'u17' => 'U17',
-			'u18' => 'U18',
-			'u19' => 'U19',
-			'u20' => 'U20',
-			'u21' => 'U21',
-			'u22' => 'U22',
-			'u23' => 'U23',
-			'u25' => 'U25',
-			'u26' => 'U26',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('u1',$this->u1);
-		$criteria->compare('u2',$this->u2);
-		$criteria->compare('u8',$this->u8);
-		$criteria->compare('u9',$this->u9);
-		$criteria->compare('u10',$this->u10);
-		$criteria->compare('u15',$this->u15);
-		$criteria->compare('u16',$this->u16,true);
-		$criteria->compare('u17',$this->u17);
-		$criteria->compare('u18',$this->u18);
-		$criteria->compare('u19',$this->u19);
-		$criteria->compare('u20',$this->u20,true);
-		$criteria->compare('u21',$this->u21);
-		$criteria->compare('u22',$this->u22);
-		$criteria->compare('u23',$this->u23);
-		$criteria->compare('u25',$this->u25,true);
-		$criteria->compare('u26',$this->u26);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
@@ -538,7 +459,7 @@ SQL;
                 continue;
 
             if($enableDistEducation==1&&$enableInSubscriptionDistEducation==1){
-                list($result, $error) = $connector->subscribeToCourse(Yii::app()->user->model, $code['ucgns1_vib']);
+                list($result, $error) = $connector->subscribeToCourse(Yii::app()->user->dbModel, $code['ucgns1_vib']);
                 Yii::app()->user->setFlash($result ? 'success' : 'error' , $error);
                 if(!$result)
                     throw new CHttpException('400',tt('Ошибка записи {error}', array(
@@ -645,7 +566,7 @@ SQL;
             Yii::app()->db->createCommand($sql)->execute($params);
 
             if($enableDistEducation==1&&$enableInSubscriptionDistEducation==1){
-                list($result, $error) = $connector->unsubscribeToCourse(Yii::app()->user->model, $code);
+                list($result, $error) = $connector->unsubscribeToCourse(Yii::app()->user->dbModel, $code);
                 Yii::app()->user->setFlash($result ? 'success' : 'error' , $error);
             }
         }

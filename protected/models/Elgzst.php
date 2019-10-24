@@ -67,14 +67,7 @@ class Elgzst extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'elgzst0' => 'Elgzst0',
-			'elgzst1' => 'Elgzst1',
-			'elgzst2' => 'Elgzst2',
 			'elgzst3' => tt('Тип'),
-			'elgzst4' => 'Elgzst4',
-			'elgzst5' => 'Elgzst5',
-			'elgzst6' => 'Elgzst6',
-			'elgzst7' => 'Elgzst7',
             'elgp2' => tt('Тип пропуска'),
             'elgp3' => tt('Номер справки'),
             'r2'=>tt('Дата занятия'),
@@ -84,38 +77,6 @@ class Elgzst extends CActiveRecord
             'group_st'=>tt('Группа'),
             'status'=>tt('Статус'),
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('elgzst0',$this->elgzst0);
-		$criteria->compare('elgzst1',$this->elgzst1);
-		$criteria->compare('elgzst2',$this->elgzst2);
-		$criteria->compare('elgzst3',$this->elgzst3);
-		$criteria->compare('elgzst4',$this->elgzst4);
-		$criteria->compare('elgzst5',$this->elgzst5);
-		$criteria->compare('elgzst6',$this->elgzst6,true);
-		$criteria->compare('elgzst7',$this->elgzst7);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
     public function searchRetake()

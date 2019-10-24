@@ -38,21 +38,10 @@ class MenuGroupController extends Controller
 
     public function actionChangeVisible($id,$type)
     {
-        //if(!Yii::app()->request->isAjaxRequest) throw new CHttpException('Нет доступа');
         $model=$this->loadModel($id);
         $model->pmg7=$type;
         $model->save();
     }
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	/*public function actionView($id)
-	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
-	}*/
 
 	/**
 	 * Creates a new model.
@@ -63,8 +52,6 @@ class MenuGroupController extends Controller
 		$model=new Pmg;
         $model->unsetAttributes();
         $model->pmg8=0;
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Pmg']))
 		{
@@ -90,9 +77,6 @@ class MenuGroupController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Pmg']))
 		{

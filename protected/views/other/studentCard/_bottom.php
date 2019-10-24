@@ -100,9 +100,7 @@ echo '<div id="studentCard">';
 HTML;
 
     $uCode = $this->universityCode;
-    /*$name = $st->st2.' '.$st->st3.' '.$st->st4;
-    if(Yii::app()->language=='en'&&!(empty($st->st74)))
-        $name = $st->st74.' '.$st->st75.' '.$st->st76;*/
+
     $isFarm = $uCode == U_FARM;
 
     echo sprintf($infoHtml,
@@ -133,26 +131,9 @@ HTML;
 
     echo '</div>';//.top-block
 
-    $this->widget('bootstrap.widgets.TbButton', array(
-        'buttonType'=>'link',
-        'type'=>'primary',
-        'icon'=>'print',
-        'url'=> Yii::app()->user->isAdmin ? '#' : Yii::app()->createUrl('/other/studentCardExcel'),
-        'label'=>tt('Печать'),
-        'htmlOptions'=>array(
-            'class'=>'btn-mini',
-            'id'=>'studentCard-print',
-            'data-url'=>Yii::app()->createUrl('/other/studentCardExcel'),
-        )
-    ));
-
     echo '<div class="bottom-block">';
 
     $disciplines = Elg::model()->getDispBySt($st->st1);
-    //стусв или стус (временно)
-    /*$ps107 = PortalSettings::model()->findByPk(107)->ps2;
-    $_pref ='';//приставка в конец дял вида со сус или стусв
-    if($ps107==1)*/
     $_pref = '_new';//Клименко сказал оставить только стусв 19.04.2018
 
     $params = array('gr1'=>$studentInfo['gr1'],'st'=>$st);

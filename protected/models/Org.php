@@ -34,9 +34,6 @@ class Org extends CActiveRecord
 			array('org1, org5', 'numerical', 'integerOnly'=>true),
 			array('org2, org4', 'length', 'max'=>1000),
 			array('org3', 'length', 'max'=>200),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('org1, org2, org3, org4, org5', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,49 +47,6 @@ class Org extends CActiveRecord
 		return array(
 			'tddos' => array(self::HAS_MANY, 'Tddo', 'tddo18'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'org1' => 'Org1',
-			'org2' => 'Org2',
-			'org3' => 'Org3',
-			'org4' => 'Org4',
-			'org5' => 'Org5',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('org1',$this->org1);
-		$criteria->compare('org2',$this->org2,true);
-		$criteria->compare('org3',$this->org3,true);
-		$criteria->compare('org4',$this->org4,true);
-		$criteria->compare('org5',$this->org5);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

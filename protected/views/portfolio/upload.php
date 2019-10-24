@@ -10,8 +10,8 @@
  * @var $model CreateZrstForm
  */
 
-$this->pageTitle=tt('Добавления файла');
-$this->pageHeader=tt('Добавления файла');
+$this->pageTitle=tt('Добавление файла');
+$this->pageHeader=tt('Добавление файла');
 ?>
 
 <div class="span4">

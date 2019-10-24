@@ -39,62 +39,6 @@ class Elgr extends CActiveRecord
 	}
 
 	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'elgr1' => 'Elgr1',
-			'elgr2' => 'Elgr2',
-			'elgr3' => 'Elgr3',
-			'elgr4' => 'Elgr4',
-			'elgr5' => 'Elgr5',
-			'elgr6' => 'Elgr6',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('elgr1',$this->elgr1);
-		$criteria->compare('elgr2',$this->elgr2);
-		$criteria->compare('elgr3',$this->elgr3,true);
-		$criteria->compare('elgr4',$this->elgr4,true);
-		$criteria->compare('elgr5',$this->elgr5,true);
-		$criteria->compare('elgr6',$this->elgr6);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.

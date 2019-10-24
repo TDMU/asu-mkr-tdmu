@@ -58,8 +58,6 @@ class D extends CActiveRecord
 	 */
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
 			array('d1, d5, d6, d10, d13, d14, d15, d16, d17, d18, d19, d20, d21, d22, d23, d24, d25, d30, d31', 'numerical', 'integerOnly'=>true),
 			array('d2, d27, d32, d34, d36', 'length', 'max'=>1000),
@@ -68,128 +66,7 @@ class D extends CActiveRecord
 			array('d7, d8, d9, d26', 'length', 'max'=>4),
 			array('d11, d12', 'length', 'max'=>8),
 			array('d28, d33, d35', 'length', 'max'=>40),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15, d16, d17, d18, d19, d20, d21, d22, d23, d24, d25, d26, d27, d28, d29, d30, d31, d32, d33, d34, d35, d36, d37', 'safe', 'on'=>'search'),
 		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'd1' => 'D1',
-			'd2' => 'D2',
-			'd3' => 'D3',
-			'd4' => 'D4',
-			'd5' => 'D5',
-			'd6' => 'D6',
-			'd7' => 'D7',
-			'd8' => 'D8',
-			'd9' => 'D9',
-			'd10' => 'D10',
-			'd11' => 'D11',
-			'd12' => 'D12',
-			'd13' => 'D13',
-			'd14' => 'D14',
-			'd15' => 'D15',
-			'd16' => 'D16',
-			'd17' => 'D17',
-			'd18' => 'D18',
-			'd19' => 'D19',
-			'd20' => 'D20',
-			'd21' => 'D21',
-			'd22' => 'D22',
-			'd23' => 'D23',
-			'd24' => 'D24',
-			'd25' => 'D25',
-			'd26' => 'D26',
-			'd27' => 'D27',
-			'd28' => 'D28',
-			'd29' => 'D29',
-			'd30' => 'D30',
-			'd31' => 'D31',
-			'd32' => 'D32',
-			'd33' => 'D33',
-			'd34' => 'D34',
-			'd35' => 'D35',
-			'd36' => 'D36',
-			'd37' => 'D37',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('d1',$this->d1);
-		$criteria->compare('d2',$this->d2,true);
-		$criteria->compare('d3',$this->d3,true);
-		$criteria->compare('d4',$this->d4,true);
-		$criteria->compare('d5',$this->d5);
-		$criteria->compare('d6',$this->d6);
-		$criteria->compare('d7',$this->d7,true);
-		$criteria->compare('d8',$this->d8,true);
-		$criteria->compare('d9',$this->d9,true);
-		$criteria->compare('d10',$this->d10);
-		$criteria->compare('d11',$this->d11,true);
-		$criteria->compare('d12',$this->d12,true);
-		$criteria->compare('d13',$this->d13);
-		$criteria->compare('d14',$this->d14);
-		$criteria->compare('d15',$this->d15);
-		$criteria->compare('d16',$this->d16);
-		$criteria->compare('d17',$this->d17);
-		$criteria->compare('d18',$this->d18);
-		$criteria->compare('d19',$this->d19);
-		$criteria->compare('d20',$this->d20);
-		$criteria->compare('d21',$this->d21);
-		$criteria->compare('d22',$this->d22);
-		$criteria->compare('d23',$this->d23);
-		$criteria->compare('d24',$this->d24);
-		$criteria->compare('d25',$this->d25);
-		$criteria->compare('d26',$this->d26,true);
-		$criteria->compare('d27',$this->d27,true);
-		$criteria->compare('d28',$this->d28,true);
-		$criteria->compare('d29',$this->d29,true);
-		$criteria->compare('d30',$this->d30);
-		$criteria->compare('d31',$this->d31);
-		$criteria->compare('d32',$this->d32,true);
-		$criteria->compare('d33',$this->d33,true);
-		$criteria->compare('d34',$this->d34,true);
-		$criteria->compare('d35',$this->d35,true);
-		$criteria->compare('d36',$this->d36,true);
-		$criteria->compare('d37',$this->d37,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -53,100 +53,7 @@ class Gr extends CActiveRecord
 			array('gr13, gr16', 'length', 'max'=>4),
 			array('gr17', 'length', 'max'=>28),
 			array('gr27', 'length', 'max'=>140),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('gr1, gr2, gr3, gr4, gr6, gr7, gr8, gr13, gr14, gr15, gr16, gr17, gr19, gr20, gr21, gr22, gr23, gr24, gr25, gr26, gr27, gr28, gr10', 'safe', 'on'=>'search'),
 		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'gr1' => 'Gr1',
-			'gr2' => 'Gr2',
-			'gr3' => 'Gr3',
-			'gr4' => 'Gr4',
-			'gr6' => 'Gr6',
-			'gr7' => 'Gr7',
-			'gr8' => 'Gr8',
-			'gr13' => 'Gr13',
-			'gr14' => 'Gr14',
-			'gr15' => 'Gr15',
-			'gr16' => 'Gr16',
-			'gr17' => 'Gr17',
-			'gr19' => 'Gr19',
-			'gr20' => 'Gr20',
-			'gr21' => 'Gr21',
-			'gr22' => 'Gr22',
-			'gr23' => 'Gr23',
-			'gr24' => 'Gr24',
-			'gr25' => 'Gr25',
-			'gr26' => 'Gr26',
-			'gr27' => 'Gr27',
-			'gr28' => 'Gr28',
-			'gr10' => 'Gr10',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('gr1',$this->gr1);
-		$criteria->compare('gr2',$this->gr2);
-		$criteria->compare('gr3',$this->gr3,true);
-		$criteria->compare('gr4',$this->gr4,true);
-		$criteria->compare('gr6',$this->gr6,true);
-		$criteria->compare('gr7',$this->gr7);
-		$criteria->compare('gr8',$this->gr8);
-		$criteria->compare('gr13',$this->gr13,true);
-		$criteria->compare('gr14',$this->gr14);
-		$criteria->compare('gr15',$this->gr15);
-		$criteria->compare('gr16',$this->gr16,true);
-		$criteria->compare('gr17',$this->gr17,true);
-		$criteria->compare('gr19',$this->gr19,true);
-		$criteria->compare('gr20',$this->gr20,true);
-		$criteria->compare('gr21',$this->gr21,true);
-		$criteria->compare('gr22',$this->gr22,true);
-		$criteria->compare('gr23',$this->gr23,true);
-		$criteria->compare('gr24',$this->gr24,true);
-		$criteria->compare('gr25',$this->gr25,true);
-		$criteria->compare('gr26',$this->gr26);
-		$criteria->compare('gr27',$this->gr27,true);
-		$criteria->compare('gr28',$this->gr28,true);
-		$criteria->compare('gr10',$this->gr10);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
@@ -255,20 +162,6 @@ SQL;
     {
         if (empty($st1))
             return array();
-        /*$sql = <<<SQL
-             select st56, gr13,gr1, gr3, gr7,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28
-                from std
-                   inner join sst on (std.std3 = sst.sst3)
-                   inner join st on (std.std2 = st.st1)
-                   inner join ucsn on (st.st1 = ucsn.ucsn2)
-                   inner join ucgns on (ucsn.ucsn1 = ucgns.ucgns1)
-                   inner join ucgn on (ucgns.ucgns2 = ucgn.ucgn1)
-                   inner join gr on (ucgn.ucgn2 = gr.gr1)
-                where std11 in (0,5,6,8) and std7 is null and sst2=:ST1 and sst6 is null and ucgns5=:YEAR and ucgns6=:SEM
-                group by st56, gr13, gr1, gr3, gr7,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28
-                ORDER by gr13, gr7 DESC, gr3 ASC;
-SQL;*/
-
         $sql = /** @lang text */
             <<<SQL
             select LISTST.sem4 as st56, gr13,gr.gr1, gr3, gr7,gr19,gr20,gr21,gr22,gr23,gr24,gr25,gr26,gr28
@@ -792,6 +685,7 @@ SQL;
      * список групп по куратору (оплата за обучение)
      * @param $p1
      * @return mixed
+     * @throws CException
      */
     public function getGroupsForCurator($p1)
     {

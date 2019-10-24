@@ -32,7 +32,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
     'buttonType'=>'link',
     'type'=>'primary',
     'icon'=>'plus',
-    'label'=>tt('Создать заявку на оплату'),
+    'label'=>tt('Создать заявление на оплату'),
     'htmlOptions'=>array(
         'class'=>'btn-mini',
         'id'=>'studentCard-create-request'

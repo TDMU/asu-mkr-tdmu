@@ -44,9 +44,6 @@ class Ido extends CActiveRecord
 			array('ido0, ido1, ido2, ido4, ido5, ido8, ido9, ido11', 'numerical', 'integerOnly'=>true),
 			array('ido6', 'length', 'max'=>8),
 			array('ido7', 'length', 'max'=>400),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('ido0, ido1, ido2, ido4, ido5, ido6, ido7, ido8, ido9', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,57 +62,6 @@ class Ido extends CActiveRecord
 			'ido40' => array(self::BELONGS_TO, 'Innf', 'ido4'),
 			'ido90' => array(self::BELONGS_TO, 'P', 'ido9'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'ido0' => 'Ido0',
-			'ido1' => 'Ido1',
-			'ido2' => 'Ido2',
-			'ido4' => 'Ido4',
-			'ido5' => 'Ido5',
-			'ido6' => 'Ido6',
-			'ido7' => 'Ido7',
-			'ido8' => 'Ido8',
-			'ido9' => 'Ido9',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('ido0',$this->ido0);
-		$criteria->compare('ido1',$this->ido1);
-		$criteria->compare('ido2',$this->ido2);
-		$criteria->compare('ido4',$this->ido4);
-		$criteria->compare('ido5',$this->ido5);
-		$criteria->compare('ido6',$this->ido6,true);
-		$criteria->compare('ido7',$this->ido7,true);
-		$criteria->compare('ido8',$this->ido8);
-		$criteria->compare('ido9',$this->ido9);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -33,9 +33,6 @@ class Tdo extends CActiveRecord
 		return array(
 			array('tdo1, tdo3', 'numerical', 'integerOnly'=>true),
 			array('tdo2', 'length', 'max'=>400),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('tdo1, tdo2, tdo3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,45 +48,6 @@ class Tdo extends CActiveRecord
 			'tdos' => array(self::HAS_MANY, 'Tdo', 'tdo3'),
 			'tddos' => array(self::HAS_MANY, 'Tddo', 'tddo20'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'tdo1' => 'Tdo1',
-			'tdo2' => 'Tdo2',
-			'tdo3' => 'Tdo3',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('tdo1',$this->tdo1);
-		$criteria->compare('tdo2',$this->tdo2,true);
-		$criteria->compare('tdo3',$this->tdo3);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

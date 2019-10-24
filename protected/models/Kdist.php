@@ -34,9 +34,6 @@ class Kdist extends CActiveRecord
 		return array(
 			array('kdist1, kdist2, kdist3, kdist4', 'numerical', 'integerOnly'=>true),
 			array('kdist5', 'length', 'max'=>25),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('kdist1, kdist2, kdist3, kdist4, kdist5', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -52,50 +49,6 @@ class Kdist extends CActiveRecord
 			'kdist40' => array(self::BELONGS_TO, 'P', 'kdist4'),
 		);
 	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'kdist1' => 'Kdist1',
-			'kdist2' => 'Kdist2',
-			'kdist3' => 'Kdist3',
-			'kdist4' => 'Kdist4',
-			'kdist5' => 'Kdist5',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('kdist1',$this->kdist1);
-		$criteria->compare('kdist2',$this->kdist2);
-		$criteria->compare('kdist3',$this->kdist3);
-		$criteria->compare('kdist4',$this->kdist4);
-		$criteria->compare('kdist5',$this->kdist5,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

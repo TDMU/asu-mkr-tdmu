@@ -45,9 +45,6 @@ class Ddo extends CActiveRecord
 		return array(
 			array('ddo1, ddo3, ddo4, ddo5, ddo6, ddo7, ddo8, ddo9, ddo10, ddo11, ddo12, ddo13, ddo14, ddo15', 'numerical', 'integerOnly'=>true),
 			array('ddo2', 'length', 'max'=>180),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('ddo1, ddo2, ddo3, ddo4, ddo5, ddo6, ddo7, ddo8, ddo9, ddo10, ddo11, ddo12, ddo13, ddo14, ddo15', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -63,69 +60,6 @@ class Ddo extends CActiveRecord
 			'ddons' => array(self::HAS_MANY, 'Ddon', 'ddon2'),
 			'tddos' => array(self::HAS_MANY, 'Tddo', 'tddo2'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'ddo1' => 'Ddo1',
-			'ddo2' => 'Ddo2',
-			'ddo3' => 'Ddo3',
-			'ddo4' => 'Ddo4',
-			'ddo5' => 'Ddo5',
-			'ddo6' => 'Ddo6',
-			'ddo7' => 'Ddo7',
-			'ddo8' => 'Ddo8',
-			'ddo9' => 'Ddo9',
-			'ddo10' => 'Ddo10',
-			'ddo11' => 'Ddo11',
-			'ddo12' => 'Ddo12',
-			'ddo13' => 'Ddo13',
-			'ddo14' => 'Ddo14',
-			'ddo15' => 'Ddo15',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('ddo1',$this->ddo1);
-		$criteria->compare('ddo2',$this->ddo2,true);
-		$criteria->compare('ddo3',$this->ddo3);
-		$criteria->compare('ddo4',$this->ddo4);
-		$criteria->compare('ddo5',$this->ddo5);
-		$criteria->compare('ddo6',$this->ddo6);
-		$criteria->compare('ddo7',$this->ddo7);
-		$criteria->compare('ddo8',$this->ddo8);
-		$criteria->compare('ddo9',$this->ddo9);
-		$criteria->compare('ddo10',$this->ddo10);
-		$criteria->compare('ddo11',$this->ddo11);
-		$criteria->compare('ddo12',$this->ddo12);
-		$criteria->compare('ddo13',$this->ddo13);
-		$criteria->compare('ddo14',$this->ddo14);
-		$criteria->compare('ddo15',$this->ddo15);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
@@ -334,7 +268,12 @@ class Ddo extends CActiveRecord
 
 		return $items;
 	}
-	/*поля для вьюва для докумнта*/
+
+    /**
+     * @param $controller Controller
+     * @param $model Tddo
+     * @return array
+     */
 	public function generateAttributesView($controller,$model){
 		$docTypeIndexModel = Ddoi::model()->findByAttributes(array('ddoi2'=>$this->ddo1));
 		if(empty($docTypeIndexModel))

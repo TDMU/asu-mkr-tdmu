@@ -654,7 +654,22 @@ $this->widget('zii.widgets.CMenu', array(
                     'active'  => $_c=='portfolio' && stristr($_a, 'teacher')
                 ),
             ),
-            'visible' => _ch('portfolio', 'main') && ($isTch||$isAdmin||$isStd) && PortalSettings::model()->getSettingFor(PortalSettings::USE_PORTFOLIO) == 1,
+            'visible' => _ch('portfolio', 'main') && ($isTch||$isAdmin||$isStd) && PortalSettings::model()->getSettingFor(PortalSettings::USE_PORTFOLIO) == 1 && Yii::app()->core->universityCode!=U_FARM,
+        ),
+        array(
+            'label' => _l('Портфолио', 'book'),
+            'url' => '#',
+            'linkOptions'=> $_l,
+            'itemOptions'=>_i('portfolioFarm'),
+            'items' => array(
+                array(
+                    'label'   => $_l2.tt('Портфолио'),
+                    'url'     => _u('/portfolioFarm/index'),
+                    'visible' => _ch('portfolioFarm', 'index') && ($isAdmin||$isStd ||$isTch),
+                    'active'  => $_c=='portfolioFarm' && stristr($_a, 'index')
+                ),
+            ),
+            'visible' => _ch('portfolioFarm', 'main') && ($isTch||$isAdmin||$isStd) && PortalSettings::model()->getSettingFor(PortalSettings::USE_PORTFOLIO) == 1 && Yii::app()->core->universityCode==U_FARM,
         ),
         array(
             'label' => _l('Нагрузка', 'briefcase'),

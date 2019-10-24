@@ -54,14 +54,6 @@ $this->widget('bootstrap.widgets.TbGridView', array(
                                 ? $data->account->u2
                                 : ""',
         ),
-        /*array(
-            'header' => 'Password',
-            'filter' => CHtml::textField('password', Yii::app()->request->getParam('password')),
-            'name'   => 'account.u3',
-            'value'  => '! empty($data->account)
-                                ? $data->account->u3
-                                : ""',
-        ),*/
         array(
             'header' => 'Email',
             'filter' => CHtml::textField('email', Yii::app()->request->getParam('email')),

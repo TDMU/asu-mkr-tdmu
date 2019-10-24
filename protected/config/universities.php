@@ -28,3 +28,4 @@ define('U_RGIIS',  21);
 define('U_KNU',  61);
 define('U_HTEI',  59);
 define('U_SUM_AGR',  1);
+define('U_ODUVS',  43);

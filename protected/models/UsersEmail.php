@@ -33,9 +33,6 @@ class UsersEmail extends CActiveRecord
 			array('ue1', 'length', 'max'=>400),
 			array('ue3', 'length', 'max'=>180),
             array('ue3','unique', 'className' => 'UsersEmail'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('ue1, ue2, ue3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -52,45 +49,6 @@ class UsersEmail extends CActiveRecord
 	}
 
 	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'ue1' => 'Ue1',
-			'ue2' => 'Ue2',
-			'ue3' => 'Ue3',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('ue1',$this->ue1,true);
-		$criteria->compare('ue2',$this->ue2);
-		$criteria->compare('ue3',$this->ue3,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
@@ -100,21 +58,6 @@ class UsersEmail extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-
-    /**
-     * UsersEmail constructor.
-     * @param Users $user
-     * @param string $scenario
-     */
-	/*public function __construct($user, $scenario = 'insert')
-    {
-        parent::__construct($scenario);
-
-        $this->ue1 = $user['u4'];
-        $this->ue2 = $user['u1'];
-
-        $this->generateToken();
-    }*/
 
     /**
      * Сгенерировать токен

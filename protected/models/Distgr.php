@@ -33,9 +33,6 @@ class Distgr extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('distgr1, distgr2, distgr3', 'numerical', 'integerOnly'=>true),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('distgr1, distgr2, distgr3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,45 +47,6 @@ class Distgr extends CActiveRecord
 			'distgr10' => array(self::BELONGS_TO, 'Gr', 'distgr1'),
             'distgr20' => array(self::BELONGS_TO, 'DispDist', 'distgr2'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'distgr1' => 'Группа(АСУ)',
-			'distgr2' => 'Код курса',
-			'distgr3' => 'Distgr3',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('distgr1',$this->distgr1);
-		$criteria->compare('distgr2',$this->distgr2);
-		$criteria->compare('distgr3',$this->distgr3);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -31,14 +31,6 @@ $this->widget('bootstrap.widgets.TbGridView', array(
                                 ? $data->parentsAccount->u2
                                 : ""',
         ),
-        /*array(
-            'header' => 'Password',
-            'filter' => CHtml::textField('password', Yii::app()->request->getParam('password')),
-            'name'   => 'parentsAccount.u3',
-            'value'  => '! empty($data->parentsAccount)
-                                ? $data->parentsAccount->u3
-                                : ""',
-        ),*/
         array(
             'class'=>'CButtonColumn',
             'template'=>'{grants} {enter} {delete}',

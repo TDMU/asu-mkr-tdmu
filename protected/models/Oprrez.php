@@ -35,8 +35,6 @@ class Oprrez extends CActiveRecord
 		return array(
 			array('oprrez2, oprrez3, oprrez5', 'numerical', 'integerOnly'=>true),
 			array('oprrez4', 'length', 'max'=>20),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
 			array('oprrez1, oprrez2, oprrez3, oprrez4, oprrez5', 'safe', 'on'=>'search'),
 		);
 	}
@@ -62,10 +60,10 @@ class Oprrez extends CActiveRecord
 	{
 		return array(
 			'oprrez1' => '#',
-			'oprrez2' => 'Студент',
-			'oprrez3' => 'Вариант ответа',
-			'oprrez4' => 'Дата',
-			'oprrez5' => 'Кто проставил',
+			'oprrez2' => tt('Студент'),
+			'oprrez3' => tt('Вариант ответа'),
+			'oprrez4' => tt('Дата'),
+			'oprrez5' => tt('Кто проставил'),
 		);
 	}
 
@@ -83,8 +81,6 @@ class Oprrez extends CActiveRecord
 	 */
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('oprrez2',$this->oprrez2);

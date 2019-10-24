@@ -59,49 +59,6 @@ class Elgsd extends CActiveRecord
 	}
 
 	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'elgsd1' => 'Elgsd1',
-			'elgsd2' => 'Elgsd2',
-			'elgsd3' => 'Elgsd3',
-			'elgsd4' => 'Elgsd4',
-			'elgsd5' => 'Elgsd5',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('elgsd1',$this->elgsd1);
-		$criteria->compare('elgsd2',$this->elgsd2,true);
-		$criteria->compare('elgsd3',$this->elgsd3);
-		$criteria->compare('elgsd4',$this->elgsd4);
-		$criteria->compare('elgsd5',$this->elgsd5);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.

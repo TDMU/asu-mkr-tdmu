@@ -29,7 +29,8 @@ class TimeTableController extends Controller
                     U_RGIIS,
                     U_KNU,
                     U_HTEI,
-                    U_SUM_AGR
+                    U_SUM_AGR,
+                    U_ODUVS
                 ))){
                         $message = tt(' <br>Новое мобильное приложение для Android : <strong><a href="{url}" target="_blank" style="font-size: 18px">здесь</a></strong>! <br>Новое мобильное приложение для iOs : <strong><a href="{url_apple}" target="_blank" style="font-size: 18px">здесь</a></strong>! <br>Также читайте инструкцию к мобильному приложению: <strong><a href="{url-instruction}" target="_blank" style="font-size: 18px">здесь</a></strong>!', array(
                             '{url}' => SH::MOBILE_URL,
@@ -382,10 +383,20 @@ class TimeTableController extends Controller
 
     }
 
+    /**
+     * @param $timeTable
+     * @param $minMax
+     * @param $maxLessons
+     * @param $rz
+     * @param $model
+     * @param $title
+     * @throws PHPExcel_Exception
+     * @throws PHPExcel_Reader_Exception
+     * @throws PHPExcel_Writer_Exception
+     */
     private function generateExcel($timeTable,$minMax,$maxLessons,$rz,$model,$title)
     {
-        Yii::import('ext.phpexcel.XPHPExcel');
-        $objPHPExcel= XPHPExcel::createPHPExcel();
+        $objPHPExcel= new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("ACY")
             ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
             ->setTitle("timeTable ".date('Y-m-d H-i'))

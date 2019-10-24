@@ -81,9 +81,6 @@ class Uo extends CActiveRecord
 			array('uo10, uo11, uo24, uo25, uo29', 'numerical'),
 			array('uo20, uo35', 'length', 'max'=>8),
 			array('uo27', 'length', 'max'=>4),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('uo1, uo2, uo3, uo4, uo5, uo6, uo10, uo11, uo12, uo13, uo14, uo15, uo16, uo17, uo18, uo19, uo20, uo21, uo22, uo23, uo24, uo25, uo26, uo27, uo28, uo29, uo30, uo33, uo34, uo35, uo36', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -120,101 +117,6 @@ class Uo extends CActiveRecord
 	}
 
 	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'uo1' => 'Uo1',
-			'uo2' => 'Uo2',
-			'uo3' => 'Uo3',
-			'uo4' => 'Uo4',
-			'uo5' => 'Uo5',
-			'uo6' => 'Uo6',
-			'uo10' => 'Uo10',
-			'uo11' => 'Uo11',
-			'uo12' => 'Uo12',
-			'uo13' => 'Uo13',
-			'uo14' => 'Uo14',
-			'uo15' => 'Uo15',
-			'uo16' => 'Uo16',
-			'uo17' => 'Uo17',
-			'uo18' => 'Uo18',
-			'uo19' => 'Uo19',
-			'uo20' => 'Uo20',
-			'uo21' => 'Uo21',
-			'uo22' => 'Uo22',
-			'uo23' => 'Uo23',
-			'uo24' => 'Uo24',
-			'uo25' => 'Uo25',
-			'uo26' => 'Uo26',
-			'uo27' => 'Uo27',
-			'uo28' => 'Uo28',
-			'uo29' => 'Uo29',
-			'uo30' => 'Uo30',
-			'uo33' => 'Uo33',
-			'uo34' => 'Uo34',
-			'uo35' => 'Uo35',
-			'uo36' => 'Uo36',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('uo1',$this->uo1);
-		$criteria->compare('uo2',$this->uo2);
-		$criteria->compare('uo3',$this->uo3);
-		$criteria->compare('uo4',$this->uo4);
-		$criteria->compare('uo5',$this->uo5);
-		$criteria->compare('uo6',$this->uo6);
-		$criteria->compare('uo10',$this->uo10);
-		$criteria->compare('uo11',$this->uo11);
-		$criteria->compare('uo12',$this->uo12);
-		$criteria->compare('uo13',$this->uo13);
-		$criteria->compare('uo14',$this->uo14);
-		$criteria->compare('uo15',$this->uo15);
-		$criteria->compare('uo16',$this->uo16);
-		$criteria->compare('uo17',$this->uo17);
-		$criteria->compare('uo18',$this->uo18);
-		$criteria->compare('uo19',$this->uo19);
-		$criteria->compare('uo20',$this->uo20,true);
-		$criteria->compare('uo21',$this->uo21);
-		$criteria->compare('uo22',$this->uo22);
-		$criteria->compare('uo23',$this->uo23);
-		$criteria->compare('uo24',$this->uo24);
-		$criteria->compare('uo25',$this->uo25);
-		$criteria->compare('uo26',$this->uo26);
-		$criteria->compare('uo27',$this->uo27,true);
-		$criteria->compare('uo28',$this->uo28);
-		$criteria->compare('uo29',$this->uo29);
-		$criteria->compare('uo30',$this->uo30);
-		$criteria->compare('uo33',$this->uo33);
-		$criteria->compare('uo34',$this->uo34);
-		$criteria->compare('uo35',$this->uo35,true);
-		$criteria->compare('uo36',$this->uo36);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
@@ -232,18 +134,6 @@ class Uo extends CActiveRecord
      */
 	public function getListByUcgns1($ucgns1)
     {
-        /*$sql = <<<SQL
-          select 
-            uo1
-            from uo
-               inner join us on (uo.uo1 = us.us2)
-               inner join nr on (us.us1 = nr.nr2)
-               inner join ug on (nr.nr1 = ug.ug1)
-               inner join ucgn on (ug.ug4 = ucgn.ucgn1)
-               inner join ucgns on (ucgn.ucgn1 = ucgns.ucgns2)
-            WHERE ucgns1=:UCGNS1
-SQL;*/
-
         $sql = <<<SQL
           select 
             uo1, d2

@@ -59,51 +59,6 @@ class Elgzu extends CActiveRecord
 	}
 
 	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'elgzu1' => 'Elgzu1',
-			'elgzu2' => 'Elgzu2',
-			'elgzu3' => 'Elgzu3',
-			'elgzu4' => 'Elgzu4',
-			'elgzu5' => 'Elgzu5',
-			'elgzu6' => 'Elgzu6',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('elgzu1',$this->elgzu1);
-		$criteria->compare('elgzu2',$this->elgzu2);
-		$criteria->compare('elgzu3',$this->elgzu3);
-		$criteria->compare('elgzu4',$this->elgzu4);
-		$criteria->compare('elgzu5',$this->elgzu5,true);
-		$criteria->compare('elgzu6',$this->elgzu6);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.

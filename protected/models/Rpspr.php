@@ -45,9 +45,6 @@ class Rpspr extends CActiveRecord
 			array('rpspr7', 'numerical'),
 			array('rpspr2, rpspr6', 'length', 'max'=>30),
 			array('rpspr4, rpspr5', 'length', 'max'=>80),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('rpspr0, rpspr1, rpspr2, rpspr3, rpspr4, rpspr5, rpspr6, rpspr7, rpspr8, rpspr9', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -85,40 +82,6 @@ class Rpspr extends CActiveRecord
 			'rpspr8' => 'Rpspr8',
 			'rpspr9' => 'Rpspr9',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('rpspr0',$this->rpspr0);
-		$criteria->compare('rpspr1',$this->rpspr1);
-		$criteria->compare('rpspr2',$this->rpspr2,true);
-		$criteria->compare('rpspr3',$this->rpspr3);
-		$criteria->compare('rpspr4',$this->rpspr4,true);
-		$criteria->compare('rpspr5',$this->rpspr5,true);
-		$criteria->compare('rpspr6',$this->rpspr6,true);
-		$criteria->compare('rpspr7',$this->rpspr7);
-		$criteria->compare('rpspr8',$this->rpspr8);
-		$criteria->compare('rpspr9',$this->rpspr9);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -37,74 +37,8 @@ class So extends CActiveRecord
 			array('so2', 'numerical'),
 			array('so3, so6, so8', 'length', 'max'=>8),
 			array('so4', 'length', 'max'=>60),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('so0, so1, so2, so3, so4, so5, so6, so7, so8', 'safe', 'on'=>'search'),
 		);
 	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'so0' => 'So0',
-			'so1' => 'So1',
-			'so2' => 'So2',
-			'so3' => 'So3',
-			'so4' => 'So4',
-			'so5' => 'So5',
-			'so6' => 'So6',
-			'so7' => 'So7',
-			'so8' => 'So8',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('so0',$this->so0);
-		$criteria->compare('so1',$this->so1);
-		$criteria->compare('so2',$this->so2);
-		$criteria->compare('so3',$this->so3,true);
-		$criteria->compare('so4',$this->so4,true);
-		$criteria->compare('so5',$this->so5);
-		$criteria->compare('so6',$this->so6,true);
-		$criteria->compare('so7',$this->so7);
-		$criteria->compare('so8',$this->so8,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

@@ -47,17 +47,11 @@ class DocController extends Controller
         $model = new Tddo();
         $model->unsetAttributes();
 
-        //$model->tddo2 = $docType;
-
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
             unset($_GET['pageSize']);  // сбросим, чтобы не пересекалось с настройками пейджера
         }
 
-        /*if (isset($_REQUEST['Tddo'])) {
-            $model->scenario = 'filter';
-            $model->attributes = $_REQUEST['Tddo'];
-        }*/
         $model->scenario = 'filter';
         if (isset($_REQUEST['Tddo']))
         {

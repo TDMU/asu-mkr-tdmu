@@ -1,6 +1,6 @@
 <?php
 
-require Yii::app()->getBasePath() . '/../framework/cli/commands/MessageCommand.php';
+require Yii::app()->getBasePath() . '/../vendor/yiisoft/yii/framework/cli/commands/MessageCommand.php';
 
 class ttMessageCommand extends MessageCommand
 {

@@ -40,8 +40,6 @@ class UsersHistory extends CActiveRecord
 			array('uh4,login,name', 'length', 'max'=>200),
 			array('uh5', 'length', 'max'=>200),
 			array('uh6', 'length', 'max'=>200),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
 			array('uh1, uh2, uh3, uh4, uh5, uh6,type,login,name,adm', 'safe', 'on'=>'search'),
 		);
 	}
@@ -91,8 +89,6 @@ class UsersHistory extends CActiveRecord
 	 */
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
 		$criteria=new CDbCriteria;
 		$criteria->select = 't.*,u2 as login,u5 as type,u7 as adm,
 							st2 as st_name1,st3 as st_name2,st4 as st_name3,

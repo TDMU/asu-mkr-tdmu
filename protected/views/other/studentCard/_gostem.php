@@ -39,7 +39,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
             'value'=>'$data["sem4"]',
         ),
         array(
-            'header'=>tt('Гос.экзамен'),
+            'header'=>tt('Гос. экзамен'),
             'value'=>'$data["d2"]',
         ),
         array(

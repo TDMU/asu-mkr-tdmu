@@ -15,21 +15,12 @@
 
 list($url, $name) = $message->getUserToFotoAndName();
 
-$extra = '';
-/*if($message->um10 > 0)
-    if(!empty($message->um100)){
-        $extra = $this->renderPartial('_inputMessage', array(
-            'model' => $model,
-            'message'=> $message->um100
-        ), true);
-    }*/
-
 echo $this->renderPartial('_message', array(
     'date' => $message->um3,
     'text' => $message->um5,
     'url'=> $url,
     'name' => $name,
-    'extra' => $extra,
+    'extra' => '',
     'model' =>$message,
     'extraTitle' => ''
 ));

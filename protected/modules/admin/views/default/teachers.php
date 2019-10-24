@@ -45,10 +45,7 @@ HTML;
             'lastPageLabel'=>'>>',
             'class'=>'bootstrap.widgets.TbPager',
             'displayFirstAndLast'=>true
-            //'maxButtonCount'=>'10',
-            //'header'=>'<span>Листалка страниц:</span>',
         ),
-        //'enableHistory'=>true,
         'template' => $template,
         'type' => 'striped bordered',
         'ajaxUrl' => Yii::app()->createAbsoluteUrl('/admin/default/teachers'),
@@ -59,15 +56,10 @@ HTML;
 			'p9'=>array(
 				'name' => 'p9',
 				'value'=>'$data->getP9String()',
-				//'filter' => '',
 				'htmlOptions' => array(
 					'style' => 'min-width:130px;',
 				),
 			),
-			/*'p13'=>array(
-				'name' => 'p13',
-				'filter' => '',
-			),*/
             'p13',
             array(
                 'header' => 'Login',
@@ -77,14 +69,6 @@ HTML;
                                 ? $data->account->u2
                                 : ""',
             ),
-            /*array(
-                'header' => 'Password',
-                'filter' => CHtml::textField('password', Yii::app()->request->getParam('password')),
-                'name'   => 'account.u3',
-                'value'  => '! empty($data->account)
-                                ? $data->account->u3
-                                : ""',
-            ),*/
             array(
                 'header' => 'Email',
                 'filter' => CHtml::textField('email', Yii::app()->request->getParam('email')),
@@ -105,7 +89,6 @@ HTML;
             array(
                 'class'=>'CButtonColumn',
                 'template'=>'{grants} {gsuite} {enter} {delete}',
-                //'header' => tt('Права доступа'),
                 'header'=>CHtml::dropDownList(
                         'pageSize',
                         $pageSize,

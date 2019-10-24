@@ -37,78 +37,7 @@ class Us extends CActiveRecord
 		return array(
 			array('us1, us2, us3, us4, us10, us11, us12, us13, us15', 'numerical', 'integerOnly'=>true),
 			array('us5, us6, us14', 'numerical'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('us1, us2, us3, us4, us5, us6, us10, us11, us12, us13, us14, us15', 'safe', 'on'=>'search'),
 		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'us1' => 'Us1',
-			'us2' => 'Us2',
-			'us3' => 'Us3',
-			'us4' => 'Us4',
-			'us5' => 'Us5',
-			'us6' => 'Us6',
-			'us10' => 'Us10',
-			'us11' => 'Us11',
-			'us12' => 'Us12',
-			'us13' => 'Us13',
-			'us14' => 'Us14',
-			'us15' => 'Us15',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('us1',$this->us1);
-		$criteria->compare('us2',$this->us2);
-		$criteria->compare('us3',$this->us3);
-		$criteria->compare('us4',$this->us4);
-		$criteria->compare('us5',$this->us5);
-		$criteria->compare('us6',$this->us6);
-		$criteria->compare('us10',$this->us10);
-		$criteria->compare('us11',$this->us11);
-		$criteria->compare('us12',$this->us12);
-		$criteria->compare('us13',$this->us13);
-		$criteria->compare('us14',$this->us14);
-		$criteria->compare('us15',$this->us15);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
@@ -122,9 +51,7 @@ class Us extends CActiveRecord
 		return parent::model($className);
 	}
 
-    /*
-     * $us = Us::model()->findByAttributes(array('us2'=>$elg->elg2, 'us3'=>$elg->elg3));
-     * */
+
     /**
      * Тип итога по журналу
      * @param $elg Elg
@@ -140,19 +67,6 @@ class Us extends CActiveRecord
     {
         if (empty($pd1) || empty($year))
             return array();
-            /*$sql= <<<SQL
-               SELECT sem5, us4, nr6, nr7, nr8, nr9, sum(nr3)
-                       FROM sem
-                INNER JOIN us on (sem.sem1 = us.us12)
-                INNER JOIN nr on (us.us1 = nr.nr2)
-                INNER JOIN uo on (us.us2 = uo.uo1)
-                INNER JOIN u on (uo.uo22 = u.u1)
-                INNER JOIN c on (u.u15 = c.c1)
-                INNER JOIN pd ON (nr.nr6 = pd.pd1) OR (nr.nr7 = pd.pd1) OR (nr.nr8 = pd.pd1) OR (nr.nr9 = pd.pd1)
-                       WHERE pd1=:PD1 AND sem3=:SEM3 AND c8 != 3
-                       GROUP BY sem5, us4, nr6, nr7, nr8, nr9
-                       ORDER BY sem5, us4
-SQL;*/
 
             $sql = <<<SQL
               SELECT sem5, us4, nr6, nr7, nr8, nr9  ,nr1 ,nr3
@@ -247,33 +161,7 @@ SQL;
         return $data;
     }
 	
-	public function getLessonsForThematicPlan($sem1, $d1)
-    {
-        if (empty($sem1) || empty($d1))
-            return array();
-		$sql = <<<SQL
-          select us4,us1
-			from us
-			   inner join sem on (us.us3 = sem.sem1)
-			where us2=:uo1 and sem1=:sem1 and us4>=1 and us4<=4
-			group by us4,us1
-SQL;
 
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':sem1', $sem1);
-        $command->bindValue(':uo1', $d1);
-        $lessons = $command->queryAll();
-		$type=array(
-			1=> tt('Лк'),
-			2=> tt('Пз'),
-			3=> tt('Сем'),
-			4=> tt('Лб')
-		);
-		foreach ($lessons as $key => $lesson) {
-            $lessons[$key]['type'] = $type[$lesson['us4']];
-        }
-        return $lessons;
-    }
     
     private function getPrakFor($pd1, $year, $sem5)
     {
@@ -467,17 +355,6 @@ SQL;
         $res = $command->queryAll();
 
         return $res;
-    }
-
-    public function getSummForStudentCard($uo1,$in)
-    {
-        $sql=<<<SQL
-          SELECT sum(us6) as sm FROM us WHERE us4 in ({$in}) and us2=:UO1
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':UO1', $uo1);
-        $sum = $command->queryScalar();
-        return $sum;
     }
 
     public function getHoursByUo1Sem1($uo1,$sem1,$type)

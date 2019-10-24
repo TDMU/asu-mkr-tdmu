@@ -38,72 +38,7 @@ class Tso extends CActiveRecord
 			array('tso3', 'length', 'max'=>600),
 			array('tso7', 'length', 'max'=>40),
 			array('tso8', 'length', 'max'=>20),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('tso1, tso2, tso3, tso4, tso5, tso6, tso7, tso8, tso9', 'safe', 'on'=>'search'),
 		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'tso1' => 'Tso1',
-			'tso2' => 'Tso2',
-			'tso3' => 'Tso3',
-			'tso4' => 'Tso4',
-			'tso5' => 'Tso5',
-			'tso6' => 'Tso6',
-			'tso7' => 'Tso7',
-			'tso8' => 'Tso8',
-			'tso9' => 'Tso9',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('tso1',$this->tso1);
-		$criteria->compare('tso2',$this->tso2);
-		$criteria->compare('tso3',$this->tso3,true);
-		$criteria->compare('tso4',$this->tso4);
-		$criteria->compare('tso5',$this->tso5);
-		$criteria->compare('tso6',$this->tso6);
-		$criteria->compare('tso7',$this->tso7,true);
-		$criteria->compare('tso8',$this->tso8,true);
-		$criteria->compare('tso9',$this->tso9);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -2,9 +2,6 @@
 
 class WorkLoadController extends Controller
 {
-    //const SELF = 1;
-    //const TEACHER = 2;
-    
     public function filters() {
 
         return array(
@@ -66,7 +63,6 @@ class WorkLoadController extends Controller
 
         $this->render('teacher', array(
             'model' => $model,
-            //'type'=>self::TEACHER
         ));
     }
 
@@ -81,7 +77,6 @@ class WorkLoadController extends Controller
         $model->year     = $year;
         $model->semester = $semester;
         $teachers=P::model()->getArrayPd(Yii::app()->user->dbModel->p1);
-        //$model->teacher  = Yii::app()->user->dbModel->p1;
 
         if (isset($_REQUEST['FilterForm']))
             $model->attributes=$_REQUEST['FilterForm'];
@@ -90,7 +85,6 @@ class WorkLoadController extends Controller
         $this->render('self', array(
             'model' => $model,
             'teachers'=>$teachers
-            //'type'=>self::SELF
         ));
     }
 
@@ -124,13 +118,7 @@ class WorkLoadController extends Controller
         if (empty($ids) || empty($year) || is_null($sem)|| empty($nr))
             throw new CHttpException(404, 'Please, do not repeat this request nay more!');
 
-        //$criteria = new CDbCriteria();
-        //$criteria->addInCondition('gr1', unserialize($ids));
-
-        //$models = Gr::model()->findAll($criteria);
-
         $html = $this->renderPartial('_groups', array(
-            //'models' => $models,
             'year'   => $year,
             'sem'    => $sem,
 			'nr'=>$nr
@@ -163,8 +151,7 @@ SQL;
             $tip=$discipline['us4'];
             $course=$discipline['sem4'];
 
-            Yii::import('ext.phpexcel.XPHPExcel');
-            $objPHPExcel= XPHPExcel::createPHPExcel();
+            $objPHPExcel=new PHPExcel();
             $objPHPExcel->getProperties()->setCreator("ACY")
                 ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
                 ->setTitle("WorkLoad ".date('Y-m-d H-i'))

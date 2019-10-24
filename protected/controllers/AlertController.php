@@ -53,7 +53,7 @@ class AlertController extends Controller
     {
         if(!Yii::app()->user->isTch)
             if(PortalSettings::model()->getSettingFor(PortalSettings::STUDENT_SEND_IN_ALERT) != 1)
-                throw new CHttpException(403, tt('Достпу запрещен'));
+                throw new CHttpException(403, tt('Доступ запрещен'));
 
         $filterChain->run();
     }

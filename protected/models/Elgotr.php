@@ -38,24 +38,9 @@ class Elgotr extends CActiveRecord
 			array('elgotr2', 'numerical'),
             //array('elgotr3', 'validateDate'),
 			array('elgotr3, elgotr5', 'length', 'max'=>30),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
 			array('elgotr0, elgotr1, elgotr2, elgotr3, elgotr4, elgotr5', 'safe', 'on'=>'search'),
 		);
 	}
-
-    /**
-     *
-     */
-    /*public function validateDate($attribute,$params)
-    {
-        if(!$this->hasErrors()) {
-                $date = DateTime::createFromFormat('d.m.y', $elgotr3);
-                if($date>new DateTime()){
-                    $this->addError('elgotr3', tt('Ошибка! Дата не валидная!'));
-                }
-        }
-    }*/
 
 	/**
 	 * @return array relational rules.
@@ -76,43 +61,10 @@ class Elgotr extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'elgotr0' => 'Elgotr0',
-			'elgotr1' => 'Elgotr1',
             'elgotr2' => tt('Оценка'),
             'elgotr3' => tt('Дата'),
             'elgotr4' => tt('Преподаватель'),
-			'elgotr5' => 'Elgotr5',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('elgotr0',$this->elgotr0);
-		$criteria->compare('elgotr1',$this->elgotr1);
-		$criteria->compare('elgotr2',$this->elgotr2);
-		$criteria->compare('elgotr3',$this->elgotr3,true);
-		$criteria->compare('elgotr4',$this->elgotr4);
-		$criteria->compare('elgotr5',$this->elgotr5,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

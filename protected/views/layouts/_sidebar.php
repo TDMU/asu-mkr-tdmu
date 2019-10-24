@@ -56,7 +56,8 @@
                 U_RGIIS,
                 U_KNU,
                 U_HTEI,
-                U_SUM_AGR
+                U_SUM_AGR,
+                U_ODUVS
             ));
         ?>
         <a href="<?= $newMobile ? SH::MOBILE_URL : 'https://play.google.com/store/apps/details?id=scheduleMKP.scheduleMKP'?>" target="_blank">

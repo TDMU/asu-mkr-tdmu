@@ -35,7 +35,6 @@ class Elgpmkst extends CActiveRecord
 			array('elgpmkst2, elgpmkst3, elgpmkst4', 'numerical', 'integerOnly'=>true),
 			array('elgpmkst5', 'numerical'),
 			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
 			array('elgpmkst1, elgpmkst2, elgpmkst3, elgpmkst4, elgpmkst5', 'safe', 'on'=>'search'),
 		);
 	}
@@ -51,49 +50,6 @@ class Elgpmkst extends CActiveRecord
 			'elgpmkst20' => array(self::BELONGS_TO, 'Elg', 'elgpmkst2'),
 			'elgpmkst30' => array(self::BELONGS_TO, 'St', 'elgpmkst3'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'elgpmkst1' => 'Elgpmkst1',
-			'elgpmkst2' => 'Elgpmkst2',
-			'elgpmkst3' => 'Elgpmkst3',
-			'elgpmkst4' => 'Elgpmkst4',
-			'elgpmkst5' => 'Elgpmkst5',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('elgpmkst1',$this->elgpmkst1);
-		$criteria->compare('elgpmkst2',$this->elgpmkst2);
-		$criteria->compare('elgpmkst3',$this->elgpmkst3);
-		$criteria->compare('elgpmkst4',$this->elgpmkst4);
-		$criteria->compare('elgpmkst5',$this->elgpmkst5);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

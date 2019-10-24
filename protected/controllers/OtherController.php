@@ -42,7 +42,6 @@ class OtherController extends Controller
                     'cancelSubscription',
                     'renderAddSpkr',
                     'addSpkr',
-                    'studentInfoExcel',
                     'studentInfoPdf',
                     'deleteRequestPayment',
                     'createRequestPayment',
@@ -63,7 +62,6 @@ class OtherController extends Controller
                     'changePassport', //проверка идет в самом методе
                     'autocompleteTeachers',
                     'studentCard', //проверка идет в самом методе
-                    'studentCardExcel',
                     'showRetake', //проверка идет в самом методе
                 ),
             ),
@@ -95,12 +93,12 @@ class OtherController extends Controller
             throw new CHttpException(403, 'Invalid request. You don\'t have access to the service.');
 
         if($model->delete()){
-            Yii::app()->user->setFlash('success', tt('Заявка на оплату №{number} от {date} успешно удалена', array(
+            Yii::app()->user->setFlash('success', tt('Заявление на оплату №{number} от {date} успешно удалено', array(
                 '{number}' => $model->zsno0,
                 '{date}'=> date("d.m.Y",strtotime($model->zsno2))
             )));
         }else{
-            Yii::app()->user->setFlash('success', tt('Ошибка удаления заявки на оплату №{number} от {date}', array(
+            Yii::app()->user->setFlash('success', tt('Ошибка удаления заявления на оплату №{number} от {date}', array(
                 '{number}' => $model->zsno0,
                 '{date}'=> date("d.m.Y",strtotime($model->zsno2))
             )));
@@ -137,7 +135,7 @@ class OtherController extends Controller
         try{
 
             if(!$model->save()){
-                throw new Exception(tt('Ошибка создания заявки на оплату'));
+                throw new Exception(tt('Ошибка создания заявления на оплату'));
             }
 
             foreach ( $form->lessons as $lesson) {
@@ -146,12 +144,12 @@ class OtherController extends Controller
                 $zsnop->zsnop1 = $lesson;
 
                 if(!$zsnop->save())
-                    throw new Exception('Ошибка добавления занятия в заявку на оплату');
+                    throw new Exception('Ошибка добавления занятия в заявление на оплату');
             }
 
             $trans->commit();
 
-            Yii::app()->user->setFlash('success', tt('Заявка на оплату №{number} от {date} успешно создана', array(
+            Yii::app()->user->setFlash('success', tt('Заявление на оплату №{number} от {date} успешно создано', array(
                 '{number}' => $model->zsno0,
                 '{date}'=> date("d.m.Y",strtotime($model->zsno2))
             )));
@@ -159,7 +157,7 @@ class OtherController extends Controller
         }catch (Exception $error){
             $trans->rollback();
 
-            throw new CHttpException(400,tt('Ошибка создания заявки на оплату №{number} от {date}: {error}', array(
+            throw new CHttpException(400,tt('Ошибка создания заявления на оплату №{number} от {date}: {error}', array(
                 '{number}' => $model->zsno0,
                 '{date}'=> date("d.m.Y",strtotime($model->zsno2)),
                 '{error}' => $error->getMessage()
@@ -252,200 +250,6 @@ class OtherController extends Controller
             'student'=>$student,
             'model'=>$model
         ));
-    }
-
-    public function actionStudentCardExcel()
-    {
-        $model = new TimeTableForm;
-        $model->scenario = 'student';
-        if (isset($_REQUEST['TimeTableForm']))
-            $model->attributes=$_REQUEST['TimeTableForm'];
-
-        if (Yii::app()->user->isAdmin) {
-
-
-        }
-        elseif (Yii::app()->user->isPrnt) {
-            $model->student = Yii::app()->user->dbModel->st1;
-        } elseif (Yii::app()->user->isStd) {
-            $model->student = Yii::app()->user->dbModel->st1;
-        }
-
-        $st1 =  $model->student;
-        $st = St::model()->findByPk($st1);
-
-        $studentInfo = $st->getStudentInfoForCard();
-
-        if(!empty($studentInfo)) {
-            Yii::import('ext.phpexcel.XPHPExcel');
-            $objPHPExcel = XPHPExcel::createPHPExcel();
-            $objPHPExcel->getProperties()->setCreator("ACY")
-                ->setLastModifiedBy("ACY " . date('Y-m-d H-i'))
-                ->setTitle("StudentCard " . date('Y-m-d H-i'))
-                ->setSubject("StudentCard " . date('Y-m-d H-i'))
-                ->setDescription("StudentCard document, generated using ACY Portal. " . date('Y-m-d H:i:'))
-                ->setKeywords("")
-                ->setCategory("Result file");
-            $objPHPExcel->setActiveSheetIndex(0);
-            $sheet = $objPHPExcel->getActiveSheet();
-
-            $sheet->mergeCells('A1:D8');
-
-            $data = Foto::getStudentFoto($st->st1);
-            if ($data != null) {
-
-                $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
-                $objDrawing->setName('logo');
-                $objDrawing->setImageResource(imagecreatefromstring($data->foto3));
-                $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_DEFAULT);
-                $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-                $objDrawing->setHeight(100);
-                $objDrawing->setCoordinates('A1');
-                $objDrawing->setOffsetX(10);
-                $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
-            }
-
-
-            $sheet->mergeCells('E1:F1');
-            $sheet->setCellValue('E1', tt('ФИО'));
-            $sheet->mergeCells('G1:J1');
-            $sheet->setCellValue('G1', $st->st2.' '.$st->st3.' '.$st->st4);
-
-            $sheet->mergeCells('E2:F2');
-            $sheet->setCellValue('E2', tt('Гражданство'));
-            $sheet->mergeCells('G2:J2');
-            $sheet->setCellValue('G2', $studentInfo['sgr2']);
-
-            $sheet->mergeCells('E3:F3');
-            $sheet->setCellValue('E3', tt('Дата рождения'));
-            $sheet->mergeCells('G3:J3');
-            $sheet->setCellValue('G3', date("m.d.y",strtotime($st->st7)));
-
-            $sheet->mergeCells('E4:F4');
-            $sheet->setCellValue('E4', tt('Факультет'));
-            $sheet->mergeCells('G4:J4');
-            $sheet->setCellValue('G4', $studentInfo['f3']);
-
-            $sheet->mergeCells('E5:F5');
-            $sheet->setCellValue('E5', tt('Специальность'));
-            $sheet->mergeCells('G5:J5');
-            $sheet->setCellValue('G5', $studentInfo['sp2']);
-
-            $sheet->mergeCells('E6:F6');
-            $sheet->setCellValue('E6', tt('Форма обучения'));
-            $sheet->mergeCells('G6:J6');
-            $sheet->setCellValue('G6',SH::convertEducationType($studentInfo['sg4']));
-
-            $sheet->mergeCells('E7:F7');
-            $sheet->setCellValue('E7', tt('Курс'));
-            $sheet->mergeCells('G7:J7');
-            $sheet->setCellValue('G7', $studentInfo['sem4']);
-
-            $sheet->mergeCells('E8:F8');
-            $sheet->setCellValue('E8', tt('Группа'));
-            $sheet->mergeCells('G8:J8');
-            $sheet->setCellValue('G8',Gr::model()->getGroupName($studentInfo['sem4'], $studentInfo));
-
-            $sheet->setTitle(tt('Карточка ст.') . ' ' . date('Y-m-d H-i'));
-
-            /*---------------------------------------------------*/
-            if(PortalSettings::model()->findByPk(48)->ps2==1) {
-                $objWorkSheet = $objPHPExcel->createSheet(1);
-                $objPHPExcel->setActiveSheetIndex(1);
-                $sheet = $objPHPExcel->getActiveSheet();
-                $sheet->setTitle(tt('Тек. задолженость'));
-
-                $disciplines = Elg::model()->getDispBySt($st->st1);
-
-                $sheet->mergeCells('A1:A2');
-                $sheet->setCellValue('A1', tt('№ пп'));
-
-                $sheet->mergeCells('B1:B2');
-                $sheet->setCellValue('B1', tt('Кафедра'));
-
-                $sheet->mergeCells('C1:C2');
-                $sheet->setCellValue('C1', tt('Дисциплина'));
-
-                $sheet->mergeCells('D1:D2');
-                $sheet->setCellValue('D1', tt('Тип занятий'));
-
-                $sheet->mergeCells('E1:E2');
-                $sheet->setCellValue('E1', tt('Общее к-во занятий'));
-
-                $sheet->mergeCells('F1:G1');
-                $sheet->setCellValue('F1', tt('Количество пропусков'));
-                $sheet->setCellValue('F2', tt('Уваж.'));
-                $sheet->setCellValue('G2', tt('Неув.'));
-
-                $sheet->mergeCells('H1:H2');
-                $sheet->setCellValue('H1', tt('К-во "2"'));
-
-                $sheet->mergeCells('I1:J1');
-                $sheet->setCellValue('I1', tt('К-во отработанных занятий'));
-                $sheet->setCellValue('I2', tt('"нб"'));
-                $sheet->setCellValue('J2', tt('"2"'));
-
-                $sheet->mergeCells('K1:K2');
-                $sheet->setCellValue('K1', tt('% задолженности'));
-
-                $sheet->getColumnDimension('B')->setWidth(20);
-                $sheet->getColumnDimension('C')->setWidth(40);
-                $sheet->getColumnDimension('E')->setWidth(12);
-
-                $i=1;
-                $k=2;
-                foreach($disciplines as $discipline)
-                {
-                    $type= $discipline['type_journal'];
-                    /*if($discipline['us4']>1)
-                        $type=1;*/
-                    list($respectful,$disrespectful,$f,$nbretake,$fretake,$count) = Elg::model()->getRetakeInfo($discipline['uo1'],$discipline['sem1'],$type,$st->st1, PortalSettings::model()->getSettingFor(55));
-                    $sheet->setCellValueByColumnAndRow(0,$i+$k, $i);
-                    $sheet->setCellValueByColumnAndRow(1,$i+$k, $discipline['k2']);
-                    if(!empty($discipline['d27'])&&Yii::app()->language=="en")
-                        $d2=$discipline['d27'];
-                    else
-                        $d2=$discipline['d2'];
-                    $sheet->setCellValueByColumnAndRow(2,$i+$k, $d2);
-                    $sheet->setCellValueByColumnAndRow(3,$i+$k, SH::convertTypeJournal($discipline['type_journal']));
-                    $sheet->setCellValueByColumnAndRow(4,$i+$k, $count);
-                    $sheet->setCellValueByColumnAndRow(5,$i+$k, $respectful);
-                    $sheet->setCellValueByColumnAndRow(6,$i+$k, $disrespectful);
-                    $sheet->setCellValueByColumnAndRow(7,$i+$k, $f);
-                    $sheet->setCellValueByColumnAndRow(8,$i+$k, $nbretake);
-                    $sheet->setCellValueByColumnAndRow(9,$i+$k, $fretake);
-                    if($count!=0)
-                        $proc = round((($respectful+$disrespectful-$nbretake)+($f-$fretake))/$count*100);
-                    else
-                        $proc=0;
-                    $sheet->setCellValueByColumnAndRow(10,$i+$k, $proc);
-                    $i++;
-                }
-                $sheet->getStyleByColumnAndRow(0,1,10,$i+$k-1)->getBorders()->getAllBorders()->applyFromArray(array('style'=>PHPExcel_Style_Border::BORDER_THIN,'color' => array('rgb' => '000000')));
-                $sheet->getStyleByColumnAndRow(0,1,10,2)->getFont()->setSize(12)->setBold(true);
-                $sheet->getStyleByColumnAndRow(0,1,10,2)->getAlignment()->setWrapText(true)->
-                setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            }
-
-
-            $objPHPExcel->setActiveSheetIndex(0);
-
-            // Redirect output to a clientâ€™s web browser (Excel5)
-            header('Content-Type: application/vnd.ms-excel');
-            header('Content-Disposition: attachment;filename="ACY_' . date('Y-m-d H-i') . '.xls"');
-            header('Cache-Control: max-age=0');
-            // If you're serving to IE 9, then the following may be needed
-            header('Cache-Control: max-age=1');
-            // If you're serving to IE over SSL, then the following may be needed
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-            header('Pragma: public'); // HTTP/1.0
-
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-            $objWriter->save('php://output');
-            Yii::app()->end();
-        }
     }
 
     public function actionPhones()
@@ -967,8 +771,7 @@ SQL;
                 $discipline = D::model()->getDisciplineForCourseWork($model->student);
                 if ($discipline) {
                     $courseWork = D::model()->getFirstCourseWork($model->student, $discipline['us1']);
-                    //list($rus, $eng) = Spkr::model()->findAllInArray();
-                    $nkrs1 = $courseWork['nkrs1'];
+
                     $p1    = $courseWork['nkrs6'];
                     $nkrs6 = P::model()->getTeacherNameWithDol($courseWork['nkrs6']);
                     $nkrs7 = $courseWork['nkrs7'];
@@ -978,18 +781,14 @@ SQL;
                     $k2=$kav['k3'];
                     $st_info=St::model()->getInfoForStudentInfoExcel($model->student);
                     $zav_name=Sh::getShortName($zav['p3'],$zav['p4'],$zav['p5']);
-                    /*if(empty($nkrs4))
-                    {*/
-                        $spkr=Spkr::model()->findByPk($nkrs7);
-                        if(!empty($spkr))
-                        {
-                            $nkrs4=$spkr->spkr2;
-                            $nkrs5=$spkr->spkr3;
-                        }
-                    //}
-                    /* @var $mPDF1 mPDF*/
-                    $mPDF1 = Yii::app()->ePdf->mpdf();
-                    //$mPDF1->showImageErrors = true;
+                    $spkr=Spkr::model()->findByPk($nkrs7);
+                    if(!empty($spkr))
+                    {
+                        $nkrs4=$spkr->spkr2;
+                        $nkrs5=$spkr->spkr3;
+                    }
+
+                    $mPDF1 = new Mpdf\Mpdf();
 
                     $patternTitle = <<<HTML
                         <style>
@@ -1073,183 +872,8 @@ HTML;
 
     }
 
-    /**
-     * печать заявления на утверждение курсовой в ексель
-     * @throws CHttpException
-     */
-    public function actionStudentInfoExcel()
-    {
-        $model = new TimeTableForm;
-        if (Yii::app()->user->isStd) {
-
-            $model->student = Yii::app()->user->dbModel->st1;
-
-        } else
-            throw new CHttpException(404, '1You don\'t have an access to this service');
-
-        $stInfoForm = new StInfoForm();
-        $stInfoForm->fillData($model);
-
-        if(empty($model->student))
-            throw new CHttpException(404, '2You don\'t have an access to this service');
-        else
-        {
-            $student=St::model()->findByPk($model->student);
-            if(empty($student))
-                throw new CHttpException(404, '3You don\'t have an access to this service');
-            else
-            {
-                $discipline = D::model()->getDisciplineForCourseWork($model->student);
-                if ($discipline) {
-                    $courseWork = D::model()->getFirstCourseWork($model->student, $discipline['us1']);
-                    //list($rus, $eng) = Spkr::model()->findAllInArray();
-                    $nkrs1 = $courseWork['nkrs1'];
-                    $p1    = $courseWork['nkrs6'];
-                    $nkrs6 = P::model()->getTeacherNameWithDol($courseWork['nkrs6']);
-                    $nkrs7 = $courseWork['nkrs7'];
-                    $nkrs4 = $courseWork['nkrs4'];
-                    $nkrs5 = $courseWork['nkrs5'];
-                    list($zav, $kav) = P::model()->getZavKavByTeacher($p1);
-                    $k2=$kav['k3'];
-                    $st_info=St::model()->getInfoForStudentInfoExcel($model->student);
-                    $zav_name=Sh::getShortName($zav['p3'],$zav['p4'],$zav['p5']);
-                    if(empty($nkrs4))
-                    {
-                        $spkr=Spkr::model()->findByPk($nkrs7);
-                        if(!empty($spkr))
-                        {
-                            $nkrs4=$spkr->spkr2;
-                            $nkrs5=$spkr->spkr3;
-                        }
-                    }
-                    $pattern='студента %s курса %s группы';
-                    Yii::import('ext.phpexcel.XPHPExcel');
-                    $objPHPExcel= XPHPExcel::createPHPExcel();
-                    $objPHPExcel->getProperties()->setCreator("ACY")
-                        ->setLastModifiedBy("ACY ".date('Y-m-d H-i'))
-                        ->setTitle("Jornal ".date('Y-m-d H-i'))
-                        ->setSubject("Jornal ".date('Y-m-d H-i'))
-                        ->setDescription("Jornal document, generated using ACY Portal. ".date('Y-m-d H:i:'))
-                        ->setKeywords("")
-                        ->setCategory("Result file");
-                    $objPHPExcel->setActiveSheetIndex(0);
-                    $sheet=$objPHPExcel->getActiveSheet();
-                    $sheet->getColumnDimension('A')->setWidth(30);
-                    $sheet->getColumnDimension('B')->setWidth(20);
-                    $sheet->getColumnDimension('C')->setWidth(20);
-                    $sheet->getColumnDimension('D')->setWidth(20);
-                    $sheet->mergeCells('C1:D1')
-                        ->setCellValue('C1', "На кафедру");
-                    $sheet->mergeCells('C2:D2')
-                        ->setCellValue('C2', $k2);
-                    $sheet->getRowDimension(2)->setRowHeight(40);
-                    $sheet->mergeCells('C3:D3')
-                        ->setCellValue('C3',  '(заведующий - профессор '. $zav_name.')');
-                    $sheet->mergeCells('C4:D4')
-                        ->setCellValue('C4', sprintf($pattern,$st_info['sem4'],$st_info['name']));
-                    /*$sheet->mergeCells('C5:D5')
-                        ->setCellValue('C5', 'Форма обучения: '.SH::convertEducationType($st_info['sg4']));*/
-                    $sheet->mergeCells('C5:D5')
-                        ->setCellValue('C5', $st_info['f3']);
-                    $sheet->getRowDimension(5)->setRowHeight(40);
-                    $sheet->mergeCells('C6:D6')
-                        ->setCellValue('C6', SH::getShortName($student->st2,$student->st3,$student->st4));
-                    $sheet->getStyleByColumnAndRow(0,1,3,6)->getAlignment()->setWrapText(true)->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
-                    $sheet->mergeCells('A7:D7')
-                        ->setCellValue('A7', 'Заявление')->getStyle('A7')->getFont()->setSize(18);
-                    $sheet->getStyle('A7')->getAlignment()-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                    $sheet->getRowDimension(7)->setRowHeight(40);
-                    $sheet->mergeCells('A8:D8')
-                        ->setCellValue('A8', '   Прошу утвердить тему моей курсовой/дипломной работы');
-                    $sheet->setCellValue('A9', 'Название на русском языке')->getStyle('A9')->getAlignment()-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                    $sheet->setCellValue('A10', 'Название на английском языке')->getStyle('A10')->getAlignment()-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                    $sheet->mergeCells('B9:D9')
-                        ->setCellValue('B9', $nkrs4)->getStyle('B9')->getAlignment()->setWrapText(true)-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                    $sheet->mergeCells('B10:D10')
-                        ->setCellValue('B10', $nkrs5)->getStyle('B10')->getAlignment()->setWrapText(true)-> setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-                    $sheet->getStyleByColumnAndRow(0,9,3,10)->getBorders()->getAllBorders()->applyFromArray(array('style'=>PHPExcel_Style_Border::BORDER_THIN,'color' => array('rgb' => '000000')));
-                    $sheet->getRowDimension(9)->setRowHeight(50);
-                    $sheet->getRowDimension(10)->setRowHeight(50);
-                    $sheet->mergeCells('A11:D11')->setCellValue('A11', 'Научный руководитель '.$nkrs6);
-                    $sheet->setCellValue('A13','« ___ » __________ 20__г.');
-                    $sheet->setCellValue('D13','__________');
-                    $sheet->setCellValue('A15','«не возражаю»');
-                    $sheet->setCellValue('D15','Научный руководитель');
-                    $sheet->mergeCells('B15:C15')->setCellValue('B15', '____________________');
-                    $sheet->setCellValue('A17','«не возражаю»');
-                    $sheet->mergeCells('B17:C17')->setCellValue('B17', '____________________');
-                    $sheet->setCellValue('D17','Заведующий кафедрой');
-                    $sheet->setCellValue('A18','(только для дипломных работ)')->getStyle('A18')->getAlignment()->setWrapText(true)->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
-                    $sheet->getRowDimension(18)->setRowHeight(30);
-
-                    $data=Foto::getStudentFoto($model->student);
-                    if($data!=null)
-                    {
-                        $sheet->setCellValue('A19','Штрихкод');
-                        $objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
-                        $objDrawing->setName('logo');
-                        $objDrawing->setImageResource( imagecreatefromstring($data->foto4));
-                        $objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_DEFAULT);
-                        $objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-                        $objDrawing->setHeight(100);
-                        $objDrawing->setCoordinates('A20');
-                        $objDrawing->setOffsetX(10);
-                        $objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
-                    }
-
-                    $sheet->getProtection()->setSheet(true);
-                    $sheet->getProtection()->setSort(true);
-                    $sheet->getProtection()->setInsertRows(true);
-                    $sheet->getProtection()->setFormatCells(true);
-
-                    $sheet->getProtection()->setPassword('TNDF12451ghtreds54213');
-
-                    $sheet->setTitle('Заявление '.date('Y-m-d H-i'));
-                    // Set active sheet index to the first sheet, so Excel opens this as the first sheet
-                    $objPHPExcel->setActiveSheetIndex(0);
-
-                    // Redirect output to a clientâ€™s web browser (Excel5)
-                    header('Content-Type: application/vnd.ms-excel');
-                    header('Content-Disposition: attachment;filename="ACY_'.date('Y-m-d H-i').'.xls"');
-                    header('Cache-Control: max-age=0');
-                    // If you're serving to IE 9, then the following may be needed
-                    header('Cache-Control: max-age=1');
-                    // If you're serving to IE over SSL, then the following may be needed
-                    header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-                    header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-                    header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-                    header ('Pragma: public'); // HTTP/1.0
-
-                    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-                    $objWriter->save('php://output');
-                    Yii::app()->end();
-                }
-                else
-                    throw new CHttpException(404, '4You don\'t have an access to this service');
-            }
-        }
-        /*$this->render('studentInfo', array(
-            'stInfoForm'  => $stInfoForm,
-        ));*/
-    }
-
     public function sendToAntiPlagiarism($document, $tmpName)
     {
-        //$ANTIPLAGIAT_URI = Yii::app()->params['antiPlagiarism']['antiplagiat_uri'];
-
-        // Создать клиента сервиса(http, unsecured)
-        //$COMPANY_NAME = Yii::app()->params['antiPlagiarism']['company_name'];
-        //$APICORP_ADDRESS = Yii::app()->params['antiPlagiarism']['apicorp_address'];
-        /*$client = new SoapClient("http://$APICORP_ADDRESS/apiCorp/$COMPANY_NAME?singleWsdl",
-            array("trace"=>1,
-                "soap_version" => SOAP_1_1,
-                "features" => SOAP_SINGLE_ELEMENT_ARRAYS));*/
-
-        //$LOGIN = "testapi";////начало
-        //$PASSWORD = "testapi";
-        //$COMPANY_NAME = 'testapi';
-        //$APICORP_ADDRESS = 'api.antiplagiat.ru:5433';
-
         $LOGIN = PortalSettings::model()->findByPk(68)->ps2;
         $PASSWORD = PortalSettings::model()->findByPk(69)->ps2;
         $COMPANY_NAME = PortalSettings::model()->findByPk(70)->ps2;

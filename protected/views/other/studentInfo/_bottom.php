@@ -167,10 +167,6 @@ $form=$this->beginWidget('CActiveForm', array(
         <?php
         if (!$canSelectSt):
         ?>
-        <?php /*<a class="btn btn-primary" href="<?=Yii::app()->createUrl('/other/studentInfoExcel')?>">
-            <i class="icon-print bigger-110"></i>
-            <?=tt('Печать')?>
-        </a>*/ ?>
         <a class="btn btn-success" href="<?=Yii::app()->createUrl('/other/studentInfoPdf',array( 'time'=>time()))?>">
             <i class="icon-print bigger-110"></i>
             <?=tt('Печать Pdf')?>

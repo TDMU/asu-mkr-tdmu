@@ -30,9 +30,6 @@ class Antsg extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('antsg1, antsg2, antsg3', 'numerical', 'integerOnly'=>true),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('antsg1, antsg2, antsg3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -46,45 +43,6 @@ class Antsg extends CActiveRecord
 		return array(
 			'antsg10' => array(self::BELONGS_TO, 'Sg', 'antsg1'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'antsg1' => 'Antsg1',
-			'antsg2' => 'Antsg2',
-			'antsg3' => 'Antsg3',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('antsg1',$this->antsg1);
-		$criteria->compare('antsg2',$this->antsg2);
-		$criteria->compare('antsg3',$this->antsg3);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -2,8 +2,8 @@
 /**
  *
  * @var TimeTableController $this
- * @var TimeTableForm $model
- * @var CActiveForm $form
+ * @var P $model
+ * @var TbActiveForm $form
  */
 $this->pageHeader=tt('Расписание преподавателя: Поиск');
 $this->breadcrumbs=array(

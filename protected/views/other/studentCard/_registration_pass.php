@@ -29,7 +29,7 @@ if($ps137!=0):
             'active'=>true
         ),
         array(
-            'label'=>tt('Заявки на оплату'),
+            'label'=>tt('Заявления на оплату'),
             'content'=>$this->renderPartial(
                 'studentCard/_requestPayments',
                 array(

@@ -30,9 +30,6 @@ class Antio extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('antio1, antio2, antio3', 'numerical', 'integerOnly'=>true),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('antio1, antio2, antio3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -46,45 +43,6 @@ class Antio extends CActiveRecord
 		return array(
 			'antio10' => array(self::BELONGS_TO, 'St', 'antio1'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'antio1' => 'Antio1',
-			'antio2' => 'Antio2',
-			'antio3' => 'Antio3',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('antio1',$this->antio1);
-		$criteria->compare('antio2',$this->antio2);
-		$criteria->compare('antio3',$this->antio3);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

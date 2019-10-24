@@ -64,47 +64,11 @@ class Elgp extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'elgp0' => 'Elgp0',
-			'elgp1' => 'Elgp1',
 			'elgp2' => tt('Тип пропуска'),
             'elgp3' => tt('№ справки'),
 			'elgp4' => tt('№ квитанции (тип оплата)'),
 			'elgp5' => tt('Дата квитанции(тип оплата)'),
-			'elgp6' => 'Elgp6',
-			'elgp7' => 'Elgp7',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('elgp0',$this->elgp0);
-		$criteria->compare('elgp1',$this->elgp1);
-		$criteria->compare('elgp2',$this->elgp2);
-		$criteria->compare('elgp3',$this->elgp3,true);
-		$criteria->compare('elgp4',$this->elgp4,true);
-		$criteria->compare('elgp5',$this->elgp5,true);
-		$criteria->compare('elgp6',$this->elgp6,true);
-		$criteria->compare('elgp7',$this->elgp7);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

@@ -42,9 +42,6 @@ class Um extends CActiveRecord
 			array('um1, um2, um4, um7, um8, um9, um10', 'numerical', 'integerOnly'=>true),
 			array('um3', 'length', 'max'=>20),
             array('um5', 'length', 'max'=>500),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('um1, um2, um3, um4, um5, um7, um8, um9, um10', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -69,7 +66,7 @@ class Um extends CActiveRecord
 	{
 		return array(
 			'um1' => '#',
-			'um2' => tt('Оправитель'),
+			'um2' => tt('Отправитель'),
 			'um3' => tt('Дата'),
 			'um4' => tt('Уведомление'),
 			'um5' => tt('Текст'),
@@ -78,39 +75,6 @@ class Um extends CActiveRecord
 			'um9' => tt('Получатель (поток)'),
 			'um10' => tt('Начальное сообщение'),
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('um1',$this->um1);
-		$criteria->compare('um2',$this->um2);
-		$criteria->compare('um3',$this->um3,true);
-		$criteria->compare('um4',$this->um4);
-		$criteria->compare('um5',$this->um5,true);
-		$criteria->compare('um7',$this->um7);
-		$criteria->compare('um8',$this->um8);
-		$criteria->compare('um9',$this->um9);
-		$criteria->compare('um10',$this->um10);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

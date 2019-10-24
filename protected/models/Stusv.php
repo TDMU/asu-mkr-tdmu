@@ -49,9 +49,6 @@ class Stusv extends CActiveRecord
 			array('stusv0, stusv1, stusv2, stusv6, stusv7, stusv8, stusv10, stusv12', 'numerical', 'integerOnly'=>true),
 			array('stusv3, stusv9, stusv11, stusv15', 'length', 'max'=>30),
 			array('stusv4', 'length', 'max'=>60),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('stusv0, stusv1, stusv2, stusv3, stusv4, stusv5, stusv6, stusv7, stusv8, stusv9, stusv10, stusv11, stusv12, stusv15', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -71,67 +68,6 @@ class Stusv extends CActiveRecord
 			'stusv100' => array(self::BELONGS_TO, 'I', 'stusv10'),
 			'sts' => array(self::MANY_MANY, 'St', 'stusvst(stusvst1, stusvst3)'),
 		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'stusv0' => 'Stusv0',
-			'stusv1' => 'Stusv1',
-			'stusv2' => 'Stusv2',
-			'stusv3' => 'Stusv3',
-			'stusv4' => 'Stusv4',
-			//'stusv5' => 'Stusv5',
-			'stusv6' => 'Stusv6',
-			'stusv7' => 'Stusv7',
-			'stusv8' => 'Stusv8',
-			'stusv9' => 'Stusv9',
-			'stusv10' => 'Stusv10',
-			'stusv11' => 'Stusv11',
-			'stusv12' => 'Stusv12',
-            'stusv15' => 'Stusv15',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('stusv0',$this->stusv0);
-		$criteria->compare('stusv1',$this->stusv1);
-		$criteria->compare('stusv2',$this->stusv2);
-		$criteria->compare('stusv3',$this->stusv3,true);
-		$criteria->compare('stusv4',$this->stusv4,true);
-		//$criteria->compare('stusv5',$this->stusv5);
-		$criteria->compare('stusv6',$this->stusv6);
-		$criteria->compare('stusv7',$this->stusv7);
-		$criteria->compare('stusv8',$this->stusv8);
-		$criteria->compare('stusv9',$this->stusv9,true);
-		$criteria->compare('stusv10',$this->stusv10);
-		$criteria->compare('stusv11',$this->stusv11,true);
-		$criteria->compare('stusv12',$this->stusv12);
-        $criteria->compare('stusv15',$this->stusv15);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**

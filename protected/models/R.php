@@ -40,16 +40,7 @@ class R extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
+
 
 	/**
 	 * @return array customized attribute labels (name=>label)
@@ -70,39 +61,6 @@ class R extends CActiveRecord
 	}
 
 	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('r1',$this->r1);
-		$criteria->compare('r2',$this->r2,true);
-		$criteria->compare('r3',$this->r3);
-		$criteria->compare('r5',$this->r5);
-		$criteria->compare('r6',$this->r6);
-		$criteria->compare('r7',$this->r7);
-		$criteria->compare('r9',$this->r9);
-		$criteria->compare('r11',$this->r11,true);
-		$criteria->compare('r10',$this->r10);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
@@ -115,22 +73,6 @@ class R extends CActiveRecord
 
     public function getDatesForJournal($uo1, $gr1,$type_lesson, $sem1)
     {
-		/*$sem1 = Sem::model()->getSem1ByUo1($uo1);
-		if(empty($sem1))
-			return array();*/
-
-		/*$sql = <<<SQL
-			select elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12
-			from elgz
-			inner join elg on (elgz.elgz2 = elg.elg1 and elg2=:UO1 and elg4=:TYPE_LESSON and elg3={$sem1})
-			inner join ustem on (elgz.elgz7 = ustem.ustem1)
-			inner join EL_GURNAL_ZAN({$uo1},:GR1,:SEM1, {$type_lesson}) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
-			inner join rz on (EL_GURNAL_ZAN.r4 = rz1)
-			inner join nr on (r1 = nr1)
-			inner join k on (nr30 = k1)
-			order by elgz3
-SQL;*/
-
         $sql = <<<SQL
 			select elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12
                from elgz
@@ -144,12 +86,6 @@ SQL;*/
             group by elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12
                order by elgz3
 SQL;
-		/*select elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6
-from elgz
-   inner join elg on (elgz.elgz2 = elg.elg1 and elg2=:UO1 and elg4=:TYPE_LESSON)
-   inner join ustem on (elgz.elgz7 = ustem.ustem1)
-   inner join EL_GURNAL_ZAN({$uo1},:GR1,:SEM1, {$type_lesson}) on (elgz.elgz3 = EL_GURNAL_ZAN.nom)
-order by elgz3*/
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':UO1', $uo1);
         $command->bindValue(':GR1', $gr1);

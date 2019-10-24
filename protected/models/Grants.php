@@ -42,9 +42,6 @@ class Grants extends CActiveRecord
 		return array(
 			array('grants7', 'required', 'on' => 'admin-teachers'),
 			array('grants1, grants2, grants3, grants4, grants6, grants7, grants8, grants9', 'numerical', 'integerOnly'=>true),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('grants1, grants2, grants3', 'safe', 'on'=>'search'),
             array('grants8, grants7, grants6, grants3, grants4', 'safe', 'on' => 'admin-doctors'),
 		);
 	}
@@ -67,8 +64,6 @@ class Grants extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'grants1' => 'Grants1',
-			'grants2' => 'Grants2',
 			'grants3' => tt('Дист. Образование'),
 			'grants4' => tt('Ведомости'),
 			'grants6' => tt('Дист. Образование админ'),

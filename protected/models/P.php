@@ -148,9 +148,6 @@ class P extends CActiveRecord implements IPerson
 			array('p74', 'length', 'max'=>24),
 			array('p80', 'length', 'max'=>180),
 			array('p81', 'length', 'max'=>200),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('p1, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p27, p33, p34, p35, p36, p37, p38, p39, p40, p41, p42, p43, p44, p45, p46, p47, p48, p49, p50, p51, p52, p53, p54, p55, p56, p57, p58, p59, p60, p61, p62, p63, p64, p65, p66, p67, p68, p74, p75, p76, p77, p78, p79, p80, p81, p82, p83, p84, p85, p86, p87, p88, p89, p90, p91, p92, p93, p94, p95, p96, p97, p98, p99, p100, p102, p103, p104, p105, p106, p107, p108, p109, p110', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -190,220 +187,10 @@ class P extends CActiveRecord implements IPerson
 			'p3' => tt('Фамилия'),
 			'p4' => tt('Имя'),
 			'p5' => tt('Отчество'),
-			'p6' => 'P6',
-			'p7' => 'P7',
-			'p8' => 'P8',
 			'p9' => tt('Дата рождения'),
-			'p10' => 'P10',
-			'p11' => 'P11',
-			'p12' => 'P12',
 			'p13' => tt('ИНН'),
-			'p14' => 'P14',
-			'p15' => 'P15',
-			'p16' => 'P16',
-			'p17' => 'P17',
-			'p18' => 'P18',
-			'p19' => 'P19',
-			'p20' => 'P20',
-			'p21' => 'P21',
-			'p22' => 'P22',
-			'p23' => 'P23',
-			'p24' => 'P24',
-			'p27' => 'P27',
-			'p33' => 'P33',
-			'p34' => 'P34',
-			'p35' => 'P35',
-			'p36' => 'P36',
-			'p37' => 'P37',
-			'p38' => 'P38',
-			'p39' => 'P39',
-			'p40' => 'P40',
-			'p41' => 'P41',
-			'p42' => 'P42',
-			'p43' => 'P43',
-			'p44' => 'P44',
-			'p45' => 'P45',
-			'p46' => 'P46',
-			'p47' => 'P47',
-			'p48' => 'P48',
-			'p49' => 'P49',
-			'p50' => 'P50',
-			'p51' => 'P51',
-			'p52' => 'P52',
-			'p53' => 'P53',
-			'p54' => 'P54',
-			'p55' => 'P55',
-			'p56' => 'P56',
-			'p57' => 'P57',
-			'p58' => 'P58',
-			'p59' => 'P59',
-			'p60' => 'P60',
-			'p61' => 'P61',
-			'p62' => 'P62',
-			'p63' => 'P63',
-			'p64' => 'P64',
-			'p65' => 'P65',
-			'p66' => 'P66',
-			'p67' => 'P67',
-			'p68' => 'P68',
-			'p74' => 'P74',
-			'p75' => 'P75',
-			'p76' => 'P76',
-			'p77' => 'P77',
-			'p78' => 'P78',
-			'p79' => 'P79',
-			'p80' => 'P80',
-			'p81' => 'P81',
-			'p82' => 'P82',
-			'p83' => 'P83',
-			'p84' => 'P84',
-			'p85' => 'P85',
-			'p86' => 'P86',
-			'p87' => 'P87',
-			'p88' => 'P88',
-			'p89' => 'P89',
-			'p90' => 'P90',
-			'p91' => 'P91',
-			'p92' => 'P92',
-			'p93' => 'P93',
-			'p94' => 'P94',
-			'p95' => 'P95',
-			'p96' => 'P96',
-			'p97' => 'P97',
-			'p98' => 'P98',
-			'p99' => 'P99',
-			'p100' => 'P100',
-			'p102' => 'P102',
-			'p103' => 'P103',
-			'p104' => 'P104',
-			'p105' => 'P105',
-			'p106' => 'P106',
-			'p107' => 'P107',
-			'p108' => 'P108',
-			'p109' => 'P109',
-			'p110' => 'P110',
             'shortName' => tt('Ф.И.О.'),
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('p1',$this->p1);
-		$criteria->compare('p3',$this->p3,true);
-		$criteria->compare('p4',$this->p4,true);
-		$criteria->compare('p5',$this->p5,true);
-		$criteria->compare('p6',$this->p6,true);
-		$criteria->compare('p7',$this->p7,true);
-		$criteria->compare('p8',$this->p8,true);
-		$criteria->compare('p9',$this->p9,true);
-		$criteria->compare('p10',$this->p10,true);
-		$criteria->compare('p11',$this->p11,true);
-		$criteria->compare('p12',$this->p12,true);
-		$criteria->compare('p13',$this->p13,true);
-		$criteria->compare('p14',$this->p14,true);
-		$criteria->compare('p15',$this->p15,true);
-		$criteria->compare('p16',$this->p16,true);
-		$criteria->compare('p17',$this->p17,true);
-		$criteria->compare('p18',$this->p18,true);
-		$criteria->compare('p19',$this->p19,true);
-		$criteria->compare('p20',$this->p20,true);
-		$criteria->compare('p21',$this->p21,true);
-		$criteria->compare('p22',$this->p22,true);
-		$criteria->compare('p23',$this->p23,true);
-		$criteria->compare('p24',$this->p24,true);
-		$criteria->compare('p27',$this->p27,true);
-		$criteria->compare('p33',$this->p33,true);
-		$criteria->compare('p34',$this->p34,true);
-		$criteria->compare('p35',$this->p35,true);
-		$criteria->compare('p36',$this->p36,true);
-		$criteria->compare('p37',$this->p37,true);
-		$criteria->compare('p38',$this->p38,true);
-		$criteria->compare('p39',$this->p39,true);
-		$criteria->compare('p40',$this->p40,true);
-		$criteria->compare('p41',$this->p41,true);
-		$criteria->compare('p42',$this->p42,true);
-		$criteria->compare('p43',$this->p43,true);
-		$criteria->compare('p44',$this->p44,true);
-		$criteria->compare('p45',$this->p45,true);
-		$criteria->compare('p46',$this->p46,true);
-		$criteria->compare('p47',$this->p47,true);
-		$criteria->compare('p48',$this->p48);
-		$criteria->compare('p49',$this->p49,true);
-		$criteria->compare('p50',$this->p50,true);
-		$criteria->compare('p51',$this->p51,true);
-		$criteria->compare('p52',$this->p52,true);
-		$criteria->compare('p53',$this->p53,true);
-		$criteria->compare('p54',$this->p54,true);
-		$criteria->compare('p55',$this->p55);
-		$criteria->compare('p56',$this->p56,true);
-		$criteria->compare('p57',$this->p57,true);
-		$criteria->compare('p58',$this->p58,true);
-		$criteria->compare('p59',$this->p59,true);
-		$criteria->compare('p60',$this->p60,true);
-		$criteria->compare('p61',$this->p61);
-		$criteria->compare('p62',$this->p62,true);
-		$criteria->compare('p63',$this->p63,true);
-		$criteria->compare('p64',$this->p64,true);
-		$criteria->compare('p65',$this->p65,true);
-		$criteria->compare('p66',$this->p66,true);
-		$criteria->compare('p67',$this->p67,true);
-		$criteria->compare('p68',$this->p68,true);
-		$criteria->compare('p74',$this->p74,true);
-		$criteria->compare('p75',$this->p75);
-		$criteria->compare('p76',$this->p76,true);
-		$criteria->compare('p77',$this->p77,true);
-		$criteria->compare('p78',$this->p78,true);
-		$criteria->compare('p79',$this->p79,true);
-		$criteria->compare('p80',$this->p80,true);
-		$criteria->compare('p81',$this->p81,true);
-		$criteria->compare('p82',$this->p82);
-		$criteria->compare('p83',$this->p83);
-		$criteria->compare('p84',$this->p84);
-		$criteria->compare('p85',$this->p85);
-		$criteria->compare('p86',$this->p86);
-		$criteria->compare('p87',$this->p87);
-		$criteria->compare('p88',$this->p88,true);
-		$criteria->compare('p89',$this->p89,true);
-		$criteria->compare('p90',$this->p90);
-		$criteria->compare('p91',$this->p91);
-		$criteria->compare('p92',$this->p92,true);
-		$criteria->compare('p93',$this->p93,true);
-		$criteria->compare('p94',$this->p94,true);
-		$criteria->compare('p95',$this->p95,true);
-		$criteria->compare('p96',$this->p96,true);
-		$criteria->compare('p97',$this->p97,true);
-		$criteria->compare('p98',$this->p98,true);
-		$criteria->compare('p99',$this->p99,true);
-		$criteria->compare('p100',$this->p100);
-		$criteria->compare('p102',$this->p102,true);
-		$criteria->compare('p103',$this->p103,true);
-		$criteria->compare('p104',$this->p104,true);
-		$criteria->compare('p105',$this->p105,true);
-		$criteria->compare('p106',$this->p106,true);
-		$criteria->compare('p107',$this->p107,true);
-		$criteria->compare('p108',$this->p108,true);
-		$criteria->compare('p109',$this->p109,true);
-		$criteria->compare('p110',$this->p110,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
@@ -536,10 +323,9 @@ SQL;
         $criteria->addSearchCondition('p13', $this->p13);
         if(!empty($this->p9))
             $criteria->addCondition("p9 CONTAINING '".date_format(date_create_from_format('d-m-Y', trim($this->p9)), 'Y-m-d')."'");
-            //$criteria->addSearchCondition('p9', date_format(date_create_from_format('d-m-Y', $this->p9), 'Y-m-d H:i:s'));
+
 
         $criteria->addSearchCondition('account.u2', Yii::app()->request->getParam('login'));
-        //$criteria->addCondition('account.u5 = 1');
         $criteria->addSearchCondition('account.u3', Yii::app()->request->getParam('password'));
         $criteria->addSearchCondition('account.u4', Yii::app()->request->getParam('email'));
         $criteria->addSearchCondition('account.u7', Yii::app()->request->getParam('status'));
@@ -550,7 +336,6 @@ SQL;
             'criteria'=>$criteria,
 			'pagination'=>array(
                 'pageSize'=> Yii::app()->user->getState('pageSize',10),
-				'currentPage'=> Yii::app()->user->getState('CurrentPageP',null),
             ),
             'sort' => array(
                 'defaultOrder' => 'p3 collate UNICODE',
@@ -601,10 +386,8 @@ SQL;
         $criteria->addSearchCondition('p13', $this->p13);
         if(!empty($this->p9))
             $criteria->addCondition("p9 CONTAINING '".date_format(date_create_from_format('d-m-Y', trim($this->p9)), 'Y-m-d')."'");
-        //$criteria->addSearchCondition('p9', date_format(date_create_from_format('d-m-Y', $this->p9), 'Y-m-d H:i:s'));
 
         $criteria->addSearchCondition('accountDoctor.u2', Yii::app()->request->getParam('login'));
-        //$criteria->addCondition('accountDoctor.u5 = 3');
         $criteria->addSearchCondition('accountDoctor.u3', Yii::app()->request->getParam('password'));
         $criteria->addSearchCondition('accountDoctor.u4', Yii::app()->request->getParam('email'));
         $criteria->addSearchCondition('accountDoctor.u7', Yii::app()->request->getParam('status'));
@@ -615,7 +398,6 @@ SQL;
             'criteria'=>$criteria,
             'pagination'=>array(
                 'pageSize'=> Yii::app()->user->getState('pageSize',10),
-                'currentPage'=> Yii::app()->user->getState('CurrentPageD',null),
             ),
             'sort' => array(
                 'defaultOrder' => 'p3 collate UNICODE',
@@ -636,7 +418,6 @@ SQL;
 	
 	public function getP9String()
 	{
-		//return date("d-m-Y", strtotime($this->p9));
 		return date_format(date_create_from_format('Y-m-d H:i:s', $this->p9), 'd-m-Y');
 	}
 	
@@ -652,7 +433,7 @@ SQL;
                 INNER JOIN PD ON (P1=PD2)
                 INNER JOIN DOL ON (PD45 = DOL1)
                 INNER JOIN K on (PD4=K1)
-            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and pd11<='{$today}'and (PD13 IS NULL or PD13>'{$today}') and k20=0
+            WHERE PD4 = {$chairId} and PD28 in (0,2,5,9) and PD3=0 and pd11<='{$today}' and (PD13 IS NULL or PD13>'{$today}') and k20=0
             group by P1,P3,P4,P5,pd7,DOL2,PD1, p76, p77, p78, dol13
             ORDER BY P3 collate UNICODE, pd7 desc
 SQL;
@@ -792,18 +573,6 @@ SQL;
             $name = implode(' ', array($model->p3, $model->p4, $model->p5));
 
         return $name;
-    }
-
-    public function getTeacherNameByPd1($pd1)
-    {
-        if (empty($pd1))
-            return '';
-
-        $pd = Pd::model()->findByAttributes(array('pd1' => $pd1));
-        if (empty($pd))
-            return '';
-
-        return $this->getTeacherNameBy($pd->pd2);
     }
 
     public function getTeacherNameForPhones($b1, $k1)
@@ -975,23 +744,6 @@ SQL;
         return $res;
     }
 
-    public function getPd1ByK1($k1)
-    {
-        $today = date('Y-m-d 00:00');
-        $sql = <<<SQL
-        SELECT FIRST 1 pd1
-        FROM PD
-        WHERE pd2=:P1 and pd4=:K1 and pd3=0 and pd28 in (0,2,5,9) and pd11<='{$today}' and (pd13 is null or pd13>'{$today}')
-        ORDER BY pd7
-SQL;
-        $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(':K1', $k1);
-        $command->bindValue(':P1', $this->p1);
-        $pd1 = $command->queryScalar();
-
-        return $pd1;
-    }
-
     public function getTeacherNameWithDol($p1)
     {
         $sql = <<<SQL
@@ -1106,5 +858,52 @@ SQL;
         $count = $command->queryScalar();
 
         return empty($count) || $count==0;
+    }
+
+    /**
+     * Являеться ли текущий преподователь куратором студента
+     * @param $st1
+     * @return bool
+     * @throws CException
+     */
+    public function isKuratorForStudent($st1){
+        if(empty($st1))
+            return false;
+
+        $sql = <<<SQL
+              SELECT COUNT(*) FROM kgrp
+                INNER JOIN std on (std2=:st1 and std3=kgrp2)
+              where kgrp1=:p1 and STD11 in (0,5,6,8) and (STD7 is null)
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':p1', $this->p1);
+        $command->bindValue(':st1', $st1);
+        return ((int)$command->queryScalar()) > 0;
+    }
+
+    /**
+     * @param $st1
+     * @return bool
+     * @throws CException
+     */
+    public function isDekanForStudent($st1){
+        if(empty($st1))
+            return false;
+
+        $sql = <<<SQL
+              SELECT COUNT(*) FROM st
+                INNER JOIN std on (st1 = std3)
+                INNER JOIN gr on (std2 = gr1)
+                INNER join sg on (sg1 = gr2)
+                INNER join sp on (sp1 = sg2)
+                INNER join f on (f1 = f5)
+              where st1=:st1 and f37=:p1 and f32=0 and f19 is null and STD11 in (0,5,6,8) and (STD7 is null)
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':p1', $this->p1);
+        $command->bindValue(':st1', $st1);
+        return ((int)$command->queryScalar()) > 0;
     }
 }

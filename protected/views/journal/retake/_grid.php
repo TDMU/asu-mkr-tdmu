@@ -61,7 +61,7 @@
             'name'=>'elgp2',
             'header'=>Elgzst::model()->getAttributeLabel('elgp2'),
             'value'=>'Elgzst::getTypeRetake($data["elgzst3"],$data["elgp2"])',
-            'filter'=>array_merge(array(0=>tt('-(інше)')),Elgzst::model()->getTypes()),
+            'filter'=>array_merge(array(0=>tt('-(другое)')),Elgzst::model()->getTypes()),
         ),
         /*'count_elgotr'=>array(
             'name'=>'count_elgotr',

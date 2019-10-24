@@ -95,6 +95,13 @@
                     ),
                 ),
                 array(
+                    'name' => 'Портфолио(Фарм)',
+                    'controller' => 'portfolioFarm',
+                    'items' => array(
+                        'index'=> 'Портфолио'
+                    ),
+                ),
+                array(
                     'name'       => 'Эл. журнал',
                     'controller' => 'journal',
                     'items' => array(

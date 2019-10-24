@@ -30,9 +30,6 @@ class Zsnop extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('zsnop0, zsnop1', 'numerical', 'integerOnly'=>true),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('zsnop0, zsnop1', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -58,32 +55,6 @@ class Zsnop extends CActiveRecord
 			'zsnop0' => 'Zsnop0',
 			'zsnop1' => 'Zsnop1',
 		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('zsnop0',$this->zsnop0);
-		$criteria->compare('zsnop1',$this->zsnop1);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
 	}
 
 	/**
