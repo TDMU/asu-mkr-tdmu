@@ -21,7 +21,8 @@ HTML;
     /*** 1 table ***/
     $tr = '';
     foreach($students as $key => $st) {
-        $name = ShortCodes::getShortName($st['st2'], $st['st3'], $st['st4']);
+        //$name = ShortCodes::getShortName($st['st2'], $st['st3'], $st['st4']);
+        $name = $st['st2'].' '.$st['st3'].' '.$st['st4']; //TDMU - display full names
         $num  = $key+1;
 
         if($st['st45']==1)
