@@ -93,6 +93,10 @@ class PortfolioFarmController extends Controller
 
         $mPDF1 = new Mpdf\Mpdf(array(
             'format' => 'A4-P',
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 20,
+            'margin_bottom' => 20,
         ));
         $css = <<<CSS
     .label-field{
@@ -128,23 +132,26 @@ CSS;
         if (Yii::app()->user->isTch) {
             $params = array();
             if (!isset($_REQUEST['TimeTableForm'])) {
-                if (isset(Yii::app()->session['TimeTableForm'])){
-                    $params=Yii::app()->session['TimeTableForm'];
+                if (isset(Yii::app()->session['portfolio-filter'])){
+                    $params=Yii::app()->session['portfolio-filter'];
                 }
             }
             else{
                 $params = $_REQUEST['TimeTableForm'];
             }
             $model->attributes = $params;
-            Yii::app()->session['TimeTableForm']=$params;
+            Yii::app()->session['portfolio-filter']=$params;
         } elseif (Yii::app()->user->isStd) {
             $model->student = Yii::app()->user->dbModel->st1;
         } else
             throw new CHttpException(404, 'You don\'t have an access to this service');
 
-        if(!empty($model->student))
-            if(!$this->_checkPermission($model->student))
+        if(!empty($model->student)) {
+            if (!$this->_checkPermission($model->student)) {
+                Yii::app()->session->remove('portfolio-filter');
                 throw new CHttpException(403, tt('Нет доступа к данному студенту'));
+            }
+        }
 
         $this->render('index', array(
             'model'=>$model
@@ -171,8 +178,8 @@ CSS;
      * @throws CException
      */
     private function _checkPermission($st1){
-        if(Yii::app()->user->isAdmin)
-            return true;
+        //if(Yii::app()->user->isAdmin)
+            //return true;
 
         if(Yii::app()->user->isStd) {
             return $st1 == Yii::app()->user->dbModel->st1;

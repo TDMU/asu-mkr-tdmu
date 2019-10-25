@@ -1,6 +1,6 @@
 <?php
 $pattern = <<<HTML
-    <tr data-st1="%s" class="%s"><td class="center">%s</td><td data-toggle="tooltip" data-placement="right" title="" data-original-title="%s">%s</td></tr>
+    <tr data-st1="%s" class="%s"><td class="center">%s</td><td>%s</td></tr>
 HTML;
 
     $columnName = tt('ФИО');
@@ -21,8 +21,7 @@ HTML;
     /*** 1 table ***/
     $tr = '';
     foreach($students as $key => $st) {
-        //$name = ShortCodes::getShortName($st['st2'], $st['st3'], $st['st4']);
-        $name = $st['st2'].' '.$st['st3'].' '.$st['st4']; //TDMU - display full names
+        $name = $st['st2'].' '.$st['st3'].' '.$st['st4'];
         $num  = $key+1;
 
         if($st['st45']==1)
@@ -38,6 +37,6 @@ HTML;
                 $button = CHtml::link('<i class="icon-info-sign"></i>', '#', array('class' => 'btn-fin-block btn btn-mini btn-warning'));
             }
         }
-        $tr .= sprintf($pattern, $st['st1'], $class, $num,$st['st2'].' '.$st['st3'].' '.$st['st4'] ,$name.$button);
+        $tr .= sprintf($pattern, $st['st1'], $class, $num,$name.$button);
     }
     echo sprintf($table, $tr); // 1 table

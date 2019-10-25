@@ -893,11 +893,11 @@ SQL;
 
         $sql = <<<SQL
               SELECT COUNT(*) FROM st
-                INNER JOIN std on (st1 = std3)
-                INNER JOIN gr on (std2 = gr1)
+                INNER JOIN std on (st1 = std2)
+                INNER JOIN gr on (std3 = gr1)
                 INNER join sg on (sg1 = gr2)
                 INNER join sp on (sp1 = sg2)
-                INNER join f on (f1 = f5)
+                INNER join f on (f1 = sp5)
               where st1=:st1 and f37=:p1 and f32=0 and f19 is null and STD11 in (0,5,6,8) and (STD7 is null)
 SQL;
 

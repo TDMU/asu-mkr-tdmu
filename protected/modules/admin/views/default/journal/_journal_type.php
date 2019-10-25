@@ -10,6 +10,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         ' '.tt('Стандартный (сума балов)'),
         ' '.tt('Вариант 1 (ср. бал по занятиям * 12 + доп. балы)'),
         ' '.tt('Вариант 2 (ср. бал по занятиям + доп. балы)'),
+        ' '.tt('Одувс (сума балов(переводится в 40 бальную систему)  + доп. балы)'),
     );
 
     $options2 = array(
@@ -65,7 +66,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 
 
     <div class="control-group">
-        <?=CHtml::radioButtonList('settings[44]', PortalSettings::model()->findByPk(44)->ps2, $options, $htmlOptions)?>
+        <?=CHtml::radioButtonList('settings[44]', PortalSettings::model()->getSettingFor(44), $options, $htmlOptions)?>
     </div>
 
     <div class="control-group">

@@ -9,8 +9,8 @@
  * @return float|int|string
  */
 
-function getTotal1($total_1,$count_dates,$ps44){
-    $value = '';
+function getTotal1($total_1,$count_dates,$ps44, $count_all_dates){
+    $value = 0;
     switch($ps44){
         case 0:
             $value = $total_1;
@@ -24,6 +24,12 @@ function getTotal1($total_1,$count_dates,$ps44){
         case 2:
             if($count_dates!=0)
                 $value = round($total_1/$count_dates);
+            else
+                $value=0;
+            break;
+        case 3:
+            if($count_dates!=0)
+                $value = round($total_1 / ($count_all_dates*5/40));
             else
                 $value=0;
             break;
@@ -166,7 +172,7 @@ if($ps85==0&&$ps84 != 0)
 
 foreach ($students as $st) {
     $st1 = $st['st1'];
-    $val=  getTotal1($total_1[$st1],$total_count_1[$st1],$ps44);
+    $val=  getTotal1($total_1[$st1],$total_count_1[$st1],$ps44, $count_dates);
     $marks=Elgdst::model()->getMarksForStudent($st1,$elg1);
     $total_2[$st1] = $val+countDopTotal($marks);
     $tr.='<tr data-st1="'.$st1.'">';

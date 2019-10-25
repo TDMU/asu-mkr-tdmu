@@ -74,7 +74,7 @@ class R extends CActiveRecord
     public function getDatesForJournal($uo1, $gr1,$type_lesson, $sem1)
     {
         $sql = <<<SQL
-			select elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12
+			select elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12, p3 ,p4, p5
                from elgz
                inner join elg on (elgz.elgz2 = elg.elg1 and elg2=:UO1 and elg4=:TYPE_LESSON and elg3={$sem1})
                inner join ustem on (elgz.elgz7 = ustem.ustem1)
@@ -82,8 +82,10 @@ class R extends CActiveRecord
                inner join rz on (EL_GURNAL_ZAN.r4 = rz1)
                inner join ug on (r1 = ug3)
                inner join nr on (ug3 = nr1)
+               inner join pd on (nr6 = pd1)
+               inner join p on (pd2 = p1)
                inner join k on (nr30 = k1)
-            group by elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12
+            group by elgz2,elgz3,r2,r1,ustem5,us4,ustem7,ustem6,elgz4,elgz1,elgz5,elgz6,nr30,k2,k3,rz9,rz10, rz11,rz12, p3 ,p4, p5
                order by elgz3
 SQL;
         $command = Yii::app()->db->createCommand($sql);

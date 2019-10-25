@@ -95,7 +95,7 @@ echo CHtml::label('2.1'.'&nbsp;'.'Навчально-професійна дія
 
 $dataProvider3 = new CArrayDataProvider(
     Stpwork::model()->findAll(
-        'stpwork2 = :stpwork2 and stpwork7 is not null',
+        'stpwork2 = :stpwork2 and stpwork9 is not null',
         array(
             ':stpwork2' => $student->st1,
         )
@@ -106,7 +106,7 @@ $dataProvider3 = new CArrayDataProvider(
         'pagination'=>false
     )
 );
-Yii::app()->controller->widget('zii.widgets.grid.CGridView', array(
+echo Yii::app()->controller->widget('zii.widgets.grid.CGridView', array(
     'dataProvider' => $dataProvider3,
     'filter' => null,
     'template'=>'{items}',
