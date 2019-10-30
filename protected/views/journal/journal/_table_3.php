@@ -28,8 +28,11 @@ function getTotal1($total_1,$count_dates,$ps44, $count_all_dates){
                 $value=0;
             break;
         case 3:
-            if($count_dates!=0)
-                $value = round($total_1 / ($count_all_dates*5/40));
+            if($count_dates!=0) {
+                $value = round(($total_1 / ($count_all_dates * 5 * 0.66)) * 50);
+                if ($value > 50)
+                    $value = 50;
+            }
             else
                 $value=0;
             break;

@@ -964,13 +964,15 @@ function recalculateBothTotal(st1,ps84)
         }
 
         if (ps44 == 2) {
-            bal = (total_1 / totalCount).toFixed(2);
-            total_1 = Math.round(total_1 / totalCount);
+            bal = (total_1 / totalCount);
+            total_1 = Math.round(total_1 / totalCount).toFixed(2);
         }
 
         if (ps44 == 3) {
             bal = total_1;
-            total_1 = total_1 / (totalAllCount*5/40).toFixed(2);
+            total_1 = ((total_1 / (totalAllCount*5 * 0.66))*50).toFixed(2);
+            if(total_1 > 50)
+                total_1 = 50;
         }
 
         $(table_3 + ' td').each(function () {
