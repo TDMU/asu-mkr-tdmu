@@ -579,7 +579,7 @@ function countMarkTotal($marks)
             ? $mark['elgzst5']
             : $mark['elgzst4'];
         $total += $m;
-        if($m>0)
+        if($m>0 || $mark['elgzst3'] > 0)
             $count++;
     }
     return array($total,$count);

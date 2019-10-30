@@ -883,6 +883,7 @@ SQL;
     }
 
     /**
+     * Являеться ли деканаом для студента
      * @param $st1
      * @return bool
      * @throws CException
@@ -904,6 +905,28 @@ SQL;
         $command = Yii::app()->db->createCommand($sql);
         $command->bindValue(':p1', $this->p1);
         $command->bindValue(':st1', $st1);
+        return ((int)$command->queryScalar()) > 0;
+    }
+
+    /**
+     * Являетсья ли проректором
+     * @return bool
+     * @throws CException
+     */
+    public function isProrector(){
+        if(empty($st1))
+            return false;
+
+        $today = date('Y-m-d 00:00');
+
+        $sql = <<<SQL
+              SELECT COUNT(*) FROM pd
+                INNER JOIN b on (pd5 = b1)
+              where  pd28 in (0,2,5,9) and pd11<='{$today}' and (pd13 is null or pd13>='{$today}') and pd2=:P1 and b10>0
+SQL;
+
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':P1', $this->p1);
         return ((int)$command->queryScalar()) > 0;
     }
 }

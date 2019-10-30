@@ -93,30 +93,37 @@ class PortfolioFarmController extends Controller
 
         $mPDF1 = new Mpdf\Mpdf(array(
             'format' => 'A4-P',
-            'margin_left' => 10,
+            'margin_left' => 30,
             'margin_right' => 10,
             'margin_top' => 20,
             'margin_bottom' => 20,
         ));
-        $css = <<<CSS
-    .label-field{
-        font-weight: bold;
-    }
-
-    .ul-fields .table thead tr{
-        color: #000;
-    }
-    
-    h3 {
-        font-weight: bold!Important;
-    }
-    table, th, td {
-      border: 1px solid black;
-    }
-CSS;
-        $mPDF1->WriteHTML($css,\Mpdf\HTMLParserMode::HEADER_CSS);
+        $mPDF1->falseBoldWeight = 8;
+        $css = <<<HTML
+            <style>
+               .label-field{
+                    font-weight: bold;
+                }
+            
+                .ul-fields .table thead tr{
+                    color: #000;
+                }
+                
+                h2, h3 {
+                    font-weight: bold;
+                    text-align: center;
+                }
+                table, th, tr {
+                  border: 1px solid #000;
+                }
+            </style>
+HTML;
+        $mPDF1->WriteHTML($css);
         $mPDF1->WriteHTML($html);
         $mPDF1->Output($student->getShortName().'.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+
+        //echo $css;
+        //echo $html;
     }
 
     /**
@@ -178,8 +185,8 @@ CSS;
      * @throws CException
      */
     private function _checkPermission($st1){
-        //if(Yii::app()->user->isAdmin)
-            //return true;
+        if(Yii::app()->user->isAdmin)
+            return true;
 
         if(Yii::app()->user->isStd) {
             return $st1 == Yii::app()->user->dbModel->st1;
@@ -187,7 +194,7 @@ CSS;
 
         if(Yii::app()->user->isTch){
             $p = Yii::app()->user->dbModel;
-            return ($p->isDekanForStudent($st1) || $p->isKuratorForStudent($st1));
+            return ($p->isProrector() || $p->isDekanForStudent($st1) || $p->isKuratorForStudent($st1));
         }
 
         return false;
@@ -212,8 +219,11 @@ CSS;
         if(!$this->_checkPermission($field->stportfolio2))
             throw new CHttpException(403, tt('Нет доступа к данному студенту'));
 
-        if(!empty($field->stportfolio7))
-            throw new CHttpException(403, tt('Элемент уже подтвержден'));
+        if(Yii::app()->user->isAdmin ||(Yii::app()->user->isTch && (Yii::app()->user->dbModel->isProrector() || Yii::app()->user->dbModel->isDekanForStudent($field->stportfolio2)))){
+
+        }else
+            if(!empty($field->stportfolio7))
+                throw new CHttpException(403, tt('Элемент уже подтвержден'));
 
         if(!$field->delete())
             throw new CHttpException(500, tt('Ошибка удаления'));
@@ -350,28 +360,31 @@ CSS;
             throw new CHttpException(403, tt('Нет доступа к данному студенту'));
 
         if($write){
-            if($file->stpfile6 == Stpfile::TYPE_STPORTFOLIO) {
-                if (empty($file->stportfolios))
-                    throw new CHttpException(400, tt('Не найден елемент'));
-                foreach ($file->stportfolios as $stportfolio){
-                    if(!empty($stportfolio->stportfolio7))
+            if(Yii::app()->user->isAdmin ||(Yii::app()->user->isTch && (Yii::app()->user->dbModel->isProrector() || Yii::app()->user->dbModel->isDekanForStudent($file->stpfile5)))){
+
+            }else {
+                if ($file->stpfile6 == Stpfile::TYPE_STPORTFOLIO) {
+                    if (empty($file->stportfolios))
+                        throw new CHttpException(400, tt('Не найден елемент'));
+                    foreach ($file->stportfolios as $stportfolio) {
+                        if (!empty($stportfolio->stportfolio7))
+                            throw new CHttpException(403, tt('Элемент к которому привязан файл уже подтвержден'));
+                    }
+                } elseif ($file->stpfile6 == Stpfile::TYPE_STPPART) {
+                    if (empty($file->stppart))
+                        throw new CHttpException(400, tt('Не найден елемент'));
+
+                    if (!empty($file->stppart->stppart12))
+                        throw new CHttpException(403, tt('Элемент к которому привязан файл уже подтвержден'));
+
+                } elseif ($file->stpfile6 == Stpfile::TYPE_STPEDUWORK) {
+                    if (empty($file->stpeduwork))
+                        throw new CHttpException(400, tt('Не найден елемент'));
+
+                    if (!empty($file->stpeduwork->stpeduwork8))
                         throw new CHttpException(403, tt('Элемент к которому привязан файл уже подтвержден'));
                 }
-            } elseif($file->stpfile6 == Stpfile::TYPE_STPPART) {
-                if (empty($file->stppart))
-                    throw new CHttpException(400, tt('Не найден елемент'));
-
-                if(!empty($file->stppart->stppart12))
-                    throw new CHttpException(403, tt('Элемент к которому привязан файл уже подтвержден'));
-
-            } elseif($file->stpfile6 == Stpfile::TYPE_STPEDUWORK) {
-                if (empty($file->stpeduwork))
-                    throw new CHttpException(400, tt('Не найден елемент'));
-
-                if(!empty($file->stpeduwork->stpeduwork8))
-                    throw new CHttpException(403, tt('Элемент к которому привязан файл уже подтвержден'));
             }
-
         }
 
         return $file;
@@ -548,14 +561,19 @@ CSS;
      * @param $id
      * @return Stpwork
      * @throws CHttpException
+     * @throws CException
      */
     private function _loadStpworkModel($id)
     {
         $model=Stpwork::model()->findByPk($id);
         if($model===null)
             throw new CHttpException(404,'The requested page does not exist.');
-        if(!empty($model->stpwork9))
-            throw new CHttpException(403, tt('Элемент уже подтвержден'));
+
+        if(Yii::app()->user->isAdmin ||(Yii::app()->user->isTch && (Yii::app()->user->isTch && (Yii::app()->user->dbModel->isProrector() || Yii::app()->user->dbModel->isDekanForStudent($model->stpwork2))))){
+
+        }else
+            if(!empty($model->stpwork9))
+                throw new CHttpException(403, tt('Элемент уже подтвержден'));
 
         return $model;
     }
@@ -566,14 +584,18 @@ CSS;
      * @param $id
      * @return Stppart
      * @throws CHttpException
+     * @throws CException
      */
     private function _loadStppartModel($id)
     {
         $model=Stppart::model()->findByPk($id);
         if($model===null)
             throw new CHttpException(404,'The requested page does not exist.');
-        if(!empty($model->stppart12))
-            throw new CHttpException(403, tt('Элемент уже подтвержден'));
+        if(Yii::app()->user->isAdmin ||(Yii::app()->user->isTch &&(Yii::app()->user->isTch && (Yii::app()->user->dbModel->isProrector() || Yii::app()->user->dbModel->isDekanForStudent($model->stppart2))))){
+
+        }else
+            if(!empty($model->stppart12))
+                throw new CHttpException(403, tt('Элемент уже подтвержден'));
 
         return $model;
     }
@@ -727,8 +749,12 @@ CSS;
         $model=Stpeduwork::model()->findByPk($id);
         if($model===null)
             throw new CHttpException(404,'The requested page does not exist.');
-        if(!empty($model->stpeduwork8))
-            throw new CHttpException(403, tt('Элемент уже подтвержден'));
+
+        if(Yii::app()->user->isAdmin ||(Yii::app()->user->isTch && (Yii::app()->user->dbModel->isProrector() || Yii::app()->user->dbModel->isDekanForStudent($model->stpeduwork2)))){
+
+        }else
+            if(!empty($model->stpeduwork8))
+                throw new CHttpException(403, tt('Элемент уже подтвержден'));
 
         return $model;
     }

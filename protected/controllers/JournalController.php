@@ -2240,13 +2240,13 @@ SQL;
                 $st1 = $st['st1'];
                 $marks = $elg->getMarksForStudent($st1);
                 $total = 0;
-                $countTotal = 0;
+                $countTotal =  0;
                 foreach ($marks as $mark) {
                     $m = $mark['elgzst5'] != 0
                         ? $mark['elgzst5']
                         : $mark['elgzst4'];
                     $total += $m;
-                    if($m>0)
+                    if($m>0 || $mark['elgzst3'] > 0)
                         $countTotal++;
                 }
 
@@ -2258,19 +2258,30 @@ SQL;
                         break;
                     case 1:
                         if($count_dates!=0)
-                            $value = round($total/$count_dates * 12);
+                            $value = round($total/$countTotal * 12, 2);
                         else
                             $value=0;
                         break;
                     case 2:
                         if($count_dates!=0)
-                            $value = round($total/$count_dates);
+                            $value = round($total/$countTotal, 2);
+                        else
+                            $value=0;
+                        break;
+                    case 3:
+                        if($count_dates!=0) {
+                            $value = round(($total / ($count_dates * 5 * 0.66)) * 50, 2);
+                            if ($value > 50)
+                                $value = 50;
+                        }
                         else
                             $value=0;
                         break;
                 }
 
                 $sheet->setCellValueByColumnAndRow(4,$i+ $rowStart,$value);
+
+                $sheet->setCellValueByColumnAndRow(7,$i+ $rowStart,$count_dates.'/'.$countTotal.'/'.$total);
 
                 $elgdCount1=0;
                 $marksDop=Elgdst::model()->getMarksForStudent($st1,$elg1);

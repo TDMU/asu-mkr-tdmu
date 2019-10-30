@@ -2,7 +2,7 @@
 mb_internal_encoding("UTF-8");
 ini_set('expose_php', 'Off');
 
-define('ASU_PORTAL_VERSION', '0.3.4');
+define('ASU_PORTAL_VERSION', '0.3.5');
 
 // Debug is on when remote address is localhost
 defined('YII_DEBUG') or $_SERVER['REMOTE_ADDR'] === '127.0.0.1' and define('YII_DEBUG', true);
