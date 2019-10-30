@@ -2252,25 +2252,26 @@ SQL;
 
                 $value = '';
                 $count_dates = count($dates);
+                $precision = Yii::app()->core->universityCode == U_TNMU ? 2 : 0;
                 switch($ps44){
                     case 0:
                         $value = $total;
                         break;
                     case 1:
                         if($count_dates!=0)
-                            $value = round($total/$countTotal * 12, 2);
+                            $value = round($total/$countTotal * 12, $precision);
                         else
                             $value=0;
                         break;
                     case 2:
                         if($count_dates!=0)
-                            $value = round($total/$countTotal, 2);
+                            $value = round($total/$countTotal, $precision);
                         else
                             $value=0;
                         break;
                     case 3:
                         if($count_dates!=0) {
-                            $value = round(($total / ($count_dates * 5 * 0.66)) * 50, 2);
+                            $value = round(($total / ($count_dates * 5 * 0.66)) * 50, $precision);
                             if ($value > 50)
                                 $value = 50;
                         }
@@ -2280,8 +2281,7 @@ SQL;
                 }
 
                 $sheet->setCellValueByColumnAndRow(4,$i+ $rowStart,$value);
-
-                $sheet->setCellValueByColumnAndRow(7,$i+ $rowStart,$count_dates.'/'.$countTotal.'/'.$total);
+                $value = round($value);
 
                 $elgdCount1=0;
                 $marksDop=Elgdst::model()->getMarksForStudent($st1,$elg1);
