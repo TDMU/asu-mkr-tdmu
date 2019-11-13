@@ -914,9 +914,6 @@ SQL;
      * @throws CException
      */
     public function isProrector(){
-        if(empty($st1))
-            return false;
-
         $today = date('Y-m-d 00:00');
 
         $sql = <<<SQL

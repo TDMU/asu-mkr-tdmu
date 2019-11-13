@@ -52,7 +52,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
             },
         ),
         array(
-            'header'=>tt('Рецензия'),
+            'header'=>tt('Отзыв'),
             'type' => 'raw',
             'value'=>function($data){
                 if(empty($data['recenziya']))

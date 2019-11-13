@@ -11,10 +11,10 @@
  * @var Stpeduwork $model
  */
 
-$this->pageHeader=tt('Додавання в "Портфоліо робіт"');
+$this->pageHeader=tt('Добавление в "Портфолио работ"');
 $this->breadcrumbs=array(
     tt('Портфолио')=> array('/portfolioFarm/index'),
-    tt('Додавання в "Портфоліо робіт"'),
+    tt('Добавление в "Портфолио работ"'),
 );
 
 

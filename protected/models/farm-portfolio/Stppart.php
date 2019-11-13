@@ -72,11 +72,11 @@ class Stppart extends CActiveRecord
 		return array(
 			'stppart1' => '#',
 			'stppart2' => tt('Студент'),
-			'stppart3' => 'Вид заходу',
-			'stppart4' => 'Назва заходу',
-			'stppart5' => 'Навчальний рік',
-			'stppart6' => 'Рівень',
-			'stppart7' => 'Форма участі',
+			'stppart3' => tt('Вид мероприятия'),
+			'stppart4' => tt('Название мероприятия'),
+			'stppart5' => tt('Учебный год'),
+			'stppart6' => tt('Уровень'),
+			'stppart7' => tt('Форма участия'),
 			'stppart8' => tt('Результат'),
 			'stppart9' => tt('Файл'),
 			'stppart10' => tt('Редактировал'),
@@ -119,10 +119,10 @@ class Stppart extends CActiveRecord
      */
 	public static function getStppart3Types(){
 	   return array(
-	       0 => 'фаховий конкурс',
-           1 => 'концерт',
-           2 => 'волонтерська акція',
-           3 => 'конкурс (інтеллектуальний, творчий)',
+	       0 => tt('профессиональный конкурс'),
+           1 => tt('концерт'),
+           2 => tt('волонтерская акция'),
+           3 => tt('конкурс (интеллектуальный, творческий)'),
        );
     }
 
@@ -144,10 +144,10 @@ class Stppart extends CActiveRecord
      */
     public static function getStppart6Types(){
         return array(
-            0 => 'всеукраїнський',
-            1 => 'регіональний',
-            2 => 'міський',
-            3 => 'внутрішньоуніверситетський',
+            0 => tt('всеукраинский'),
+            1 => tt('региональный'),
+            2 => tt('городской'),
+            3 => tt('внутриуниверситетский'),
         );
     }
 
@@ -168,10 +168,10 @@ class Stppart extends CActiveRecord
      */
     public static function getStppart7Types(){
         return array(
-            0 => 'виступ',
-            1 => 'презентація',
-            2 => 'членство у оргкомітеті',
-            3 => 'тощо',
+            0 => tt('выступление'),
+            1 => tt('презентация'),
+            2 => tt('членство в оргкомитете'),
+            3 => tt('другое'),
         );
     }
 
@@ -194,10 +194,10 @@ class Stppart extends CActiveRecord
      */
     public static function getStppart8Types(){
         return array(
-            0 => 'грамота',
-            1 => 'сертифікат',
-            2 => 'подяка',
-            3 => 'тощо',
+            0 => tt('грамота'),
+            1 => tt('сертификат'),
+            2 => tt( 'благодарность'),
+            3 => tt('другое'),
         );
     }
 

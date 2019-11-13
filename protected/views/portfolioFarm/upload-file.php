@@ -36,7 +36,19 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'enctype' => 'multipart/form-data',
     )
 ));
-echo $form->fileFieldRow($model, 'file', array( 'labelOptions' => array('label' => tt('Разрешены файлы размером не более 8МБ и расширением: jpeg, jpg, png, doc, docx, pdf'))));
+$extension = 'jpeg, jpg, png, doc, docx, pdf';
+switch ($type){
+    case CreateStpfileForm::TYPE_FIELD3:
+        $extension = 'doc, docx, pdf';
+        break;
+    case CreateStpfileForm::TYPE_FIELD23:
+    case CreateStpfileForm::TYPE_FIELD:
+        $extension = 'jpeg, jpg, png, pdf';
+        break;
+}
+echo $form->fileFieldRow($model, 'file', array( 'labelOptions' => array('label' => tt('Разрешены файлы размером не более 8МБ и расширением: {extension}', array(
+        '{extension}' => $extension
+)))));
 ?>
     <div class="buttons">
         <?php echo CHtml::submitButton( tt('Добавить'), array(

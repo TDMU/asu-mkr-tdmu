@@ -11,10 +11,10 @@
  * @var Stpwork $model
  */
 
-$this->pageHeader=tt('Редагування в "Навчально-професійна діяльність"');
+$this->pageHeader=tt('Редактирование в "Учебно-профессиональная деятельность"');
 $this->breadcrumbs=array(
     tt('Портфолио')=> array('/portfolioFarm/index'),
-    tt('Редагування в "Навчально-професійна діяльність"'),
+    tt('Редактирование в "Учебно-профессиональная деятельность"'),
 );
 
 echo $this->renderPartial('stpwork/_form-stpwork', array(

@@ -35,7 +35,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
             'value'=>'Gr::model()->getGroupName($data["sem4"], $data)'
         ),
         array(
-            'header'=>tt('Рецензия'),
+            'header'=>tt('Отзыв'),
             'type' => 'raw',
             'value'=>function($data){
                 if(empty($data['recenziya']))

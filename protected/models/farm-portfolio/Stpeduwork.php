@@ -82,9 +82,9 @@ class Stpeduwork extends CActiveRecord
 		return array(
 			'stpeduwork1' => '#',
 			'stpeduwork2' => tt('Студент'),
-			'stpeduwork3' => 'Вид науково-дослідницької роботи',
-			'stpeduwork4' => 'Назва роботи',
-			'stpeduwork5' => tt('Уч. год'),
+			'stpeduwork3' => tt('Вид научно-иследовательской работы'),
+			'stpeduwork4' => tt('Название работы'),
+			'stpeduwork5' => tt('Учебный год'),
 			'stpeduwork6' => tt('Редактировал'),
 			'stpeduwork7' => tt('Дата редактирования'),
 			'stpeduwork8' => tt('Подтвердил'),
@@ -130,11 +130,11 @@ class Stpeduwork extends CActiveRecord
      */
     public static function getStpeduwork3Types(){
         return array(
-            0 => 'дослідницькі роботи',
-            1 => 'доповіді науково-практичних конференцій',
-            2 => 'реферати',
-            3 => 'друковані роботи',
-            4 => 'тощо'
+            0 => tt('исследовательские работы'),
+            1 => tt('доклады научно-практических конференций'),
+            2 => tt('рефераты'),
+            3 => tt('печатные работы'),
+            4 => tt('другое')
         );
     }
 

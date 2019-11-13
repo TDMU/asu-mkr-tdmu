@@ -112,8 +112,12 @@ class PortfolioFarmController extends Controller
                 h2, h3 {
                     font-weight: bold;
                     text-align: center;
+                    text-transform: uppercase;
                 }
-                table, th, tr {
+                table {
+                    border-collapse: collapse;
+                }
+                table, th, td {
                   border: 1px solid #000;
                 }
             </style>
@@ -121,9 +125,6 @@ HTML;
         $mPDF1->WriteHTML($css);
         $mPDF1->WriteHTML($html);
         $mPDF1->Output($student->getShortName().'.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-
-        //echo $css;
-        //echo $html;
     }
 
     /**
@@ -396,9 +397,6 @@ HTML;
      * @throws CHttpException
      */
     public function actionUploadFile(){
-
-        $model = new CreateStpfileForm();
-
         $st1 = Yii::app()->request->getParam('st1', null);
         $id = Yii::app()->request->getParam('idField', null);
         $type = Yii::app()->request->getParam('type', null);
@@ -408,6 +406,8 @@ HTML;
 
         if(!$this->_checkPermission($st1))
             throw new CHttpException(403, tt('Нет доступа к данному студенту'));
+
+        $model = new CreateStpfileForm($type);
 
         if(isset($_POST['CreateStpfileForm'])) {
             $model->attributes = $_POST['CreateStpfileForm'];

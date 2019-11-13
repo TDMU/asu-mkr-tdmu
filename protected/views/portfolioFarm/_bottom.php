@@ -227,8 +227,10 @@ Yii::app()->clientScript->registerCss('portfolioBottom', <<<CSS
 CSS
     );
 
+$successMessage = tt('Изменение сохранено');
+
 Yii::app()->clientScript->registerScript('portfolioFarm', <<<JS
-    var successFieldMessage = 'Изменение сохранено';
+    var successFieldMessage = '{$successMessage}';
     
     $('.btn-add-field').click(function(event) {
         event.preventDefault();
@@ -289,7 +291,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 echo '<div class="alert alert-info">'.tt('Внимание! На печать выводятся только подтвержденные куратором или деканом данные.').'</div>';
 
 echo '<div class="page-header">
-  <h3>1. РЕЗЮМЕ</h3>
+  <h3>1. '.tt('Резюме').'</h3>
 </div>';
 
 $this->renderPartial('_stInfo', array(
@@ -302,9 +304,6 @@ echo CHtml::openTag('ul', array(
 ));
 $field = $fields[Stportfolio::FIELD_EDUCATION_SCHOOL];
 echo renderField('',$student->st1, $field['code'], $field['text'], $field['needFile'], $field['inputType']);
-
-/*$field = $fields[Stportfolio::FIELD_EDUCATION_DATE_END];
-echo renderField('',$student->st1, $field['code'], $field['text'], $field['needFile'], $field['inputType']);*/
 
 $field = $fields[Stportfolio::FIELD_EXTRA_EDUCATION];
 echo renderField('',$student->st1, $field['code'], $field['text'], $field['needFile'], $field['inputType']);
@@ -322,7 +321,7 @@ echo CHtml::closeTag('ul');
 
 
 echo '<div class="page-header">
-  <h3>2. ПОРТФОЛІО ДОСЯГНЕНЬ</h3>
+  <h3>2. '.tt('Портфолио достижений').'</h3>
 </div>';
 
 echo CHtml::openTag('ul', array(
@@ -331,7 +330,7 @@ echo CHtml::openTag('ul', array(
 
 
 echo CHtml::openTag('ol');
-echo CHtml::label('2.1'.'&nbsp;'.'Навчально-професійна діяльність', '', array(
+echo CHtml::label('2.1'.'&nbsp;'.tt('Учебно-профессиональная деятельность'), '', array(
     'class' => 'label-field',
     'id' => 'label-field-block21'
 ));
@@ -397,7 +396,7 @@ $field = $fields[Stportfolio::FIELD_EXTRA_COURSES];
 echo renderField('2.2', $student->st1, $field['code'], $field['text'], $field['needFile'], $field['inputType']);
 
 echo CHtml::openTag('ol');
-echo CHtml::label('2.3'.'&nbsp;'.'Дані щодо участі у заходах', '', array(
+echo CHtml::label('2.3'.'&nbsp;'.tt('Данные об участии в мероприятиях'), '', array(
     'class' => 'label-field',
     'id' => 'label-field-block23'
 ));
@@ -524,7 +523,7 @@ echo CHtml::closeTag('ul');
 
 
 echo '<div class="page-header">
-  <h3 id="label-field-block3">3. ПОРТФОЛІО РОБІТ</h3>
+  <h3 id="label-field-block3">3. '.tt('Портфолио работ').'</h3>
 </div>';
 
 Yii::app()->controller->widget('bootstrap.widgets.TbGridView', array(
@@ -612,18 +611,10 @@ Yii::app()->controller->widget('bootstrap.widgets.TbGridView', array(
 echo CHtml::link(tt('Добавить'), Yii::app()->createUrl('/portfolioFarm/addStpeduwork', array( 'id'=> $model->student)), array('class'=>'btn-mini btn btn-primary btn-add-stpeduwork'));
 
 echo '<div class="page-header">
-  <h3 id="label-field-block4">4. ПОРТФОЛІО ВІДГУКІВ</h3>
+  <h3 id="label-field-block4">4. '.tt('Портфолио отзывов').'</h3>
 </div>';
 
-echo '<div class="alert alert-info">
-<ul>Тут можно розмістити скановані копії файлів: 
-<ol> 1.	Характеристики з місць проходження практик,</ol> 
-<ol> 2.	Рекомендаційні листи, </ol> 
-<ol> 3.	Листи-подяки, </ol> 
-<ol> 4.	Відгуки про досягнення, </ol> 
-<ol> 5.	Характеристики куратора тощо</ol> 
-</ul>
-</div>';
+echo tt('<div class="alert alert-info"><ul>Здесь можно разместить сканированные копии файлов:<ol> 1.Характеристики с мест прохождения практик,</ol><ol> 2.Рекомендательные письма, </ol><ol> 3.Благодарственные письма, </ol><ol> 4.Отзывы о достижениях, </ol><ol> 5.Характеристики куратора и т.д.</ol> </ul></div>');
 
 echo gridFiles(-1, $model->student);
 

@@ -11,10 +11,10 @@
  * @var Stpeduwork $model
  */
 
-$this->pageHeader=tt('Редагування в "Портфоліо робіт"');
+$this->pageHeader=tt('Редактирование в "Портфолио работ"');
 $this->breadcrumbs=array(
     tt('Портфолио')=> array('/portfolioFarm/index'),
-    tt('Редагування в "Портфоліо робіт"'),
+    tt('Редактирование в "Портфолио работ"'),
 );
 
 echo $this->renderPartial('stpeduwork/_form-stpeduwork', array(

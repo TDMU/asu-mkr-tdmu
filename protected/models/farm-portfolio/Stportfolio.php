@@ -171,19 +171,19 @@ SQL;
         return array(
             self::FIELD_EXTRA_EDUCATION => array(
                 'code' => self::FIELD_EXTRA_EDUCATION,
-                'text' => 'Дані про додаткову отриману освіту (музичну, мистецьку, спортивну школу, школу іноземних мов тощо)',
+                'text' => tt('Данные о дополнительно полученном образование (музыкальное, художественное, спортивной школы, школы иностранных языков и т.д.)'),
                 'needFile' => false,
                 'inputType' => 'textArea'
             ),
             self::FIELD_WORK_EXPERIENCE => array(
                 'code' => self::FIELD_WORK_EXPERIENCE,
-                'text' => 'Досвід роботи за спеціальністю (де і на якій посаді)',
+                'text' => tt('Опыт работы по специальности (где и на какой должности)'),
                 'needFile' => false,
                 'inputType' => 'textArea'
             ),
             self::FIELD_PHONE => array(
                 'code' => self::FIELD_PHONE,
-                'text' => 'Контактний телефон',
+                'text' => tt('Контактный телефон'),
                 'needFile' => false,
                 'inputType' => 'textField'
             ),
@@ -195,58 +195,52 @@ SQL;
             ),
             self::FIELD_EXTRA_COURSES => array(
                 'code' => self::FIELD_EXTRA_COURSES,
-                'text' => 'Курси, додаткова освіта: назва курсів, отриманий документ – назва (сертифікат, посвідчення тощо), дата, рівень',
+                'text' => tt('Курсы, дополнительное образование: название курсов, полученный документ - название (сертификат, удостоверение и т.д.), дата, уровень'),
                 'needFile' => true,
                 'inputType' => 'textArea'
             ),
             self::FIELD_OLIMPIADS => array(
                 'code' => self::FIELD_OLIMPIADS,
-                'text' => 'Олімпіади, конкурси за навчальними дисциплінами (навчальний рік, назва дисципліни, результат)',
+                'text' => tt('Олимпиады, конкурсы по учебным дисциплинам (учебный год, название дисциплины, результат)'),
                 'needFile' => true,
                 'inputType' => 'textArea'
             ),
             self::FIELD_SPORTS => array(
                 'code' => self::FIELD_SPORTS,
-                'text' => 'Спортивні досягнення (навчальний рік, рівень змагань, вид спорту, результат)',
+                'text' => tt('Спортивные достижения (учебный год, уровень соревнований, вид спорта, результат)'),
                 'needFile' => true,
                 'inputType' => 'textArea'
             ),
             self::FIELD_SCIENCES => array(
                 'code' => self::FIELD_SCIENCES,
-                'text' => 'Наукова діяльність (участь у науково-практичних конференціях, рівень, теми досліджень, статті чи тези, результат)',
+                'text' => tt('Научная деятельность (участие в научно-практических конференциях, уровень, темы исследований, статьи или тезисы, результат)'),
                 'needFile' => true,
                 'inputType' => 'textArea'
             ),
             self::FIELD_STUD_ORGS => array(
                 'code' => self::FIELD_STUD_ORGS,
-                'text' => 'Участь у органах студентського самоврядування (назва, форма участі, доручення, які виконувалися)',
+                'text' => tt('Участие в органах студенческого самоуправления (название, форма участия, поручения, которые выполнялись)'),
                 'needFile' => false,
                 'inputType' => 'textArea'
             ),
             self::FIELD_VOLONTER => array(
                 'code' => self::FIELD_VOLONTER,
-                'text' => 'Участь у волонтерській діяльності (назва заходу, форма участі)',
+                'text' => tt('Участие в волонтерской деятельности (название мероприятия, форма участия)'),
                 'needFile' => true,
                 'inputType' => 'textArea'
             ),
             self::FIELD_GROMADSKE => array(
                 'code' => self::FIELD_GROMADSKE,
-                'text' => 'Досягнення у творчій та громадській діяльності (назва заходу, форма участі)',
+                'text' => tt('Достижения в творческой и общественной деятельности (название мероприятия, форма участия)'),
                 'needFile' => false,
                 'inputType' => 'textArea'
             ),
             self::FIELD_EDUCATION_SCHOOL => array(
                 'code' => self::FIELD_EDUCATION_SCHOOL,
-                'text' => 'Поперядня освіта (навчальний заклад, коли закінчив)',
+                'text' => tt('Предыдущее образование (учебное заведение, когда закончил)'),
                 'needFile' => false,
                 'inputType' => 'textField'
-            ),
-            /*self::FIELD_EDUCATION_DATE_END => array(
-                'code' => self::FIELD_EDUCATION_DATE_END,
-                'text' => 'Поперядня освіта (дата закінчення)',
-                'needFile' => false,
-                'inputType' => 'dateField'
-            ),*/
+            )
         );
     }
 

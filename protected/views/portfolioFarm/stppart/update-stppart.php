@@ -11,10 +11,10 @@
  * @var Stppart $model
  */
 
-$this->pageHeader=tt('Редагування в "Дані щодо участі у заходах"');
+$this->pageHeader=tt('Редактирование в "Данные об участии в мероприятиях"');
 $this->breadcrumbs=array(
     tt('Портфолио')=> array('/portfolioFarm/index'),
-    tt('Редагування в "Навчально-професійна діяльність"'),
+    tt('Редактирование в "Учебно-профессиональная деятельность"'),
 );
 
 echo $this->renderPartial('stppart/_form-stppart', array(
