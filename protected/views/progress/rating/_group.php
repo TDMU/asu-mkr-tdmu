@@ -1,7 +1,8 @@
 <?php
 /**
- *
- * @var RatingForm $model
+/**
+ * @var $this ProgressController
+ * @var $model RatingForm
  * @var CActiveForm $form
  */
 

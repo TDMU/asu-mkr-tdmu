@@ -1,8 +1,7 @@
 <?php
 /**
- *
- * @var WorkPlanController $this
- * @var FilterForm $model
+ * @var ProgressController $this
+ * @var RatingForm $model
  */
 
 $this->pageHeader=tt('Рейтинг группы');

@@ -137,9 +137,9 @@
                     'controller' => 'progress',
                     'items' => array(
                         'rating'      => 'Рейтинг',
-                        'test'=> array(
-                            'name'=>'Тестирование',
-                            'authOnly' => $studentStr
+                        'module'=> array(
+                            'name'=>'Ведение модулей',
+                            'authOnly' => $teacherStr
                         ),
                     ),
                 ),

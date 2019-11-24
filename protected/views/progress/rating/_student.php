@@ -7,8 +7,8 @@
  */
 
 /**
- *
- * @var RatingForm $model
+ * @var $this ProgressController
+ * @var $model RatingForm
  * @var St $student
  */
 

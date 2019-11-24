@@ -7,6 +7,7 @@
  */
 
 /**
+ * @var $this ProgressController
  * @var $model RatingForm
  */
 $this->widget('bootstrap.widgets.TbButton', array(

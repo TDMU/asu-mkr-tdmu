@@ -14,28 +14,13 @@ class ProgressController extends Controller
         return array(
             array('allow',
                 'actions' => array(
-                    'getGroups',
-                    'insertMejModule',
-                    'deleteMejModule',
-                    'module',
-                    'updateVvmp',
-                    'insertVmpMark',
-                    'updateStus',
-                    'closeModule',
-                    'renderExtendedModule',
-                    'examSession',
-                    'insertStus',
-                    //'insertVmp',
-
-                    'modules',
-                    'insertJpvd',
-                    'getCxmb'
+                    'module', 'changeField', 'changeMark', 'autocomplete', 'changeTeacher'
                 ),
                 'expression' => 'Yii::app()->user->isAdmin || Yii::app()->user->isTch',
             ),
 
             array('allow',
-                'actions' => array('attendanceStatistic','rating','ratingExcel', 'ratingStudent')
+                'actions' => array('rating','ratingExcel', 'ratingStudent')
             ),
             array('deny',
                 'users' => array('*'),
@@ -45,7 +30,6 @@ class ProgressController extends Controller
     
     public function actionRating()
     {
-        //throw new CHttpException(400, 'Сервис времено недоступен по техническим причинам. В близжайшее время работа возобновиться.');
         $model = new RatingForm();
         $model->scenario = 'rating-group';
         if (isset($_REQUEST['RatingForm']))
@@ -196,5 +180,198 @@ class ProgressController extends Controller
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
         Yii::app()->end();
+    }
+
+    /**
+     *
+     */
+    public function actionModule(){
+        $form = new ModuleForm(Yii::app()->user->dbModel->p1);
+        if (isset($_REQUEST['ModuleForm']))
+            $form->attributes=$_REQUEST['ModuleForm'];
+
+        if($form->validate()){
+            if(!$form->checkAccess())
+                throw new CHttpException(403, tt('Доступ запрещен'));
+
+            $count = $form->getCountModules();
+            if($count > 0)
+                $form->countModules = $count;
+            else if($form->countModules > 0) {
+                $form->createModules();
+            }
+        }
+
+        $this->render('module', array(
+            'model' => $form,
+        ));
+    }
+
+    /**
+     * Изменение Оценки
+     * @throws CHttpException
+     * @throws CException
+     */
+    public function actionChangeMark()
+    {
+        if (!Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $st1 = Yii::app()->request->getParam('st1', null);
+        $mark = Yii::app()->request->getParam('mark', null);
+        $module = Yii::app()->request->getParam('module', null);
+
+        if($st1==null || $module==null || $mark == null)
+            throw new CHttpException(400, tt('Не все данные переданы'));
+
+        $moduleModel = Modgr::model()->findByPk($module);
+        if(empty($moduleModel))
+            throw new CHttpException(400, tt('Не найден модуль'));
+
+        //TODO: добавить проврку что студент есть в данной группе
+
+        $form = new ModuleForm(Yii::app()->user->dbModel->p1);
+        if(!$form->checkAccessForModule($module))
+            throw new CHttpException(403, tt('Доступ запрещен'));
+
+        if($mark < 0)
+            throw new CHttpException(400, tt('Оценка должна быть больше 0'));
+
+        $mod = $moduleModel->module;
+        if($mod->mod6 > 0 && $mark > $mod->mod6)
+            throw new CHttpException(400, tt('Оценка должна быть ниже максимального балла'));
+
+        $currentDate = new DateTime();
+        if(!empty($mod->mod7)){
+            $date = new DateTime($mod->mod7);
+            if($date>$currentDate)
+                throw new CHttpException(400, tt('Дата начала модуля еще не наступила'));
+        }
+        if(!empty($mod->mod8)){
+            $date = new DateTime($mod->mod8);
+            if($date<$currentDate)
+                throw new CHttpException(400, tt('Дата конца модуля уже прошла'));
+        }
+
+        $markModel = Mods::model()->findByAttributes(array('mods1' => $module, 'mods2' => $st1));
+        if(empty($markModel))
+        {
+            $markModel = new Mods();
+            $markModel->mods1 = $module;
+            $markModel->mods2 = $st1;
+        }
+
+        $markModel->mods3 = $mark;
+        $markModel->mods4 = date('Y-m-d H:i:s');
+        $markModel->mods5 = Yii::app()->user->id;
+
+        if(!$markModel->save())
+            throw new CHttpException(500, tt('Ошибка сохранения оценки'));
+
+        Yii::app()->end(CJSON::encode(array('message' => 'OK')));
+    }
+
+    /**
+     * Изменение параметров модуля
+     * @throws CHttpException
+     * @throws CException
+     */
+    public function actionChangeField(){
+        if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $field = Yii::app()->request->getParam('field', null);
+        $id = Yii::app()->request->getParam('id', null);
+        $value = Yii::app()->request->getParam('value', null);
+
+        if($id==null || $field==null)
+            throw new CHttpException(400, tt('Не все данные переданы'));
+
+        if(!in_array($field, array('mod5', 'mod6')) || !is_string($value))
+            throw new CHttpException(400, tt('Ошибка входящих данных'));
+
+        $module = Mod::model()->findByPk($id);
+        if(empty($module))
+            throw new CHttpException(400, tt('Не найден модуль'));
+
+        $form = new ModuleForm(Yii::app()->user->dbModel->p1);
+        if(!$form->checkAccessForMod($module->mod1))
+            throw new CHttpException(403, tt('Доступ запрещен'));
+
+        if($module->checkMaxBall($value))
+            throw new CHttpException(400, tt('Сумма баллов по модулям не должна быть больше 100'));
+
+        $module->$field = $value;
+
+        if(!$module->save())
+            throw new CHttpException(500, tt('Ошибка сохранения'));
+
+       Yii::app()->end(CJSON::encode(array(
+           'message' => 'ok'
+       )));
+    }
+
+    /**
+     * Изменение параметров модуля
+     * @throws CHttpException
+     * @throws CException
+     */
+    public function actionChangeTeacher(){
+        if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $id = Yii::app()->request->getParam('id', null);
+        $value = Yii::app()->request->getParam('value', null);
+
+        if($id==null || $value==null)
+            throw new CHttpException(400, tt('Не все данные переданы'));
+
+        $module = Modgr::model()->findByPk($id);
+        if(empty($module))
+            throw new CHttpException(400, tt('Не найден модуль'));
+
+        $form = new ModuleForm(Yii::app()->user->dbModel->p1);
+        if(!$form->checkAccessForMod($module->module->mod1))
+            throw new CHttpException(403, tt('Доступ запрещен'));
+
+        $module->modgr5 = $value;
+
+        if(!$module->save())
+            throw new CHttpException(500, tt('Ошибка сохранения'));
+
+        Yii::app()->end(CJSON::encode(array(
+            'message' => 'ok'
+        )));
+    }
+
+    /**
+     * Поиск преподователя
+     * @throws CHttpException
+     */
+    public function actionAutocomplete($k1)
+    {
+        if (! Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(404, 'Invalid request. Please do not repeat this request again.');
+
+        $query = Yii::app()->request->getParam('query', null);
+
+        $suggestions = array();
+
+        $teachers = P::model()->findTeacherChairByName($k1,$query);
+
+        foreach($teachers as $tch)
+        {
+            $suggestions[] = array(
+                'value' => SH::getShortName($tch['p3'], $tch['p4'], $tch['p5']). ' '.$tch['dol2']. ' '.round($tch['pd6'], 2).' '.tt('ст.'),
+                'id'    => $tch['pd1']
+            );
+        }
+
+        $res = array(
+            'query'       => $query,
+            'suggestions' => $suggestions,
+        );
+
+        Yii::app()->end(CJSON::encode($res));
     }
 }

@@ -1,5 +1,6 @@
 <?php
 /**
+ * @var $this ProgressController
  * @var $model RatingForm
  */
 

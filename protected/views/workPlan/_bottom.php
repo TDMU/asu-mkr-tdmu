@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @var WorkPlanController $this
- * @var FilterForm $model
- */
-
-
 function getHoursByUs6($us4, $us6){
     switch ($us4){
         case 5:
@@ -29,6 +23,12 @@ function getHoursByUs6($us4, $us6){
             return '';
     }
 }
+
+/**
+ * @var WorkPlanController $this
+ * @var FilterForm $model
+ */
+
 $options = array('class'=>'chosen-select', 'autocomplete' => 'off', 'empty' => '&nbsp;', 'style' => 'width:200px');
 
 $data = CHtml::listData(Sem::model()->getSemestersForWorkPlan($model->group, $type), 'us3', 'sem7', 'name');

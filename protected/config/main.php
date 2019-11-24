@@ -35,6 +35,7 @@ $config = array(
 	'import'=>array(
 		'application.models.*',
         'application.models.farm-portfolio.*',
+        'application.models.modules.*',
         'application.forms.*',
 		'application.components.*',
         'application.components.OAuth.*',

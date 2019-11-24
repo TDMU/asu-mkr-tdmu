@@ -81,7 +81,7 @@ SQL;
 		return $statements;
 	}
 	
-	public function getGroupsByModule($uo1,$vvmp1)
+	/*public function getGroupsByModule($uo1,$vvmp1)
 	{
 		if (empty($uo1)||empty($vvmp1))
             return array();
@@ -105,9 +105,9 @@ SQL;
             $groups[$key]['name'] = $this->getGroupName($group['sem4'], $group);
         }
 		return $groups;
-	}
+	}*/
     
-    public function getGroupsForJournal($discipline)
+    /*public function getGroupsForJournal($discipline)
     {
         if (empty($discipline))
             return array();
@@ -151,7 +151,7 @@ SQL;
         }
 
         return $groups;
-    }
+    }*/
 
     /**
      * Список дисциплин для старосты для кориктеровки (с вирутальными группами)

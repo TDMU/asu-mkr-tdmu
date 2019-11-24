@@ -610,6 +610,12 @@ $this->widget('zii.widgets.CMenu', array(
                     'url'     => _u('/progress/rating'),
                     'active'  => $_c=='progress' && $_a=='rating',
                     'visible' => _ch('progress', 'rating')
+                ),
+                array(
+                    'label'   => $_l2.tt('Ведение модулей'),
+                    'url'     => _u('/progress/module'),
+                    'active'  => $_c=='progress' && $_a=='module',
+                    'visible' => _ch('progress', 'module') && ($isTch||$isAdmin)
                 )
             ),getDopItem('progress',0)),
             'visible' => _ch('progress', 'main')

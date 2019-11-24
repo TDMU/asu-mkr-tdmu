@@ -655,6 +655,48 @@ SQL;
         return $teachers;
     }
 
+    public function findTeacherChairByName($k1, $query)
+    {
+        $sql = <<<SQL
+            select P1,P3,P4,P5,DOL2,PD1,PD7,PD6
+			FROM P
+				INNER JOIN PD ON(P1=PD2)
+				INNER JOIN DOL ON (PD45 = DOL1)
+				INNER JOIN K ON (PD4 = K1)
+				where PD2>0  and (PD28 in (0,2,5,9)) and PD11<=:DATE1 and K1=:K1
+				and (PD13 is null or PD13>:DATE2)
+				and k20=0
+				and
+				(
+					P3 CONTAINING :QUERY1
+					or P76 CONTAINING :QUERY2
+					or P102 CONTAINING :QUERY3
+					or P105 CONTAINING :QUERY4
+					or P108 CONTAINING :QUERY5
+				)
+				and p1 not in
+					(
+						Select ZPD3
+							from ZPD
+						where ZPD2 = 2
+					)
+            group by P1,P3,P4,P5,DOL2,PD1,PD7,PD6
+			order by P3 collate UNICODE,P4,P5,PD7
+SQL;
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':DATE1', date('d.m.Y 00:00', strtotime('+20 days')));
+        $command->bindValue(':DATE2', date('d.m.Y 00:00'));
+        $command->bindValue(':K1', $k1);
+        $command->bindValue(':QUERY1', $query);
+        $command->bindValue(':QUERY2', $query);
+        $command->bindValue(':QUERY3', $query);
+        $command->bindValue(':QUERY4', $query);
+        $command->bindValue(':QUERY5', $query);
+        $teachers = $command->queryAll();
+
+        return $teachers;
+    }
+
     public function findTeacherByName($query)
     {
         $sql = <<<SQL
