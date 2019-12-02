@@ -303,7 +303,7 @@ SQL;
 
         $with = array(
             'account' => array(
-                'select' => 'u2, u3, u4, u7'
+                'select' => 'u2, u4, u7'
             )
         );
         if (! empty($chairId)) {
@@ -312,25 +312,47 @@ SQL;
                 'together' => true
             );
 			$today = date('d.m.Y 00:00');
-            $criteria->compare('pd4', $chairId);
+            $criteria->addCondition('pd4 = :K1');
 			$criteria->addCondition("PD28 in (0,2,5,9) and PD3=0 and (PD13 IS NULL or PD13>'{$today}')");
         }
 
+        $criteria->addCondition("p1 > 0");
         $criteria->addCondition("p3 <> ''");
-		$criteria->addCondition("p3 CONTAINING '".$this->p3."'");
-		$criteria->addCondition("p4 CONTAINING '".$this->p4."'");
-		$criteria->addCondition("p5 CONTAINING '".$this->p5."'");
-        $criteria->addSearchCondition('p13', $this->p13);
+
+        if(!empty($this->p3))
+            $criteria->addCondition('p3 CONTAINING :P3');
+        if(!empty($this->p4))
+            $criteria->addCondition('p4 CONTAINING :P4');
+        if(!empty($this->p4))
+            $criteria->addCondition('p5 CONTAINING :P5');
+
+        if(!empty($this->p13))
+            $criteria->addCondition('p13 = :P13');
         if(!empty($this->p9))
             $criteria->addCondition("p9 CONTAINING '".date_format(date_create_from_format('d-m-Y', trim($this->p9)), 'Y-m-d')."'");
 
+        $login = Yii::app()->request->getParam('login');
+        $email = Yii::app()->request->getParam('email');
+        $status = Yii::app()->request->getParam('status', null);
 
-        $criteria->addSearchCondition('account.u2', Yii::app()->request->getParam('login'));
-        $criteria->addSearchCondition('account.u3', Yii::app()->request->getParam('password'));
-        $criteria->addSearchCondition('account.u4', Yii::app()->request->getParam('email'));
-        $criteria->addSearchCondition('account.u7', Yii::app()->request->getParam('status'));
+        if(!empty($login))
+            $criteria->addCondition('account.u2 CONTAINING :LOGIN');
+        if(!empty($email))
+            $criteria->addCondition('account.u4 CONTAINING :EMAIL');
+        if($status!==null && $status!='')
+            $criteria->addCondition('account.u7 =:STATUS');
 
         $criteria->with = $with;
+        $criteria->params = array(
+            ':P3'=>$this->p3,
+            ':P4'=>$this->p4,
+            ':P5'=>$this->p5,
+            ':P13'=>$this->p13,
+            ':LOGIN' => $login,
+            ':EMAIL' => $email,
+            ':STATUS' => $status,
+            ':K1' => $chairId
+        );
 
         return new CActiveDataProvider($this, array(
             'criteria'=>$criteria,
@@ -346,7 +368,6 @@ SQL;
 					'p9',
 					'p13',
                     'account.u2',
-                    'account.u3',
                     'account.u4',
                     'account.u7',
                 ),

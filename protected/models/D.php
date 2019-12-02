@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * This is the model class for table "d".
  *
@@ -700,6 +698,11 @@ SQL;
         return $disciplines;
     }
 
+    /**
+     * @param FilterForm $model
+     * @param $type
+     * @return array
+     */
     public function getDisciplinesForWorkPlan(FilterForm $model, $type)
     {
         $disciplines = $this->getWorkPlanDisciplinesFor($model, $type);
@@ -737,7 +740,10 @@ SQL;
             if (! isset($data[$i]['hours'][$us4]))
                 $data[$i]['hours'][$us4] = null;
 
-            $data[$i]['hours'][$us4] += $discipline['us6'];
+            if(in_array($us4, array(5,6,7,8)))
+                $data[$i]['hours'][$us4] = $discipline['us6'];
+            else
+                $data[$i]['hours'][$us4] += $discipline['us6'];
             $data[$i]['d2'] = $this->getNameFor($discipline);
 
         }

@@ -293,7 +293,7 @@ SQL;
         $criteria->select = array( 't.st2', 't.st3', 't.st4', 't.st15','std11 as st_status');
         $with = array(
             'account' => array(
-                'select' => 'u2, u3, u4'
+                'select' => 'u2, u4'
             ),
         );
 
@@ -351,7 +351,6 @@ SQL;
                     'st4',
                     'st15',
                     'account.u2',
-                    'account.u3',
                     'account.u4',
                 ),
             )
