@@ -17,7 +17,7 @@ echo CHtml::openTag('table', array(
 $itog = null;
 echo CHtml::openTag('thead');
 echo CHtml::openTag('tr');
-echo '<th style="width: 25px">'.tt('№').'</th>';
+echo '<th style="width: 25px">'.'№'.'</th>';
 echo '<th style="width: 200px">'.tt('ФИО').'</th>';
 echo '<th style="width: 90px">'.tt('Номер зачетки').'</th>';
 foreach ($modules as $module) {

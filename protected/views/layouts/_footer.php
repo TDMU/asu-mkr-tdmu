@@ -18,7 +18,7 @@ if(!empty($textFooter))
 else {
     echo '©2015 ООО НПП "МКР", ';
 
-    $mkrUrl = in_array(Yii::app()->core->universityCode, array(3, 7, 15, 21, 31, 34, 42)) ? 'https://mkr.org.ru' : 'http://mkr.org.ua';
+    $mkrUrl = in_array(Yii::app()->core->universityCode, array(3, 7, 15, 21, 31, 34, 42)) ? 'https://mkr.com.ru' : 'http://mkr.org.ua';
 
     $ps104 = PortalSettings::model()->getSettingFor(104);
     if ($ps104 == 0) {

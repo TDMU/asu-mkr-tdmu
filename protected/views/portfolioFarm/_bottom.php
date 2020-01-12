@@ -190,6 +190,7 @@ function renderField($number, $st1, $code, $name, $needFile, $inputType){
 }
 
 $url = Yii::app()->createUrl('/portfolioFarm/addField');
+$url2 = Yii::app()->createUrl('/portfolioFarm/saveStpfwork');
 $spinner1 = '$spinner1';
 
 Yii::app()->clientScript->registerCss('portfolioBottom', <<<CSS
@@ -198,7 +199,7 @@ Yii::app()->clientScript->registerCss('portfolioBottom', <<<CSS
         font-size: 17px;
     }
 
-    .field-input{
+    .field-input, .stpfwork-input{
         width: 99%;
     }
     
@@ -208,12 +209,12 @@ Yii::app()->clientScript->registerCss('portfolioBottom', <<<CSS
         border-bottom-width: 2px;
     }
 
-    .btn-create-file, .btn-add-field, .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork {
+    .btn-create-file, .btn-add-field, .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork, .btn-save-stpfwork {
         min-width: 100px;
         font-size: 15px!important;
     }
 
-    .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork{
+    .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork, .btn-save-stpfwork{
         margin-bottom: 5px!important;
     }
 
@@ -234,8 +235,6 @@ Yii::app()->clientScript->registerScript('portfolioFarm', <<<JS
     
     $('.btn-add-field').click(function(event) {
         event.preventDefault();
-        var url = '{$url}';
-        
         var parentControl = $(this).closest('.control-group');
         
         var id = $(this).data('id');
@@ -248,7 +247,7 @@ Yii::app()->clientScript->registerScript('portfolioFarm', <<<JS
         $spinner1.show();
         $.ajax({
             type: 'POST',
-            url:  url,
+            url:  '{$url}',
             data: params,
             dataType: 'json',
             success: function(data) {
@@ -267,6 +266,42 @@ Yii::app()->clientScript->registerScript('portfolioFarm', <<<JS
             }
         });
     });
+    
+    $('.btn-save-stpfwork').click(function(event) {
+        event.preventDefault();
+
+        var field = $(this).data('field');
+        var parentControl = $('#field-'+field).closest('.control-group');
+        
+        var params = {
+            st1:{$model->student},
+            field: field,
+            value:$('#field-'+field).val()
+        };
+        $spinner1.show();
+        $.ajax({
+            type: 'POST',
+            url:   '{$url2}',
+            data: params,
+            dataType: 'json',
+            success: function(data) {
+                addGritter('', successFieldMessage, 'success');
+                $spinner1.hide();
+                parentControl.removeClass('error');
+                parentControl.addClass('success');
+            },
+            error: function(jqXHR, textStatus, errorThrown){
+                addGritter('', textStatus + ':'+ jqXHR.responseText, 'error');
+                $spinner1.hide();
+                parentControl.removeClass('success');
+                parentControl.addClass('error');
+            }
+        });
+    });
+    
+    $(document).on('change', '#AcceptProgressDataForm_accept', function(){
+        $(this).closest('form').submit();
+    });
 JS
    , CClientScript::POS_END );
 
@@ -281,14 +316,24 @@ if(Yii::app()->user->isTch){
     ));
 }
 
+if(Yii::app()->user->isStd && empty(Yii::app()->user->model->u16)){
+    $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', [
+        'action' => ['acceptEnter']
+    ]);
+
+    echo $form->checkBoxRow(new AcceptProgressDataForm(Yii::app()->user->model), 'accept');
+
+    $this->endWidget();
+}
+
 $this->widget('bootstrap.widgets.TbButton', array(
     'url'=>Yii::app()->createUrl('/portfolioFarm/print', array('id'=>$model->student)),
     'type'=>'primary',
     'icon'=>'print',
     'label'=>tt('Печать')
 ));
-
 echo '<div class="alert alert-info">'.tt('Внимание! На печать выводятся только подтвержденные куратором или деканом данные.').'</div>';
+
 
 echo '<div class="page-header">
   <h3>1. '.tt('Резюме').'</h3>
@@ -617,6 +662,42 @@ echo '<div class="page-header">
 echo tt('<div class="alert alert-info"><ul>Здесь можно разместить сканированные копии файлов:<ol> 1.Характеристики с мест прохождения практик,</ol><ol> 2.Рекомендательные письма, </ol><ol> 3.Благодарственные письма, </ol><ol> 4.Отзывы о достижениях, </ol><ol> 5.Характеристики куратора и т.д.</ol> </ul></div>');
 
 echo gridFiles(-1, $model->student);
+
+echo '<div class="page-header">
+  <h3 id="label-field-block5">5. '.tt('Портфолио профессиональной реализации').'</h3>
+</div>';
+
+$stpfwork = $student->getStpfwork();
+
+echo CHtml::openTag('div');
+echo CHtml::openTag('div', array(
+    'class' => 'control-group'
+));
+echo  CHtml::activeLabel($stpfwork,'stpfwork2', array(
+    'class' => 'control-label label-field'
+));
+echo CHtml::activeTextArea($stpfwork, 'stpfwork2', array(
+    'class' => 'stpfwork-input',
+    'id' => 'field-stpfwork2'
+));
+echo CHtml::closeTag('div');
+echo CHtml::link(tt('Сохранить'), '#', array('class'=>'btn-mini btn btn-primary btn-save-stpfwork', 'data-field' => 'stpfwork2'));
+echo CHtml::closeTag('div');
+
+echo CHtml::openTag('div');
+echo CHtml::openTag('div', array(
+    'class' => 'control-group'
+));
+echo  CHtml::activeLabel($stpfwork,'stpfwork3', array(
+    'class' => 'control-label label-field'
+));
+echo CHtml::activeTextArea($stpfwork, 'stpfwork3', array(
+    'class' => 'stpfwork-input',
+    'id' => 'field-stpfwork3'
+));
+echo CHtml::closeTag('div');
+echo CHtml::link(tt('Сохранить'), '#', array('class'=>'btn-mini btn btn-primary btn-save-stpfwork', 'data-field' => 'stpfwork3'));
+echo CHtml::closeTag('div');
 
 
 

@@ -2,48 +2,6 @@
 
 class TimeTableController extends Controller
 {
-    public function beforeAction($action){
-
-        $result = parent::beforeAction($action);
-        if(Yii::app()->core->isMobile)
-            if(in_array($action->id, array(
-                'group', 'student', 'teacher', 'self'
-            ))) {
-                if (in_array($this->universityCode, array(
-                    U_XNMU,
-                    U_NMU,
-                    U_KRNU,
-                    U_KNAME,
-                    U_NULAU,
-                    U_KHADI,
-                    U_URFAK,
-                    U_FGU,
-                    U_UIPA,
-                    U_SEM_MGU,
-                    U_ONMU,
-                    U_NOBEL,
-                    U_IRPEN,
-                    U_FARM,
-                    U_KIEV_MVD,
-                    U_UMAN,
-                    U_RGIIS,
-                    U_KNU,
-                    U_HTEI,
-                    U_SUM_AGR,
-                    U_ODUVS
-                ))){
-                        $message = tt(' <br>Новое мобильное приложение для Android : <strong><a href="{url}" target="_blank" style="font-size: 18px">здесь</a></strong>! <br>Новое мобильное приложение для iOs : <strong><a href="{url_apple}" target="_blank" style="font-size: 18px">здесь</a></strong>! <br>Также читайте инструкцию к мобильному приложению: <strong><a href="{url-instruction}" target="_blank" style="font-size: 18px">здесь</a></strong>!', array(
-                            '{url}' => SH::MOBILE_URL,
-                            '{url_apple}' => SH::MOBILE_URL_APPLE,
-                            '{url-instruction}' => SH::MOBILE_URL_INSTRUCTION
-                        ));
-                    Yii::app()->user->setFlash('info', '<strong>' . tt('Внимание!') . '</strong>' . $message);
-                }
-            }
-
-        return $result;
-    }
-
     public function filters() {
 
         return array(

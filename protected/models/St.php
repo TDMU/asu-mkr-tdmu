@@ -1398,4 +1398,19 @@ SQL;
         $command->bindValue(':st1_',  $this->st1);
         return $command->queryScalar();
     }
+
+    /**
+     * Данные о будущем трудоустройестве для портфолио фарма
+     * @return Stpfwork
+     */
+    public function getStpfwork(){
+        $model = Stpfwork::model()->findByPk($this->st1);
+        if(empty($model)) {
+            $model = new Stpfwork();
+            $model->stpfwork1 = $this->st1;
+            $model->stpfwork2 = $model->stpfwork3 = '';
+        }
+
+        return $model;
+    }
 }

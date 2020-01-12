@@ -11,7 +11,8 @@ class PortfolioFarmController extends Controller
     public function filters() {
         return array(
             'accessControl',
-            'checkPermission'
+            'checkPermission',
+            'u16 -index, accept, acceptEnter'
         );
     }
 
@@ -35,7 +36,8 @@ class PortfolioFarmController extends Controller
                     'addStpeduwork',
                     'updateStpeduwork',
                     'deleteStpeduwork',
-                    'print'
+                    'print',
+                    'saveStpfwork'
                 ),
                 'expression' => 'Yii::app()->user->isTch ||Yii::app()->user->isStd || Yii::app()->user->isAdmin',
             ),
@@ -45,10 +47,29 @@ class PortfolioFarmController extends Controller
                 ),
                 'expression' => 'Yii::app()->user->isTch || Yii::app()->user->isAdmin',
             ),
+            array('allow',
+                'actions' => array(
+                    'acceptEnter',
+                ),
+                'expression' => 'Yii::app()->user->isStd',
+            ),
             array('deny',
                 'users' => array('*'),
             ),
         );
+    }
+
+    /**
+     * @param $filterChain
+     * @throws CHttpException
+     */
+    public function filterU16($filterChain){
+        if (Yii::app()->user->isStd && empty(Yii::app()->user->model->u16))
+        {
+            throw new CHttpException(403, tt('Необходимо дать согласие на обработку персональных данных.'));
+        }
+
+        $filterChain->run();
     }
 
     /**
@@ -72,6 +93,26 @@ class PortfolioFarmController extends Controller
             throw new CHttpException(403, tt('Неверные настройки, обратитесь к администратору.'));
 
         $filterChain->run();
+    }
+
+    /**
+     * Согласие на обработку персональных данных
+     */
+    public function actionAcceptEnter(){
+        if(!empty(Yii::app()->user->model->u16))
+            $this->redirect('index');
+
+        $model=new AcceptProgressDataForm(Yii::app()->user->model, '');
+        $model->unsetAttributes();
+
+        if(isset($_POST['AcceptProgressDataForm']))
+        {
+            $model->attributes=$_POST['AcceptProgressDataForm'];
+            if($model->save()) {
+                $this->redirect('index');
+            }
+        }
+        throw new CHttpException(403, tt('Необходимо дать согласие на обработку персональных данных.'));
     }
 
     /**
@@ -199,6 +240,43 @@ HTML;
         }
 
         return false;
+    }
+
+    /**
+     * дизменение stpfwork
+     * @throws CException
+     * @throws CHttpException
+     */
+    public function actionSaveStpfwork(){
+        if (!Yii::app()->request->isAjaxRequest)
+            throw new CHttpException(405, 'Invalid request. Please do not repeat this request again.');
+
+        $st1 = Yii::app()->request->getParam('st1', null);
+        $field = Yii::app()->request->getParam('field', null);
+        $value = Yii::app()->request->getParam('value', null);
+
+        if(empty($field) || empty($st1))
+            throw new CHttpException(400, tt('Не все данные переданны'));
+
+        if($value === null)
+            throw new CHttpException(400, tt('Введите значение'));
+
+        if(!in_array($field, ['stpfwork2', 'stpfwork3']))
+            throw new CHttpException(400, tt('Неверные входящие данные'));
+
+        if(!$this->_checkPermission($st1))
+            throw new CHttpException(403, tt('Нет доступа к данному студенту'));
+
+        $student = St::model()->findByPk($st1);
+        $model = $student->getStpfwork();
+
+        $p = new CHtmlPurifier();
+        $model->$field = $p->purify($value);
+
+        if(!$model->save())
+            throw new CHttpException(500, tt('Ошибка сохранения'));
+
+        Yii::app()->end(CJSON::encode(array('error' => false)));
     }
 
     /**
@@ -706,7 +784,10 @@ HTML;
                 'stportfolio7' => Yii::app()->user->id,
                 'stportfolio8' => date('Y-m-d H:i:s')
             ),
-            'stportfolio7 is null'
+            'stportfolio7 is null and stportfolio2=:ID',
+            array (
+                ':ID' => $id
+            )
         );
 
         Stpwork::model()->updateAll(
@@ -714,7 +795,10 @@ HTML;
                 'stpwork9' => Yii::app()->user->id,
                 'stpwork10' => date('Y-m-d H:i:s')
             ),
-            'stpwork9 is null'
+            'stpwork9 is null and stpwork2=:ID',
+            array (
+                ':ID' => $id
+            )
         );
 
         Stppart::model()->updateAll(
@@ -722,7 +806,10 @@ HTML;
                 'stppart12' => Yii::app()->user->id,
                 'stppart13' => date('Y-m-d H:i:s')
             ),
-            'stppart12 is null'
+            'stppart12 is null and stppart2=:ID',
+            array (
+                ':ID' => $id
+            )
         );
 
         Stpeduwork::model()->updateAll(
@@ -730,9 +817,11 @@ HTML;
                 'stpeduwork8' => Yii::app()->user->id,
                 'stpeduwork9' => date('Y-m-d H:i:s')
             ),
-            'stpeduwork8 is null'
+            'stpeduwork8 is null and stpeduwork2=:ID',
+            array (
+                ':ID' => $id
+            )
         );
-
 
         $this->redirect(array('index'));
     }

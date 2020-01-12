@@ -59,17 +59,17 @@ class ModuleForm extends CFormModel
         try{
             list($us1, $group) = $this->getGroupParams();
         }catch (Exception $error){
-            $this->addError('group', tt('Не верное значение'));
+            $this->addError('group', tt('Неверное значение'));
             return false;
         }
 
         if(empty(Us::model()->findByPk($us1))) {
-            $this->addError('group', tt('Не верное значение'));
+            $this->addError('group', tt('Неверное значение'));
             return false;
         }
 
         if(empty(Gr::model()->findByPk($group))) {
-            $this->addError('group', tt('Не верное значение'));
+            $this->addError('group', tt('Неверное значение'));
             return false;
         }
     }

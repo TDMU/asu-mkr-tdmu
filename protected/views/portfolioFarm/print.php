@@ -273,3 +273,18 @@ echo Yii::app()->controller->widget('zii.widgets.grid.CGridView', array(
         )
     )
 ), true);
+
+echo '<h3>5. '.tt('Портфолио профессиональной реализации').'</h3>';
+
+$stpfwork = $student->getStpfwork();
+
+if(!empty($stpfwork->stpfwork2)) {
+    echo CHtml::openTag('div');
+    echo CHtml::tag('strong', array('class' => 'label-field'), $stpfwork->getAttributeLabel('stpfwork2')) .': ' . $stpfwork->stpfwork2;
+    echo CHtml::closeTag('div');
+}
+if(!empty($stpfwork->stpfwork3)) {
+    echo CHtml::openTag('div');
+    echo CHtml::tag('strong', array('class' => 'label-field'), $stpfwork->getAttributeLabel('stpfwork3')) .': ' . $stpfwork->stpfwork3;
+    echo CHtml::closeTag('div');
+}

@@ -18,6 +18,7 @@
  * @property string $u12
  * @property string $u13
  * @property string $u15
+ * @property string $u16
  *
  * @property bool isStudent
  * @property bool isAdmin
@@ -57,14 +58,11 @@ class Users extends CActiveRecord
 			array('u1, u5, u6, u7,u8', 'numerical', 'integerOnly'=>true),
 			array('u6', 'default', 'value'=>0, 'setOnEmpty'=>TRUE),
 			array('u10', 'default', 'value'=>'', 'setOnEmpty'=>TRUE),
-			//array('u2, u3','length',  'min' => 8,'max'=>30),
 			array('u3', 'match', 'pattern'=>'/^[a-zA-Z0-9-_\.,\/$|]{7,}$/','message'=>tt('В password могут быть только строчные и прописные латинские буквы, цифры, спецсимволы. Минимум 8 символов')),
 			array('u4', 'length', 'max'=>400),
 			array('u9, u10, u12', 'length', 'max'=>45),
-            array('u13', 'length', 'max'=>20),
-            array('u15', 'length', 'max'=>20),
+            array('u15, u13, u16', 'length', 'max'=>20),
             array('u2, u4', 'checkIfUnique'),
-            //array('u2', 'length', 'min'=>5, 'max'=>30),
             // Логин должен соответствовать шаблону
             array('u2', 'match', 'pattern'=>'/^[a-zA-Z][a-zA-Z0-9-_.]{7,30}$/','message'=>tt('В login могут быть только латинские символы и цифры, а так же символы "." и "_",  длиной от 8 до 30 символов. Также логин должен начинаться с латинской буквы')),
             array('u2, u3, u4, password', 'required', 'on'=>'admin-create,admin-update'),
