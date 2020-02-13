@@ -42,6 +42,7 @@ class Stpwork extends CActiveRecord
 			array('stpwork2, stpwork7, stpwork9', 'numerical', 'integerOnly'=>true),
 			array('stpwork3, stpwork4, stpwork5, stpwork6', 'length', 'max'=>200),
 			array('stpwork8, stpwork10', 'length', 'max'=>20),
+            array('stpwork3, stpwork4, stpwork5, stpwork6','filter','filter'=>array($obj=new CHtmlPurifier(),'purify')),
 		);
 	}
 

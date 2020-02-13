@@ -36,8 +36,10 @@ class PortfolioFarmController extends Controller
                     'addStpeduwork',
                     'updateStpeduwork',
                     'deleteStpeduwork',
-                    'print',
-                    'saveStpfwork'
+                    'addStpfwork',
+                    'updateStpfwork',
+                    'deleteStpfwork',
+                    'print'
                 ),
                 'expression' => 'Yii::app()->user->isTch ||Yii::app()->user->isStd || Yii::app()->user->isAdmin',
             ),
@@ -119,6 +121,7 @@ class PortfolioFarmController extends Controller
      * @param $id int
      * @throws CException
      * @throws CHttpException
+     * @throws \Mpdf\MpdfException
      */
     public function actionPrint($id){
         $student = St::model()->findByPk($id);
@@ -243,43 +246,6 @@ HTML;
     }
 
     /**
-     * дизменение stpfwork
-     * @throws CException
-     * @throws CHttpException
-     */
-    public function actionSaveStpfwork(){
-        if (!Yii::app()->request->isAjaxRequest)
-            throw new CHttpException(405, 'Invalid request. Please do not repeat this request again.');
-
-        $st1 = Yii::app()->request->getParam('st1', null);
-        $field = Yii::app()->request->getParam('field', null);
-        $value = Yii::app()->request->getParam('value', null);
-
-        if(empty($field) || empty($st1))
-            throw new CHttpException(400, tt('Не все данные переданны'));
-
-        if($value === null)
-            throw new CHttpException(400, tt('Введите значение'));
-
-        if(!in_array($field, ['stpfwork2', 'stpfwork3']))
-            throw new CHttpException(400, tt('Неверные входящие данные'));
-
-        if(!$this->_checkPermission($st1))
-            throw new CHttpException(403, tt('Нет доступа к данному студенту'));
-
-        $student = St::model()->findByPk($st1);
-        $model = $student->getStpfwork();
-
-        $p = new CHtmlPurifier();
-        $model->$field = $p->purify($value);
-
-        if(!$model->save())
-            throw new CHttpException(500, tt('Ошибка сохранения'));
-
-        Yii::app()->end(CJSON::encode(array('error' => false)));
-    }
-
-    /**
      * удаление поля
      * @param $id
      * @throws CDbException
@@ -317,7 +283,6 @@ HTML;
         }
 
         $this->_redirect(0,$field->stportfolio1 );
-        //$this->redirect(Yii::app()->createUrl('/portfolioFarm/index').'#'.$field->stportfolio1);
     }
 
     /**
@@ -539,6 +504,8 @@ HTML;
             $url.='#label-field-block4';
         elseif($type == 4)
             $url.='#label-field-block21';
+        elseif($type == 5)
+            $url.='#label-field-block5';
 
         $this->redirect($url);
     }
@@ -832,6 +799,7 @@ HTML;
      * @param $id
      * @return Stpeduwork
      * @throws CHttpException
+     * @throws CException
      */
     private function _loadStpeduworkModel($id)
     {
@@ -935,6 +903,111 @@ HTML;
         }
 
         $this->render('stpeduwork/update-stpeduwork',array(
+            'model'=>$model,
+        ));
+    }
+
+
+    /**
+     * Загрзка модели Stpfwork по id
+     * @param $id
+     * @return Stpfwork
+     * @throws CHttpException
+     */
+    private function _loadStpfworkModel($id)
+    {
+        $model=Stpfwork::model()->findByPk($id);
+        if($model===null)
+            throw new CHttpException(404,'The requested page does not exist.');
+
+        return $model;
+    }
+
+    /**
+     * Удаление елемента
+     * @param $id
+     * @throws CException
+     * @throws CHttpException
+     */
+    public function actionDeleteStpfwork($id){
+        if (!Yii::app()->request->isPostRequest)
+            throw new CHttpException(405, 'Invalid request. Please do not repeat this request again.');
+
+        $model = $this->_loadStpfworkModel($id);
+
+        if(!$this->_checkPermission($model->stpfwork2))
+            throw new CHttpException(403, tt('Нет доступа к данному студенту'));
+
+        if ($model->delete()) {
+            Yii::app()->user->setFlash('success', tt('Успешно удалено'));
+        } else {
+            Yii::app()->user->setFlash('error', tt('Ошибка удаления'));
+        }
+
+        $this->_redirect(5);
+    }
+
+    /**
+     * @param $id
+     * @throws CException
+     * @throws CHttpException
+     */
+    public function actionAddStpfwork($id)
+    {
+        $student = St::model()->findByPk($id);
+        if(empty($student))
+            throw new CHttpException(400, tt('Не найден студент'));
+
+        if(!$this->_checkPermission($id))
+            throw new CHttpException(403, tt('Нет доступа к данному студенту'));
+
+        $model=new Stpfwork;
+        $model->unsetAttributes();
+
+        if(isset($_POST['Stpfwork']))
+        {
+            $model->attributes=$_POST['Stpfwork'];
+            if($model->validate())
+            {
+                $model->stpfwork2 = $id;
+                $model->stpfwork1 = new CDbExpression('GEN_ID(GEN_Stpfwork, 1)');
+                $model->stpfwork6 = Yii::app()->user->id;
+                $model->stpfwork7 = date('Y-m-d H:i:s');
+                if($model->save())
+                    $this->_redirect(5);
+            }
+        }
+
+        $this->render('stpfwork/add-stpfwork',array(
+            'model'=>$model,
+        ));
+    }
+
+    /**
+     * @param $id
+     * @throws CHttpException
+     * @throws CException
+     */
+    public function actionUpdateStpfwork($id)
+    {
+        $model=$this->_loadStpfworkModel($id);
+
+        $studentId = $model->stpfwork2;
+
+        if(!$this->_checkPermission($model->stpfwork2))
+            throw new CHttpException(403, tt('Нет доступа к данному студенту'));
+
+        if(isset($_POST['Stpfwork']))
+        {
+            $model->attributes=$_POST['Stpfwork'];
+            $model->stpfwork2 = $studentId;
+            $model->stpfwork6 = Yii::app()->user->id;
+            $model->stpfwork7 = date('Y-m-d H:i:s');
+            if($model->save())
+                $this->_redirect(5);
+        }
+
+        $this->render('stpfwork/update-stpfwork',array(
             'model'=>$model,
         ));
     }

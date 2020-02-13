@@ -44,6 +44,7 @@ class Stpeduwork extends CActiveRecord
 			array('stpeduwork2, stpeduwork3, stpeduwork5, stpeduwork6, stpeduwork8, stpeduwork10', 'numerical', 'integerOnly'=>true),
 			array('stpeduwork4', 'length', 'max'=>200),
             array('stpeduwork11', 'length', 'max'=>30),
+            array('stpeduwork11, stpeduwork4','filter','filter'=>array($obj=new CHtmlPurifier(),'purify')),
 			array('stpeduwork11', 'validateStpeduwork11'),
 			array('stpeduwork7, stpeduwork9', 'length', 'max'=>20),
         );

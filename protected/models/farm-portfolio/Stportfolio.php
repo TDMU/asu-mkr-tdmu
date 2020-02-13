@@ -46,8 +46,6 @@ class Stportfolio extends CActiveRecord
 
     const FIELD_EDUCATION_SCHOOL = 12;
 
-    //const FIELD_EDUCATION_DATE_END = 13;
-
 	/**
 	 * @return string the associated database table name
 	 */
@@ -61,12 +59,11 @@ class Stportfolio extends CActiveRecord
 	 */
 	public function rules()
 	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
 		return array(
 			array('stportfolio1, stportfolio2, stportfolio4, stportfolio6, stportfolio7', 'numerical', 'integerOnly'=>true),
 			array('stportfolio3', 'length', 'max'=>1400),
 			array('stportfolio5, stportfolio8', 'length', 'max'=>20),
+            array('stportfolio3','filter','filter'=>array($obj=new CHtmlPurifier(),'purify')),
 		);
 	}
 
@@ -75,8 +72,6 @@ class Stportfolio extends CActiveRecord
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
 			'stportfolio20' => array(self::BELONGS_TO, 'St', 'stportfolio2'),
 			'stportfolio40' => array(self::BELONGS_TO, 'Users', 'stportfolio4'),

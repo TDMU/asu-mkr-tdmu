@@ -47,6 +47,7 @@ class Stppart extends CActiveRecord
 			array('stppart4', 'length', 'max'=>200),
             array('stppart14, stppart15', 'length', 'max'=>30),
 			array('stppart11, stppart13', 'length', 'max'=>20),
+            array('stppart4, stppart14, stppart15','filter','filter'=>array($obj=new CHtmlPurifier(),'purify')),
             array('stppart9', 'safe'),
 		);
 	}
@@ -88,7 +89,10 @@ class Stppart extends CActiveRecord
 		);
 	}
 
-
+    /**
+     * @param $st1
+     * @return CActiveDataProvider
+     */
 	public function search($st1)
 	{
 		$criteria=new CDbCriteria;

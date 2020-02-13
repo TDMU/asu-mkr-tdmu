@@ -149,12 +149,7 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
                                 'connectorRoute'=>'/admin/default/connector',
-                            ),
-                            /*'settings'=>array(
-                                'theme' => "advanced",
-                                'skin' => 'default',
-                                'language' => Yii::app()->language,
-                            ),*/
+                            )
                         )); ?>
                 </div>
 
@@ -168,12 +163,7 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
                                 'connectorRoute'=>'/admin/default/connector',
-                            ),
-                            /*'settings'=>array(
-                                'theme' => "advanced",
-                                'skin' => 'default',
-                                'language' => Yii::app()->language,
-                            ),*/
+                            )
                         )); ?>
                 </div>
 
@@ -187,12 +177,7 @@ Yii::app()->clientScript->registerScript('sem-start', $js);
                             'fileManager' => array(
                                 'class' => 'ext.elFinder.TinyMceElFinder',
                                 'connectorRoute'=>'/admin/default/connector',
-                            ),
-                            /*'settings'=>array(
-                                'theme' => "advanced",
-                                'skin' => 'default',
-                                'language' => Yii::app()->language,
-                            ),*/
+                            )
                         )); ?>
                 </div>
 

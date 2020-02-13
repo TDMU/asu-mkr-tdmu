@@ -686,7 +686,7 @@ HTML;
 
     $sem1End = null;
     if($elg->elg20->uo6==3) {
-        $sem1End = Vmp::model()->getEndSem1($elg->elg2);
+        $sem1End = Vmp::model()->getEndSem1($elg->elg2, $gr1);
     }
 
     foreach($dates as $date) {

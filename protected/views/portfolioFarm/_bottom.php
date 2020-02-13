@@ -190,7 +190,6 @@ function renderField($number, $st1, $code, $name, $needFile, $inputType){
 }
 
 $url = Yii::app()->createUrl('/portfolioFarm/addField');
-$url2 = Yii::app()->createUrl('/portfolioFarm/saveStpfwork');
 $spinner1 = '$spinner1';
 
 Yii::app()->clientScript->registerCss('portfolioBottom', <<<CSS
@@ -199,7 +198,7 @@ Yii::app()->clientScript->registerCss('portfolioBottom', <<<CSS
         font-size: 17px;
     }
 
-    .field-input, .stpfwork-input{
+    .field-input{
         width: 99%;
     }
     
@@ -209,12 +208,12 @@ Yii::app()->clientScript->registerCss('portfolioBottom', <<<CSS
         border-bottom-width: 2px;
     }
 
-    .btn-create-file, .btn-add-field, .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork, .btn-save-stpfwork {
+    .btn-create-file, .btn-add-field, .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork, .btn-add-stpfwork {
         min-width: 100px;
         font-size: 15px!important;
     }
 
-    .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork, .btn-save-stpfwork{
+    .btn-add-stpwork, .btn-add-stppart, .btn-add-stpeduwork, .btn-add-stpfwork {
         margin-bottom: 5px!important;
     }
 
@@ -257,38 +256,6 @@ Yii::app()->clientScript->registerScript('portfolioFarm', <<<JS
                 parentControl.addClass('success');
                 $('#field-'+id).val('');
                 $.fn.yiiGridView.update('field-grid-'+id);
-            },
-            error: function(jqXHR, textStatus, errorThrown){
-                addGritter('', textStatus + ':'+ jqXHR.responseText, 'error');
-                $spinner1.hide();
-                parentControl.removeClass('success');
-                parentControl.addClass('error');
-            }
-        });
-    });
-    
-    $('.btn-save-stpfwork').click(function(event) {
-        event.preventDefault();
-
-        var field = $(this).data('field');
-        var parentControl = $('#field-'+field).closest('.control-group');
-        
-        var params = {
-            st1:{$model->student},
-            field: field,
-            value:$('#field-'+field).val()
-        };
-        $spinner1.show();
-        $.ajax({
-            type: 'POST',
-            url:   '{$url2}',
-            data: params,
-            dataType: 'json',
-            success: function(data) {
-                addGritter('', successFieldMessage, 'success');
-                $spinner1.hide();
-                parentControl.removeClass('error');
-                parentControl.addClass('success');
             },
             error: function(jqXHR, textStatus, errorThrown){
                 addGritter('', textStatus + ':'+ jqXHR.responseText, 'error');
@@ -667,37 +634,34 @@ echo '<div class="page-header">
   <h3 id="label-field-block5">5. '.tt('Портфолио профессиональной реализации').'</h3>
 </div>';
 
-$stpfwork = $student->getStpfwork();
-
-echo CHtml::openTag('div');
-echo CHtml::openTag('div', array(
-    'class' => 'control-group'
+Yii::app()->controller->widget('bootstrap.widgets.TbGridView', array(
+    'dataProvider' => Stpfwork::model()->search($model->student),
+    'filter' => null,
+    'id' => 'field-block5',
+    'type' => 'striped bordered',
+    'columns' => array(
+        'stpfwork3',
+        'stpfwork4',
+        'stpfwork5',
+        array(
+            'class'=>'bootstrap.widgets.TbButtonColumn',
+            'template'=>'{update} {delete}',
+            'buttons'=>array(
+                'delete' => array
+                (
+                    'url'=>'array("/portfolioFarm/deleteStpfwork","id"=>$data->stpfwork1)',
+                    'options'=>array(
+                        'class' => 'text-error'
+                    )
+                ),
+                'update' => array
+                (
+                    'url'=>'array("/portfolioFarm/updateStpfwork","id"=>$data->stpfwork1)',
+                ),
+            ),
+        ),
+    )
 ));
-echo  CHtml::activeLabel($stpfwork,'stpfwork2', array(
-    'class' => 'control-label label-field'
-));
-echo CHtml::activeTextArea($stpfwork, 'stpfwork2', array(
-    'class' => 'stpfwork-input',
-    'id' => 'field-stpfwork2'
-));
-echo CHtml::closeTag('div');
-echo CHtml::link(tt('Сохранить'), '#', array('class'=>'btn-mini btn btn-primary btn-save-stpfwork', 'data-field' => 'stpfwork2'));
-echo CHtml::closeTag('div');
-
-echo CHtml::openTag('div');
-echo CHtml::openTag('div', array(
-    'class' => 'control-group'
-));
-echo  CHtml::activeLabel($stpfwork,'stpfwork3', array(
-    'class' => 'control-label label-field'
-));
-echo CHtml::activeTextArea($stpfwork, 'stpfwork3', array(
-    'class' => 'stpfwork-input',
-    'id' => 'field-stpfwork3'
-));
-echo CHtml::closeTag('div');
-echo CHtml::link(tt('Сохранить'), '#', array('class'=>'btn-mini btn btn-primary btn-save-stpfwork', 'data-field' => 'stpfwork3'));
-echo CHtml::closeTag('div');
-
+echo CHtml::link(tt('Добавить'), Yii::app()->createUrl('/portfolioFarm/addStpfwork', array( 'id'=> $model->student)), array('class'=>'btn-mini btn btn-primary btn-add-stpfwork'));
 
 

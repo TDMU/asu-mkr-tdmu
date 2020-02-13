@@ -100,20 +100,25 @@ SQL;
     /**
      * Sem1 псоледнего семестра дисциплині
      * @param $uo1
+     * @param $gr1
      * @return mixed
+     * @throws CException
      */
-    public function getEndSem1($uo1){
+    public function getEndSem1($uo1, $gr1){
         $sql = <<<SQL
             select first 1 sem1
-            from sem
-               inner join us on (sem.sem1 = us.us3)
-            where us2=:UO1 and us4 in (1,2,3,4,5,6) and us6>0
+                from ug
+                   inner join nr on (ug.ug1 = nr.nr1)
+                   inner join us on (nr.nr2 = us.us1)
+                   inner join sem on (us.us3 = sem.sem1)
+            where us2=:UO1 and us4 in (1,2,3,4,5,6) and us6>0 and ug2=:GR1
             order by sem7 DESC
 SQL;
 
         $command = Yii::app()->db->createCommand($sql);
 
         $command->bindValue(':UO1', $uo1);
+        $command->bindValue(':GR1', $gr1);
         $row = $command->queryScalar();
 
         return $row;
@@ -128,6 +133,7 @@ SQL;
      * @param $dopJoin string
      * @param $dopColumns string
      * @return array
+     * @throws CException
      */
     private function getMarksBySem($elg, $sem1, $gr1, $st1, $dopJoin, $dopColumns = ''){
         $sql = <<<SQL
@@ -932,7 +938,7 @@ SQL;
                 $elgpmkst->save();
 
                 if($elg->elg20->uo6==3){
-                    $sem1 = $this->getEndSem1($elg->elg2);
+                    $sem1 = $this->getEndSem1($elg->elg2, $gr1);
                     if($sem1==$elg->elg3){
                         $vmp = $this->getVedItog($elg->elg2, $gr1, 98, $st1);
 

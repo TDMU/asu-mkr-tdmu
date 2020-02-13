@@ -95,7 +95,12 @@ class Controller extends CController
 
         if(Yii::app()->controller->id=='site'&&($action->id=='index'||$action->id=='logout'||$action->id=='error'))
             $enable_close=false;
-        if(!Yii::app()->user->isAdmin) {
+
+        if($enable_close &&Yii::app()->controller->id == 'portfolioFarm' && Yii::app()->user->isStd && $this->universityCode == U_FARM){
+            $enable_close = false;
+        }
+
+        if(!Yii::app()->user->isAdmin && $enable_close) {
             if (!Yii::app()->user->isGuest && !Yii::app()->user->isBlock) {
                 if (Yii::app()->user->dbModel->checkBlocked()) {
                     throw new CHttpException(403, tt('Доступ закрыт! Учетная запись заблокирована!'));

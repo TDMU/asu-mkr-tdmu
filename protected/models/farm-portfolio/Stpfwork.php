@@ -5,11 +5,16 @@
  *
  * The followings are the available columns in table 'stpfwork':
  * @property integer $stpfwork1
- * @property string $stpfwork2
+ * @property integer $stpfwork2
  * @property string $stpfwork3
+ * @property string $stpfwork4
+ * @property string $stpfwork5
+ * @property integer $stpfwork6
+ * @property string $stpfwork7
  *
  * The followings are the available model relations:
- * @property St $stpfwork10
+ * @property St $student
+ * @property Users $user
  */
 class Stpfwork extends CActiveRecord
 {
@@ -29,8 +34,10 @@ class Stpfwork extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('stpfwork1', 'numerical', 'integerOnly'=>true),
-			array('stpfwork2, stpfwork3', 'length', 'max'=>400),
+			array('stpfwork2, stpfwork6', 'numerical', 'integerOnly'=>true),
+			array('stpfwork3, stpfwork4, stpfwork5', 'length', 'max'=>400),
+            array('stpfwork3, stpfwork4, stpfwork5','filter','filter'=>array($obj=new CHtmlPurifier(),'purify')),
+			array('stpfwork7', 'length', 'max'=>20),
 		);
 	}
 
@@ -39,10 +46,9 @@ class Stpfwork extends CActiveRecord
 	 */
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
 		return array(
-			'stpfwork10' => array(self::BELONGS_TO, 'St', 'stpfwork1'),
+			'student' => array(self::BELONGS_TO, 'St', 'stpfwork2'),
+			'user' => array(self::BELONGS_TO, 'Users', 'stpfwork6'),
 		);
 	}
 
@@ -52,11 +58,32 @@ class Stpfwork extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'stpfwork1' => tt('Студент'),
-			'stpfwork2' => tt('Будущее место проведения интернатуры'),
-			'stpfwork3' => tt('Будущее место трудоустройства'),
+			'stpfwork1' => '#',
+			'stpfwork2' => tt('Студент'),
+			'stpfwork3' => tt('Название организации трудоустройства и ее местонахождение'),
+			'stpfwork4' => tt('Карьерный путь (должность)'),
+			'stpfwork5' => tt('Период работы на должности'),
+			'stpfwork6' => tt('Редактировал'),
+			'stpfwork7' => tt('Дата редактирования'),
 		);
 	}
+
+    /**
+     * @param $st1
+     * @return CActiveDataProvider
+     */
+    public function search($st1)
+    {
+        $criteria=new CDbCriteria;
+
+        $criteria->compare('stpfwork2',$st1);
+
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+            'sort' => false,
+            'pagination'=>false
+        ));
+    }
 
 	/**
 	 * Returns the static model of the specified AR class.

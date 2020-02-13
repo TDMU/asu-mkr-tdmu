@@ -270,7 +270,7 @@ class Tddo extends CActiveRecord
 	public function getTddo11Types(){
 		return
 			array(
-					2=>tt('-'),
+					2=>'-',
 					1=>tt('Поставлено на контроль'),
 			);
 	}

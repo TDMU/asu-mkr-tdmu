@@ -500,17 +500,19 @@ SQL;
         return $info;
     }
 
-	/**
-	 * Список студентов по группе дял журнала
-	 * @param $gr1
-	 * @param $uo1
-	 * @return mixed
-	 */
+
+    /**
+     * Список студентов по группе дял журнала
+     * @param $gr1
+     * @param $uo1
+     * @return mixed
+     * @throws CException
+     */
     public function getStudentsForJournal($gr1, $uo1)
     {
         $year = Yii::app()->session['year'];
         $sem = Yii::app()->session['sem'];
-        $date = $sem == 1 ? '31.05.'.($year+1) : '20.01.'.($year+1);
+        $date = $sem == 1 ? '31.05.'.($year+1) : '31.01.'.($year+1);
 
         $sql = <<<SQL
        select t.st1,st.st2,st.st3,st.st4,st.st45,st.st71,st.st163,st.st167, elgvst2, elgvst3
@@ -1397,20 +1399,5 @@ SQL;
         $command->bindValue(':st1',  $this->st1);
         $command->bindValue(':st1_',  $this->st1);
         return $command->queryScalar();
-    }
-
-    /**
-     * Данные о будущем трудоустройестве для портфолио фарма
-     * @return Stpfwork
-     */
-    public function getStpfwork(){
-        $model = Stpfwork::model()->findByPk($this->st1);
-        if(empty($model)) {
-            $model = new Stpfwork();
-            $model->stpfwork1 = $this->st1;
-            $model->stpfwork2 = $model->stpfwork3 = '';
-        }
-
-        return $model;
     }
 }
