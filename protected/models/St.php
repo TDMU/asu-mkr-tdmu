@@ -928,15 +928,17 @@ SQL;
         return implode(' ', $parts);
     }
 
-	/**
-	 * Получение кода группы(возможно вирутальной) по студенту по году сметсру и дисциплине
-	 * @param $st1 {int} код студента
-	 * @param $uo19 {int}
-	 * @param $year {int} год
-	 * @param $sem {int} семестр
-	 */
+    /**
+     * Получение кода группы(возможно вирутальной) по студенту по году сметсру и дисциплине
+     * @param $st1 {int} код студента
+     * @param $uo19 {int}
+     * @param $year {int} год
+     * @param $sem {int} семестр
+     * @return
+     * @throws CException
+     */
 	public function getGroupByStudent($st1,$uo19,$year,$sem){
-        $date = $sem == 1 ? '31.05.'.($year+1) : '20.01.'.($year+1);
+        $date = $sem == 1 ? '31.05.'.($year+1) : '31.01.'.($year+1);
 
 		$sql = <<<SQL
 		select first 1 LISTST.gr1, gr3, listst.GR1_VIRT

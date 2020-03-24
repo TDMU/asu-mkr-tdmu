@@ -708,6 +708,7 @@ SQL;
      * @param $student int студент
      * @param $nkrs1 int
      * @param $nkrs6 mixed
+     * @return bool
      */
     private function proccessAntiplagiat($student, $nkrs1, $nkrs6){
         $st = St::model()->findByPk($student);

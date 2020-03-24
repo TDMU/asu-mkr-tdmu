@@ -19,13 +19,6 @@ $(document).ready(function(){
         $form.submit();
     }
 
-    $('.btn-select-module').click(function(e){
-        e.preventDefault();
-        var $tr = $(this).parents('tr');
-        $('#ModuleForm_module').val($tr.data('id'));
-        $('#filter-form').submit();
-    });
-
     $('.input-module').change(function(){
         var $url = $('#modules').data('url');
         var $tr = $(this).parents('tr');

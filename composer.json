@@ -8,6 +8,7 @@
         "ext-PDO": "*",
         "ext-PDO_Firebird": "*",
         "ext-gd": "*",
+        "ext-soap": "*",
         "yiisoft/yii": "*",
         "myclabs/php-enum": "1.6.6",
         "myclabs/deep-copy": "1.7.0",

@@ -62,20 +62,18 @@ class RegistrationForm extends CFormModel
 
     public function checkExistence($attribute,$params)
     {
-        /*$st = St::model()->with(array(
-            'std' => array(
-                'join' => 'inner join std on (st1 = std2)',
-                'condition' => "std11 in (0,3,5,7,6,8) and (std7 is null)",
-            )
-        ))->findAll('st15=:ID ORDER BY st1 DESC', );*/
-
         $st = $p = array();
 
         if($this->type==self::TYPE_STUDENT||$this->type==self::TYPE_PARENT) {
+
+            $std11= '0,3,5,7,6,8';
+            if(Yii::app()->core->universityCode == U_FARM)
+                $std11.=',4';
+
             $st = St::model()->findAllBySql(<<<SQL
           SELECT st.* FROM st
             inner join std on (st1 = std2)
-          WHERE std11 in (0,3,5,7,6,8) and (std7 is null) AND st15=:ID ORDER BY st1 DESC
+          WHERE std11 in ({$std11}) and (std7 is null) AND st15=:ID ORDER BY st1 DESC
 SQL
                 , array(':ID' => $this->$attribute));
         }else {

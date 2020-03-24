@@ -314,10 +314,12 @@ HTML;
         $model = new Stportfolio();
 
         $p = new CHtmlPurifier();
+        $value = $p->purify($value);
+
         $model->stportfolio0 = new CDbExpression('GEN_ID(GEN_Stpwork, 1)');
         $model->stportfolio1 = $id;
         $model->stportfolio2 = $st1;
-        $model->stportfolio3 = $p->purify($value);
+        $model->stportfolio3 = $value;
         $model->stportfolio4 = Yii::app()->user->id;
         $model->stportfolio5 = date('Y-m-d H:i:s');
 

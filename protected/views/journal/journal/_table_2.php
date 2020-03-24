@@ -521,21 +521,6 @@ HTML;
 HTML;
     }
 
-    /*switch($date['elgz4'])
-    {
-        case '0':
-            $type='';
-            break;
-        case '1':
-            $type=tt('Субмодуль');
-            break;
-        case '2':
-            $type=tt('ПМК');
-            break;
-        default:
-            $type='';
-    }*/
-
     $type = Ustem::model()->getUstem6Value($date['elgz4']);
 
     $type=' '.$type;
@@ -565,7 +550,7 @@ HTML;
         ));
     }
 
-    $content = $time.'<br>'.$date['k2'].'<br>'.$date['ustem5']. '<br>'. $date['p3']. ' '. $date['p4']. ' '. $date['p5'];
+    $content = $time.'<br>'.CHtml::encode($date['k2']).'<br>'.CHtml::encode($date['ustem5']). '<br>'. CHtml::encode($date['p3']. ' '. $date['p4']. ' '. $date['p5']);
 
     return sprintf($pattern,$date['elgz3'],$content, $name, $a);
 }

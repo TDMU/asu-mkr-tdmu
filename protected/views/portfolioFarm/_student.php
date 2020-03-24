@@ -42,7 +42,7 @@ $form=$this->beginWidget('CActiveForm', array(
     $html .= '</div>';
 
 
-    $groups = CHtml::listData(Gr::model()->getGroupsForTimeTableForPortfolio($model->faculty, $model->course), 'gr1', 'name');
+    $groups = CHtml::listData(Gr::model()->getGroupsForPortfolioFarm($model->faculty, $model->course), 'gr1', 'name');
     $html .= '<div class="span2 ace-select">';
     $html .= $form->label($model, 'group');
     $html .= $form->dropDownList($model, 'group', $groups, $options);

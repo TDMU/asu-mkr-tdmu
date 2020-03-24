@@ -211,6 +211,7 @@ class ProgressController extends Controller
      * Изменение Оценки
      * @throws CHttpException
      * @throws CException
+     * @throws Exception
      */
     public function actionChangeMark()
     {
