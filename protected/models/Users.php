@@ -320,6 +320,19 @@ HTML;
 		return parent::beforeSave();
 	}
 
+	public function afterSave(){
+        // TDMU save u1 to pe38 for students (u5=0) (link u6=st1)
+        unset($key);
+        if ($this->u5==0) {
+            $key = St::model()->findByPk($this->u6)->st200;
+            $attr = 'pe38';
+            if (!empty($key)) {
+                Person::model()->findByPk($key)->saveAttributes(array($attr => $this->u1));
+            }
+        }
+		return parent::afterSave();
+	}
+
 	public function validatePassword($password){
 		return $this->u3 === crypt($password,$this->u9);
 	}
